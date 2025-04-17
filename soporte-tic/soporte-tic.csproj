@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>soporte_tic</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\assets\libs\jquery.easing\bower_components\jquery\MIT-LICENSE.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utils\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net-autofill-bs4\types\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net-autofill\types\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net-bs4\types\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net-buttons-bs4\types\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net-buttons\types\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net-keytable-bs4\types\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net-keytable\types\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net-responsive-bs4\types\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net-responsive\types\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net-select-bs4\types\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net-select\types\" />
+    <Folder Include="wwwroot\assets\libs\datatables.net\types\" />
+    <Folder Include="wwwroot\assets\libs\flatpickr\types\" />
+    <Folder Include="wwwroot\assets\libs\flatpickr\utils\" />
+    <Folder Include="wwwroot\assets\libs\gmaps\docs\" />
+    <Folder Include="wwwroot\assets\libs\gmaps\examples\" />
+    <Folder Include="wwwroot\assets\libs\gmaps\test\" />
+    <Folder Include="wwwroot\assets\libs\ion-rangeslider\less\skins\" />
+    <Folder Include="wwwroot\assets\libs\jquery-sparkline\src\" />
+    <Folder Include="wwwroot\assets\libs\jquery-steps\demo\" />
+    <Folder Include="wwwroot\assets\libs\jquery-steps\src\" />
+    <Folder Include="wwwroot\assets\libs\jquery-steps\test\" />
+    <Folder Include="wwwroot\assets\libs\jquery.easing\bower_components\jquery-easing-original\example\" />
+    <Folder Include="wwwroot\assets\libs\jquery.easing\bower_components\jquery\dist\" />
+    <Folder Include="wwwroot\assets\libs\jquery.easing\bower_components\jquery\src\" />
+    <Folder Include="wwwroot\assets\libs\jquery.easing\example\" />
+    <Folder Include="wwwroot\assets\libs\pdfmake\src\" />
+    <Folder Include="wwwroot\assets\libs\swiper\types\modules\" />
+    <Folder Include="wwwroot\uploads\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\assets\libs\jquery.easing\bower_components\jquery-easing-original\jquery.easing.compatibility.js" />
+    <None Include="wwwroot\assets\libs\jquery.easing\bower_components\jquery-easing-original\jquery.easing.min.js" />
+    <None Include="wwwroot\assets\libs\jquery.easing\bower_components\jquery\jquery.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="axios" Version="0.16.2" />
+    <PackageReference Include="FirebaseAdmin" Version="3.1.0" />
+    <PackageReference Include="Google.Cloud.Storage.V1" Version="4.11.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
+    <PackageReference Include="vue" Version="2.6.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+
+ 
+
+</Project>

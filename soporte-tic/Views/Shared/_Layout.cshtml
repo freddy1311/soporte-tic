@@ -1,0 +1,52 @@
+﻿
+<!doctype html>
+<html lang="en">
+<head>
+    @await Html.PartialAsync("~/Views/Shared/_title_meta.cshtml")
+    @RenderSection("styles", required: false)
+    @await Html.PartialAsync("~/Views/Shared/_head_css.cshtml")
+</head>
+<body data-sidebar="dark">
+
+    <!-- Loader -->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-chase">
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+        @await Html.PartialAsync("~/Views/Shared/_menu.cshtml")
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+                    @await Html.PartialAsync("~/Views/Shared/_page_title.cshtml")
+
+                    @RenderBody()
+                </div>
+            </div>
+            @await Html.PartialAsync("~/Views/Shared/_footer.cshtml")
+        </div>
+
+    </div>
+    <!-- END layout-wrapper -->
+    @await Html.PartialAsync("~/Views/Shared/_rightsidebar.cshtml")
+
+    @await Html.PartialAsync("~/Views/Shared/_vendor_scripts.cshtml")
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

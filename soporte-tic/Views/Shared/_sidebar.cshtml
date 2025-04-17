@@ -1,0 +1,87 @@
+﻿<!-- ========== Left Sidebar Start ========== -->
+<div class="vertical-menu">
+
+    <div data-simplebar class="h-100">
+
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+            <!-- Left Menu Start -->
+            <ul class="metismenu list-unstyled" id="side-menu">
+                <li class="menu-title" key="t-menu">Menu</li>
+
+                <li>
+                    <a href="@Url.Action("Index","Home")">
+                        <i class='bx bxs-dashboard'></i>
+                        <span key="t-home">Inicio</span>
+                    </a>
+                </li>
+
+                <li class="menu-title mt-3" key="t-more">Administración</li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class='bx bx-building-house'></i>
+                        <span key="t-authentication">Gestión</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="@Url.Action("Index","Empresa") " key="t-empresa">Empresa</a></li>
+                        <li><a href="@Url.Action("Index","Usuario")" key="t-usuarios">Usuarios</a></li>
+                        <li><a href="@Url.Action("Index","Producto")" key="t-productos">Maquinarias</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class='bx bx-briefcase'></i>
+                        <span key="t-multi-level">Mantenimiento</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="true">
+                        <li><a href="@Url.Action("Index","ClienteEmpresa")" key="t-mis-clientes ">Mis Clientes</a></li>
+                        <li><a href="@Url.Action("GetListSucursal","ClienteSucursal")" key="t-sucursales-clientes">Sucursales General</a></li>
+                        <li><a href="@Url.Action("GetListProductos","ProductoSucursalCliente")" key="t-productos-sucursales">Inventario General Sucursales</a></li>
+                    </ul>
+                </li>
+
+                <li class="menu-title mt-3" key="t-transaccion">Transacción</li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class='bx bx-support'></i>
+                        <span key="t-support">Soporte</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="true">
+                        <li><a href="@Url.Action("SoportePrimerNivel","Visita")" key="t-primer-nivel">Soporte 1er. Nivel</a></li>
+                        <li><a href="@Url.Action("Index","Ruta")" key="t-rutas">Rutas</a></li>
+                    </ul>
+                </li>
+
+                <li class="menu-title mt-3" key="t-reportes">Reportes</li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect ">
+                        <i class='bx bx-bar-chart-alt-2'></i>
+                        <span key="t-historicos">Históricos</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="true">
+                        <li><a href="@Url.Action("ReporteHistoricoPrimerNivel","Visita")" key="t-reporte-rutas">Reporte Soporte 1er Nivel</a></li>
+                        <li><a href="@Url.Action("ReporteHistoricoVisita","Visita")" key="t-reporte-visitas">Reporte Visitas</a></li>
+                    </ul>
+                </li>
+
+                <li class="menu-title mt-3" key="t-faq">FAQ</li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect ">
+                        <i class='bx bx-book'></i>
+                        <span key="t-inci-sol">Incidencias</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="true">
+                        <li><a href="@Url.Action("Index","IncidenciaSolucion")" key="t-incidencias">Incidencias/Soluciones</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+        <!-- Sidebar -->
+    </div>
+</div>
+<!-- Left Sidebar End -->
