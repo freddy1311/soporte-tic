@@ -26,7 +26,6 @@
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="@Url.Action("Index","Empresa") " key="t-empresa">Empresa</a></li>
                         <li><a href="@Url.Action("Index","Usuario")" key="t-usuarios">Usuarios</a></li>
-                        <li><a href="@Url.Action("Index","Producto")" key="t-productos">Maquinarias</a></li>
                     </ul>
                 </li>
 
@@ -36,9 +35,8 @@
                         <span key="t-multi-level">Mantenimiento</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-                        <li><a href="@Url.Action("Index","ClienteEmpresa")" key="t-mis-clientes ">Mis Clientes</a></li>
-                        <li><a href="@Url.Action("GetListSucursal","ClienteSucursal")" key="t-sucursales-clientes">Sucursales General</a></li>
-                        <li><a href="@Url.Action("GetListProductos","ProductoSucursalCliente")" key="t-productos-sucursales">Inventario General Sucursales</a></li>
+                        <li><a href="@Url.Action("Index","Producto")" key="t-productos">Maquinarias</a></li>
+                        <li><a href="@Url.Action("Index","ClienteEmpresa")" key="t-mis-clientes ">Tareas Maquinaria</a></li>
                     </ul>
                 </li>
 
@@ -50,8 +48,8 @@
                         <span key="t-support">Soporte</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-                        <li><a href="@Url.Action("SoportePrimerNivel","Visita")" key="t-primer-nivel">Soporte 1er. Nivel</a></li>
-                        <li><a href="@Url.Action("Index","Ruta")" key="t-rutas">Rutas</a></li>
+                        <li><a href="@Url.Action("SoportePrimerNivel","Visita")" key="t-primer-nivel">Lista de ODT's</a></li>
+                        <li><a href="@Url.Action("Index","Ruta")" key="t-rutas">Configuración ODT</a></li>
                     </ul>
                 </li>
 
@@ -63,8 +61,8 @@
                         <span key="t-historicos">Históricos</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-                        <li><a href="@Url.Action("ReporteHistoricoPrimerNivel","Visita")" key="t-reporte-rutas">Reporte Soporte 1er Nivel</a></li>
-                        <li><a href="@Url.Action("ReporteHistoricoVisita","Visita")" key="t-reporte-visitas">Reporte Visitas</a></li>
+                        <li><a href="@Url.Action("ReporteHistoricoPrimerNivel","Visita")" key="t-reporte-rutas">Reporte General</a></li>
+                        <li><a href="@Url.Action("ReporteHistoricoVisita","Visita")" key="t-reporte-visitas">Reporte ODT</a></li>
                     </ul>
                 </li>
 

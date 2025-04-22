@@ -5,7 +5,7 @@ namespace soporte_tic.Services.LocalStorage
     public interface ILocalFileService
     {
         #region methods
-        Task<ResponseModel> SaveImageAsync(Stream fileStream, string fileName);
+        Task<ResponseModel> SaveImageAsync(IFormFile fileStream, string fileName);
         ResponseModel DeleteImageAsync(string filePath);
         #endregion
     }

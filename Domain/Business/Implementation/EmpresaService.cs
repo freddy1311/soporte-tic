@@ -77,19 +77,7 @@ namespace Domain.Business.Implementation
 
                     empresaUpdate.EmprNombre = entity.EmprNombre;
                     empresaUpdate.EmprRuc = entity.EmprRuc;
-
-                    #region check user photo
-                    //if (logo != null)
-                    //{
-                    //    string namePhoto = $"logo_empresa_{entity.EmprRuc}";
-                    //    var rmPhoto = await _firebaseService.UploadStorage(logo, "EMPRESA", namePhoto);
-                    //    if (rmPhoto.Response)
-                    //    {
-                    //        string urlPhoto = (string)rmPhoto.Result;
-                    //        empresaUpdate.EmprLogo = urlPhoto;
-                    //    }
-                    //}
-                    #endregion
+                    empresaUpdate.EmprLogo = entity.EmprLogo;
 
                     var rmUpdate = await _ctx.Update(empresaUpdate);
 

@@ -1,0 +1,522 @@
+﻿@{
+    ViewBag.Title = "Gestión Empresa";
+    ViewBag.pagetitle = "Mi Empresa";
+}
+
+<div class="row mb-4" id="index-empresa">
+    <div class="col-xl-4">
+
+        <div class="card h-100">
+
+            <div class="card-body">
+                <div>
+                    <div class="dropdown float-end">
+                        <a class="text-body dropdown-toggle font-size-18" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-haspopup="true">
+                            <i class="mdi mdi-dots-vertical"></i>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="#">Recargar</a>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <div class="text-center bg-pattern">
+                        <img v-if="(!vmEmpresa.emprLogo)" src="~/assets/images/no_image.jpg" alt="imagen-empresa" class="img-thumbnail shadow-sm mb-3" style="height: 100px;">
+                        <img v-if="(vmEmpresa.emprLogo)" :src="logoNew" alt="imagen-empresa" class="img-thumbnail shadow-sm mb-3" style="height: 100px;">
+                        <h4 class="text-primary mb-2">{{vmEmpresa.emprNombre}}</h4>
+                        <h5 class="text-muted font-size-13 mb-3">{{vmEmpresa.emprRazonSocial}}</h5>
+                    </div>
+
+                    <hr class="my-4">
+                    <div class="table-responsive">
+                        <h5 class="font-size-16 mb-3">Información de Empresa</h5>
+                        <div>
+                            <div class="mb-3">
+                                <label for="fileLogo" class="form-label">Logo de empresa</label>
+                                <input class="form-control form-control-sm" id="fileLogo" type="file">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="txtNombre"
+                                       placeholder="Nombre empresa..." v-model="vmEmpresa.emprNombre">
+                                <label for="txtNombre">Nombre de empresa</label>
+                            </div>
+                        </div>
+                      @*   <div class="mt-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="txtRazonSocial"
+                                       placeholder="Razón social empresa..." v-model="vmEmpresa.emprRazonSocial">
+                                <label for="txtRazonSocial">Razón social</label>
+                            </div>
+                        </div> *@
+                        <div class="mt-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="txtRuc"
+                                       placeholder="RUC de empresa..." v-model="vmEmpresa.emprRuc">
+                                <label for="txtRuc">RUC</label>
+                            </div>
+                        </div>
+                        <div class="float-end">
+                            <button class="btn btn-primary" v-on:click="updateEmpresa()">
+                                Actualizar
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-8">
+        <div class="card mb-0">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#sucursal" role="tab">
+                        <i class="mdi mdi-office-building-outline font-size-20"></i>
+                        <span class="d-none d-sm-block">Sucursal</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#config" role="tab">
+                        <i class="mdi mdi-cog-outline font-size-20"></i>
+                        <span class="d-none d-sm-block">Configuración</span>
+                    </a>
+                </li>
+            </ul>
+            <!-- Tab content -->
+            <div class="tab-content p-4">
+                <div class="tab-pane active" id="sucursal" role="tabpanel">
+                    <div>
+
+                        <div>
+                            <h5 class="font-size-16 mb-4">Sucursales</h5>
+
+                            <div class="table-responsive">
+                                <table class="table table-nowrap table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Dirección</th>
+                                            <th scope="col">Ciudad</th>
+                                            <th scope="col">Teléfono</th>
+                                            <th scope="col">Contacto</th>
+                                            <th scope="col" style="width: 120px; text-align: center;">Opciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="sucu in sucursales">
+                                            <th>
+                                                <small>{{sucu.sucuNombre}}</small>
+                                            </th>
+                                            <td>
+                                                <small>{{sucu.sucuDireccion}}</small>
+                                            </td>
+                                            <td>
+                                                {{sucu.paisNombre}}
+                                            </td>
+                                            <td>
+                                                <small>{{sucu.sucuTelefono}}</small>
+                                            </td>
+                                            <td>
+                                                <small class="text-primary">
+                                                    {{sucu.sucuContacto}}<br />
+                                                    {{sucu.sucuContactoTelefono}}
+                                                </small>
+                                            </td>
+                                            <td style="text-align: center;">
+                                                <a class="text-warning" href="javascript: void(0);" v-on:click="showUpdateSucursal(sucu.sucuCodigo)">
+                                                    <i class="mdi mdi-square-edit-outline"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="config" role="tabpanel">
+                    <div>
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <h5 class="font-size-16">Configuraciones de Empresa</h5>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-sm btn-primary float-end" v-on:click="showCreateConfiguracion()">
+                                    <i class="mdi mdi-plus"></i> Nuevo
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive mt-2">
+                            <table class="table table-nowrap table-centered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Recurso</th>
+                                        <th scope="col">Propiedad</th>
+                                        <th scope="col">Valor</th>
+                                        <th scope="col">Opciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="conf in configuraciones">
+                                        <td>
+                                            {{conf.confRecurso}}
+                                        </td>
+                                        <td>
+                                            {{conf.confPropiedad}}
+                                        </td>
+                                        <td>
+                                            {{conf.confValor}}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <a class="text-warning mr-2" href="javascript: void(0);" v-on:click="showUpdateConfiguracion(conf.confCodigo)">
+                                                <i class="mdi mdi-square-edit-outline"></i>
+                                            </a>
+                                            <a class="text-danger" href="javascript: void(0);" v-on:click="deleteConfiguracion(conf.confCodigo)">
+                                                <i class="mdi mdi-delete-outline"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@await Html.PartialAsync("~/Views/Shared/_modalStandard.cshtml")
+
+@section scripts {
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+
+    <script>
+        var indexEmpresa = new Vue({
+            el: '#index-empresa',
+            data: {
+                vmEmpresa: {
+                    emprCodigo: 0,
+                    emprNombre: '',
+                    emprRuc: '',
+                    emprRazonSocial: '',
+                    emprLogo: '',
+                    file: null
+                },
+                sucursales: [],
+                vmSucursal: {
+                    sucuCodigo: 0,
+                    sucuNombre: '',
+                    sucuDireccion: '',
+                    sucuTelefono: '',
+                    sucuContacto: '',
+                    sucuContactoTelefono: '',
+                    sucuContactoEmail: '',
+                    paisCodigo: 0,
+                    paisNombre: '',
+                    emprCodigo: 0,
+                    emprNombre: ''
+                },
+                configuraciones: [],
+                logoNew: ''
+            },
+            mounted: function () {
+                var vm = this;
+                this.$on('responseModel', (resp) => {
+                    //console.log('response modal', JSON.stringify(resp));
+                    if (resp.response) {
+                        $('#standardModal').hide();
+                        $('#standardModal').modal('hide');
+
+                        switch (resp.result) {
+                            case 1:
+                                //edición sucursal
+                                vm.getSucursales();
+                                break;
+                            case 2:
+                                //crear configuración
+                                vm.getListConfiguraciones();
+                                break;
+                            case 3:
+                                //editar configuración
+                                vm.getListConfiguraciones();
+                                break;
+                            case 3:
+
+                        }
+                    }
+                });
+            },
+            created: function () {
+                this.getEmpresa();
+            },
+            methods: {
+                blockUI: function (msg) {
+                    $(function () {
+                        //#region block UI
+                        $('#index-empresa').block({
+                            message: msg,
+                            css: {
+                                backgroundColor: '#36404a',
+                                color: '#fff',
+                                height: 40,
+                                paddingTop: 10,
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                borderRadius: 7,
+                                border: '0',
+                                opacity: 0.5,
+                                zIndex: 9999999,
+                                cursor: 'wait'
+                            },
+                        });
+                        //#endregion
+                    });
+                },
+                unblockUI: function () {
+                    $(function () {
+                        $('#index-empresa').unblock();
+                    });
+                },
+                showAlert: function (title, msg, icon) {
+
+                    const typeIcon = icon;
+
+                    Swal.fire(
+                        {
+                            title: title,
+                            text: msg,
+                            icon: typeIcon,
+                            confirmButtonColor: '#0576b9'
+                        }
+                    );
+                },
+                getEmpresa: function () {
+                    const url = '/Empresa/GetEmpresa/';
+
+                    axios.get(url)
+                        .then(response => {
+                            console.log('Response getEmpresa => ' + response.data.response);
+
+                            let rm = response.data;
+
+                            if (rm.response) {
+                                this.vmEmpresa = rm.result;
+                                this.logoNew = `/uploads/${this.vmEmpresa.emprLogo}`;
+                                console.log('vmEmpresa cod => ' + this.vmEmpresa.emprCodigo, this.logoNew);
+
+                                if (this.vmEmpresa.emprCodigo != 0) {
+                                    this.getSucursales();
+                                }
+                            } else {
+
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error getEmpresa => ' + error);
+                        });
+                },
+                getSucursales: function () {
+                    const url = '/Empresa/GetSucursalesEmpresa/';
+                    this.sucursales = [];
+
+                    axios.get(url, {
+                        params: {
+                            codEmpresa: this.vmEmpresa.emprCodigo
+                        }
+                    }).then(response => {
+                        let rm = response.data;
+
+                        if (rm.response) {
+                            this.sucursales = rm.result;
+
+                            if (this.sucursales.length > 0) {
+                                this.getListConfiguraciones();
+                            }
+
+                        } else {
+                            this.sucursales = [];
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error getSucursales => ' + error);
+                    });
+                },
+                updateEmpresa: function () {
+                    const fileInput = document.getElementById("fileLogo");
+
+                    this.blockUI('Actualizando datos empresa...');
+
+                    const file = fileInput.files[0];
+
+                    if (file != null)
+                        this.vmEmpresa.file = file;
+
+                    axios.put('/Empresa/UpdateEmpresa/', this.vmEmpresa, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data', // Importante establecer el encabezado
+                        },
+                    }).then(response => {
+                        let rm = response.data;
+
+                        if (rm.response) {
+                            this.getEmpresa();
+                            this.showAlert(
+                                'Actualización Empresa',
+                                rm.message,
+                                'success'
+                            );
+                        } else {
+                            this.showAlert(
+                                'Actualización Empresa',
+                                rm.message,
+                                'warning'
+                            );
+                        }
+
+                        this.unblockUI();
+
+                    }).catch(error => {
+                        console.error('Error updateEmpresa => ' + error);
+                        this.showAlert(
+                            'Actualización Empresa',
+                            'No se pudo actualizar la información de la empresa.',
+                            'error'
+                        );
+                        this.unblockUI();
+                    });
+
+                },
+                showUpdateSucursal: function (codSucursal) {
+                    if (codSucursal != 0) {
+                        let url = '/Empresa/EditSucursal/';
+
+                        axios.get(url, { params: { codSucursal: codSucursal } }).
+                            then((response) => {
+
+                                //console.log(response.data);
+                                $('.modal').html(response.data);
+                                $('#standardModal').modal('show');
+
+                            }).
+                            catch((error) => {
+                                console.log('Error en showUpdateSucursal: ' + error);
+                            });
+                    } else {
+                        this.showAlert('Validación', 'No se detectó una sucursal válida para actualizar!.', 'warning');
+                    }
+                },
+                getListConfiguraciones: function () {
+                    const url = '/Configuracion/GetListConfiguracion/';
+                    this.configuraciones = [];
+                    let codigoSucursal = this.sucursales[0].sucuCodigo;
+
+                    axios.get(url, {
+                        params: {
+                            codSucursal: codigoSucursal
+                        }
+                    }).then(response => {
+                        let rm = response.data;
+
+                        if (rm.response) {
+                            this.configuraciones = rm.result;
+                        } else {
+                            this.configuraciones = [];
+                        }
+
+                        console.log('list config => ', this.configuraciones.length);
+                    })
+                    .catch(error => {
+                        console.error('Error getListConfiguraciones => ' + error);
+                    });
+                },
+                showCreateConfiguracion: function (codConfig) {
+                    let url = '/Configuracion/CreateConfiguracion/';
+                    let codigoSucursal = this.sucursales[0].sucuCodigo;
+
+                    if (codigoSucursal != 0 && codigoSucursal != null) {
+                        axios.get(url, { params: { codSucursal: codigoSucursal } }).
+                            then((response) => {
+
+                                //console.log(response.data);
+                                $('.modal').html(response.data);
+                                $('#standardModal').modal('show');
+
+                            }).
+                            catch((error) => {
+                                console.log('Error en showCreateConfiguracion: ' + error);
+                            });
+                    } else {
+                        this.showAlert('Validación', 'No se detectó código de sucursal!.', 'warning');
+                    }
+                },
+                showUpdateConfiguracion: function (codConfig) {
+                    if (codConfig != 0) {
+                        let url = '/Configuracion/UpdateConfiguracion/';
+
+                        axios.get(url, { params: { codConfiguracion: codConfig } }).
+                            then((response) => {
+
+                                //console.log(response.data);
+                                $('.modal').html(response.data);
+                                $('#standardModal').modal('show');
+
+                            }).
+                            catch((error) => {
+                                console.log('Error en showUpdateConfiguracion: ' + error);
+                            });
+                    } else {
+                        this.showAlert('Validación', 'No se detectó una configuración válida para actualizar!.', 'warning');
+                    }
+                },
+                deleteConfiguracion: function (codConfig) {
+                    if (codConfig != 0) {
+
+                        Swal.fire({
+                            title: 'Está seguro de querer eliminar la configuración seleccionada?',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí',
+                            icon: 'question'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                let url = '/Configuracion/DeleteConfiguracion/';
+
+                                this.blockUI('Eliminando configuración...');
+
+                                axios.delete(url, { params: { codConfiguracion: codConfig } }).
+                                    then((response) => {
+                                        let rm = response.data;
+
+                                        if (rm.response) {
+                                            this.showAlert(rm.title, rm.message, 'success');
+                                            this.getListConfiguraciones();
+                                        } else {
+                                            this.showAlert(rm.title, rm.message, 'warning');
+                                        }
+
+                                        this.unblockUI();
+                                    }).
+                                    catch((error) => {
+                                        this.unblockUI();
+                                        console.log('Error en showUpdateConfiguracion: ' + error);
+                                    });
+                            }
+                        });
+
+                    } else {
+                        this.showAlert('Validación', 'No se detectó una configuración válida para actualizar!.', 'warning');
+                    }
+                }
+            }
+        });
+    </script>
+
+}

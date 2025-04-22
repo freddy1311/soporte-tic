@@ -38,7 +38,7 @@ namespace soporte_tic.Services.LocalStorage
             return rm;
         }
 
-        public async Task<ResponseModel> SaveImageAsync(Stream fileStream, string fileName)
+        public async Task<ResponseModel> SaveImageAsync(IFormFile fileStream, string fileName)
         {
             var rm = new ResponseModel();
 
@@ -59,7 +59,8 @@ namespace soporte_tic.Services.LocalStorage
                     await fileStream.CopyToAsync(file);
                 }
 
-                var urlImage = $"/{UploadsFolder}/{uniqueFileName}"; // Ruta relativa
+                var urlImage = $"{uniqueFileName}"; // Ruta relativa
+                rm.SetResponse(true, "Imagen almacenada exitosamente!.", "Registro Imagen", urlImage);
             }
             catch (Exception ex)
             {

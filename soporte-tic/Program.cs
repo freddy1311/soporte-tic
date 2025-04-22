@@ -8,6 +8,7 @@ using Infrastructure.Repository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using soporte_tic.Services.LocalStorage;
+using soporte_tic.Utils.AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +31,7 @@ builder.Services.AddDbContext<soporteContext>(options =>
 
 #region data
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddSingleton<LocalFileService>();
+builder.Services.AddScoped<ILocalFileService, LocalFileService>();
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUtilsService, UtilsService>();
@@ -39,6 +40,8 @@ builder.Services.AddScoped<IEmpresaService, EmpresaService>();
 builder.Services.AddScoped<ISucursalService, SucursalService>();
 builder.Services.AddScoped<IConfiguracionService, ConfiguracionService>();
 #endregion
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 var app = builder.Build();
 
