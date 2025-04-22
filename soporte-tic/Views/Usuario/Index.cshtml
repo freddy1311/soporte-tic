@@ -1,0 +1,363 @@
+﻿@{
+    ViewBag.Title = "Gestión Usuarios";
+    ViewBag.pagetitle = "Usuarios";
+}
+
+<div class="row" id="index-usuarios">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex mb-3">
+                    <div class="flex-grow-1">
+                        <h4 class="card-title">Usuarios</h4>
+                        <p class="card-title-desc mb-0">
+                            Listado de usuarios disponibles en el sistema.
+                        </p>
+                        <p class="text-muted mt-1"><em>Total de usuarios: {{totalUsers}}</em></p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button class="btn btn-warning" v-on:click="reloadingUsers()">
+                            <i class="mdi mdi-refresh"></i>
+                        </button>
+                        <button class="btn btn-primary" v-on:click="showCreateUsuario()">
+                            <i class="mdi mdi-plus"></i> Nuevo
+                        </button>
+                    </div>
+                </div>
+                <div id="tbl-usuarios" v-if="(usuarios.length > 0)">
+                    <table id="dtUsuarios" class="table dt-responsive nowrap w-100">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Teléfono</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Usuario</th>
+                                <th scope="col">Perfil</th>
+                                <th scope="col" style="width: 120px; text-align: center;">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="user in usuarios">
+                                <td>
+                                    <div class="d-flex align-items-start">
+                                        <img v-if="(user.usuaFoto != '' && user.usuaFoto != null)" :src="`/uploads/${user.usuaFoto}`" class="img-thumbnail rounded-circle avatar-sm me-2" loading="lazy" />
+                                        <img v-if="(user.usuaFoto == '' || user.usuaFoto == null)" src="/assets/images/users/no_user.jpg" class="img-thumbnail rounded-circle h-auto avatar-sm me-2" />
+                                        <span>
+                                            <small>
+                                                {{user.usuaNombre}}<br />
+                                                <span class="text-muted">CI: {{user.usuaCedula}}</span>
+                                            </small>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small>{{user.usuaTelefono}}</small>
+                                </td>
+                                <td>
+                                    <small>{{user.usuaEmail}}</small>
+                                </td>
+                                <td>
+                                    <small>{{user.usuaUser}}</small>
+                                </td>
+                                <td>
+                                    <small v-if="(user.usuaPerfil == 0)">Root</small>
+                                    <small v-if="(user.usuaPerfil == 1)">Administrador</small>
+                                    <small v-if="(user.usuaPerfil == 2)">Supervisor</small>
+                                    <small v-if="(user.usuaPerfil == 3)">Técnico</small>
+                                    <small v-if="(user.usuaPerfil == 4)">Monitor</small>
+                                </td>
+                                <td style="text-align: center;">
+                                    <a class="text-info mr-2" href="javascript:void(0);" v-on:click="showInfoUser(user)">
+                                        <i class="mdi mdi-eye-outline"></i>
+                                    </a>
+                                    <a class="text-warning mr-2" href="javascript:void(0);" v-on:click="showUpdateUsuario(user.usuaCodigo)">
+                                        <i class="mdi mdi-square-edit-outline"></i>
+                                    </a>
+                                    <a class="text-danger" href="javascript:void(0);" v-on:click="deleteUsuario(user.usuaCodigo)">
+                                        <i class="mdi mdi-delete-outline"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("~/Views/Shared/_modalStandard.cshtml")
+
+@section scripts {
+    <!-- Required datatable js -->
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+
+    <script>
+        var indexUsuarios = new Vue({
+            el: '#index-usuarios',
+            data: {
+                vmUsuario: {
+
+                },
+                usuarios: [],
+                totalUsers: 0
+            },
+            mounted: function () {
+                var vm = this;
+                this.$on('responseModel', (resp) => {
+                    //console.log('response modal', JSON.stringify(resp));
+                    if (resp.response) {
+                        $('#standardModal').hide();
+                        $('#standardModal').modal('hide');
+
+                        switch (resp.result) {
+                            case 1:
+                                //creación usuario
+                                vm.getUsuarios();
+                                break;
+                            case 2:
+                                //edición usuario
+                                vm.getUsuarios();
+                                break;
+                        }
+                    }
+                });
+
+                window.onload = () => {
+                    this.getUsuarios();
+                };
+            },
+            created: function () {
+                    
+            },
+            methods: {
+                blockUI: function (msg) {
+                    $(function () {
+                        //#region block UI
+                        $('#index-usuarios').block({
+                            message: msg,
+                            css: {
+                                backgroundColor: '#36404a',
+                                color: '#fff',
+                                height: 40,
+                                paddingTop: 10,
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                borderRadius: 7,
+                                border: '0',
+                                opacity: 0.5,
+                                zIndex: 9999999,
+                                cursor: 'wait'
+                            },
+                        });
+                        //#endregion
+                    });
+                },
+                unblockUI: function () {
+                    $(function () {
+                        $('#index-usuarios').unblock();
+                    });
+                },
+                showAlert: function (title, msg, icon) {
+
+                    const typeIcon = icon;
+
+                    Swal.fire(
+                        {
+                            title: title,
+                            text: msg,
+                            icon: typeIcon,
+                            confirmButtonColor: '#0576b9'
+                        }
+                    );
+                },
+                initTableUsuarios: function () {
+                    setTimeout(() => {
+                        $("#dtUsuarios").DataTable({
+                            "language": {
+                                "zeroRecords": "No se encontraron usuarios disponibles!",
+                                "info": "Mostrando pag. _PAGE_ de _PAGES_",
+                                "infoEmpty": "No se encontró coincidencias!",
+                                "infoFiltered": "(filtrado de _MAX_ registros en total)",
+                                "search": "Buscar:",
+                                "paginate": {
+                                    "previous": "<i class='mdi mdi-chevron-left'>",
+                                    "next": "<i class='mdi mdi-chevron-right'>"
+                                },
+                                "lengthMenu": "Mostrar <select class=\"custom-select custom-select-sm ml-1 mr-1\"><option value='10'>10</option><option value='20'>20</option><option value='-1'>Todas</option></select> usuarios"
+                            },
+                            pageLength: 10,
+                            columns: [
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 }, { orderable: !0 }, { orderable: !0 }, { orderable: !0 }
+                            ],
+                            responsive: false,
+                            destroy: true,
+                            retrieve: true,
+                            autoFill: true,
+                            order: [],
+                            drawCallback: function () { 
+                                $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+                                $(".dataTables_paginate ").addClass('float-end');
+                            }
+                        });
+                    }, 500);
+                },
+                getUsuarios: function () {
+                    const url = '/Usuario/GetListUsuarios/';
+                    this.usuarios = [];
+                    this.totalUsers = 0;
+
+                    this.blockUI('Cargando usuarios...');
+
+                    axios.get(url).then(response => {
+                        let rm = response.data;
+
+                        if (rm.response) {
+                            this.usuarios = rm.result;
+                            console.log(JSON.stringify(this.usuarios));
+                        } else {
+                            this.usuarios = [];
+                        }
+
+                        this.totalUsers = this.usuarios.length;
+
+                        this.initTableUsuarios();
+
+                        this.unblockUI();
+                    }).catch(error => {
+                        console.error('Error getUsuarios => ' + error);
+                        this.unblockUI();
+                    });
+                },
+                reloadingUsers: function () {
+                    this.getUsuarios();
+                },
+                showCreateUsuario: function () {
+                    let url = '/Usuario/CreateUsuario/';
+
+                    axios.get(url).
+                        then((response) => {
+                            $('.modal').html(response.data);
+                            $('#standardModal').modal('show');
+                        }).
+                        catch((error) => {
+                            console.log('Error en showCreateUsuario: ' + error);
+                        });
+                },
+                showUpdateUsuario: function (codUsuario) {
+                    if (codUsuario != 0) {
+                        let url = '/Usuario/UpdateUsuario/';
+
+                        axios.get(url, { params: { codUsuario: codUsuario } }).
+                            then((response) => {
+
+                                //console.log(response.data);
+                                $('.modal').html(response.data);
+                                $('#standardModal').modal('show');
+
+                            }).
+                            catch((error) => {
+                                console.log('Error en showUpdateUsuario: ' + error);
+                            });
+                    } else {
+                        this.showAlert('Validación', 'No se detectó un usuario válido para actualizar!.', 'warning');
+                    }
+                },
+                deleteUsuario: function (codiUsuario) {
+                    if (codiUsuario != 0) {
+                        Swal.fire({
+                            title: 'Está seguro de querer eliminar el usuario seleccionado?',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí',
+                            confirmButtonColor: '#d65530',
+                            icon: 'question'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                let url = '/Usuario/DeleteUsuario/';
+                                console.log('código usuario: ' + codiUsuario);
+                                this.blockUI('Eliminando usuario...');
+
+                                axios.get(url, { params: { codUsuario: codiUsuario } }).
+                                    then((response) => {
+                                        let rm = response.data;
+
+                                        if (rm.response) {
+                                            this.showAlert(rm.title, rm.message, 'success');
+                                            this.getUsuarios();
+                                        } else {
+                                            this.showAlert(rm.title, rm.message, 'warning');
+                                        }
+
+                                        this.unblockUI();
+                                    }).
+                                    catch((error) => {
+                                        this.unblockUI();
+                                        console.log('Error en deleteUsuario: ' + error);
+                                    });
+                            }
+                        });
+                    } else {
+                        this.showAlert('Validación', 'No se detectó un usuario válido para actualizar!.', 'warning');
+                    }
+                },
+                showInfoUser: function (user) {
+                    if (user != null) {
+                        let estado = (user.usuaEstado == 0) ? 'INACTIVO' : 'ACTIVO';
+                        let logo = (user.usuaFoto != null && user.usuaFoto != '') ?
+                            user.usuaFoto : '/assets/images/users/no_user.jpg';
+
+                        Swal.fire({
+                            title: "<strong>Información de Usuario</strong>",
+                            html: `
+                                <div style="text-align: center; margin-top: 10px; ">
+                                    <img class="img-thumbnail avatar-sm mt-2 mb-4" style="width: 120px!important; height: 120px!important;" src="${logo}" alt="Logo Empresa">
+                                    <table style="border-collapse: collapse; width: 100%; margin: 0 auto; font-size: 16px;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Nombre:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaNombre}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Cédula:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaCedula}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Teléfono:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaTelefono}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Email:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaEmail}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Perfil:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.perfNombre}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">User:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaUser}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Estado:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${estado}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            `,
+                        });
+                    } else {
+                        this.showAlert(
+                            'Ver Información de Usuario',
+                            'No se detectó un Usuario para mostar!.',
+                            'warning'
+                        );
+                    }
+                }
+            }
+        });
+    </script>
+}

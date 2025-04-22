@@ -1,0 +1,216 @@
+﻿@model soporte_tic.Models.ViewModels.VMUsuario
+
+@{
+    var modelUsuario = Model;
+}
+
+<div class="modal-dialog modal-dialog-centered" role="document" id="frmUpdateUsuario">
+    <div class="modal-content" id="frmContent">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Editar Usuario</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="txtNombre">Nombre</label>
+                    <input id="txtNombre" class="form-control" style="text-transform: uppercase;" type="text" v-model="vmUsuario.usuaNombre" />
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-6">
+                    <label for="txtCedula">Cédula</label>
+                    <input id="txtCedula" class="form-control" type="text" v-model="vmUsuario.usuaCedula" />
+                </div>
+                <div class="col-lg-6">
+                    <label for="fileLogo" class="form-label">Foto</label>
+                    <input class="form-control form-control-sm" id="fileLogo" type="file">
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-6">
+                    <label for="txtTelefono">Teléfono</label>
+                    <input id="txtTelefono" maxlength="10" class="form-control" type="tel" v-model="vmUsuario.usuaTelefono" />
+                </div>
+                <div class="col-lg-6">
+                    <label for="txtEmail">Email</label>
+                    <input id="txtEmail" class="form-control" type="email" v-model="vmUsuario.usuaEmail" />
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-6">
+                    <label for="txtPassword">Password</label>
+                    <input id="txtPassword" class="form-control" type="text" v-model="vmUsuario.usuaPassword" />
+                </div>
+                <div class="col-lg-6">
+                    <label for="cboPerfil">Perfil</label>
+                    <select id="cboPerfil" class="form-select" name="usuaPerfil" v-model="vmUsuario.usuaPerfil">
+                        <option selected class="text-muted" value="-1">Seleccione un perfil...</option>
+                        <option value="1">Administrador</option>
+                        <option value="2">Supervisor</option>
+                        <option value="3">Técnico</option>
+                        <option value="4">Monitor</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" v-on:click="updateUsuario()">Actualizar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var frmUpdateUsuario = new Vue({
+        el: '#frmUpdateUsuario',
+        data: {
+            perfiles: [],
+            vmUsuario: {
+                file: null
+            }
+        },
+        mounted: function () {
+
+        },
+        created: function () {
+            this.vmUsuario = @Html.Raw(Json.Serialize(Model));
+        },
+        methods: {
+            blockUI: function (msg) {
+                $(function () {
+                    //#region block UI
+                    $('#frmContent').block({
+                        message: msg,
+                        css: {
+                            backgroundColor: '#36404a',
+                            color: '#fff',
+                            height: 40,
+                            paddingTop: 10,
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            borderRadius: 7,
+                            border: '0',
+                            opacity: 0.5,
+                            zIndex: 9999999,
+                            cursor: 'wait'
+                        },
+                    });
+                    //#endregion
+                });
+            },
+            unblockUI: function () {
+                $(function () {
+                    $('#frmContent').unblock();
+                });
+            },
+            showAlert: function (title, msg, icon) {
+
+                const typeIcon = icon;
+
+                Swal.fire(
+                    {
+                        title: title,
+                        text: msg,
+                        icon: typeIcon,
+                        confirmButtonColor: '#0576b9'
+                    }
+                );
+            },
+            validateFields: function () {
+
+                let isValid = true;
+
+                //#region nombre
+                if (this.vmUsuario.usuaNombre == '' ||
+                    this.vmUsuario.usuaNombre == null) {
+                    $('#txtNombre').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#txtNombre').removeClass('is-invalid');
+                }
+                //#endregion
+
+                //#region cédula
+                if (this.vmUsuario.usuaCedula == '' ||
+                    this.vmUsuario.usuaCedula == null) {
+                    $('#txtCedula').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#txtCedula').removeClass('is-invalid');
+                }
+                //#endregion
+
+                //#region teléfono
+                if (this.vmUsuario.usuaTelefono == '' ||
+                    this.vmUsuario.usuaTelefono == null) {
+                    $('#txtTelefono').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#txtTelefono').removeClass('is-invalid');
+                }
+                //#endregion
+
+                //#region email
+                if (this.vmUsuario.usuaEmail == '' ||
+                    this.vmUsuario.usuaEmail == null) {
+                    $('#txtEmail').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#txtEmail').removeClass('is-invalid');
+                }
+                //#endregion
+
+                //#region perfil
+                if (this.vmUsuario.usuaPerfil == -1) {
+                    $('#cboPerfil').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#cboPerfil').removeClass('is-invalid');
+                }
+                //#endregion
+
+                return isValid;
+            },
+            updateUsuario: function () {
+                let url = '/Usuario/UpdateUsuario/';
+
+                const fileInput = document.getElementById("fileLogo");
+                const file = fileInput.files[0];
+
+                if (file != null)
+                    this.vmUsuario.file = file;
+
+                if (!this.validateFields()) {
+                    return;
+                }
+
+                console.log('vmUsuario: ' + JSON.stringify(this.vmUsuario));
+
+                this.blockUI('Actualizando usuario...');
+
+                axios.put(url, this.vmUsuario, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data', // Importante establecer el encabezado
+                    },
+                }).then((resp) => {
+                    let rm = resp.data;
+
+                    if (rm.response) {
+                        rm.result = null;
+                        rm.result = 2;
+                        indexUsuarios.$emit('responseModel', rm);
+                        this.showAlert(rm.title, rm.message, 'success');
+                    } else {
+                        this.showAlert(rm.title, rm.message, 'warning');
+                    }
+
+                    this.unblockUI();
+                }).catch((error) => {
+                    this.unblockUI();
+                    console.log('Ocurrió un error en updateUsuario: ' + error);
+                });
+            }
+        }
+    });
+</script>

@@ -1,0 +1,134 @@
+﻿@model soporte_tic.Models.ViewModels.VMSucursal
+@{
+    var modelSucursal = Model;
+}
+
+<div class="modal-dialog modal-dialog-centered" role="document" id="frmUpdateSucursal">
+    <div class="modal-content" id="frmContent">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Editar Sucursal</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="txtNombre">Nombre Sucursal</label>
+                    <input id="txtNombre" class="form-control" type="text" v-model="vmSucursal.sucuNombre" />
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-6">
+                    <label for="txtCiudad">Ciudad</label>
+                    <input id="txtCiudad" class="form-control" type="text" v-model="vmSucursal.sucuCiudad" />
+                </div>
+                <div class="col-lg-6">
+                    <label for="txtDireccion">Dirección</label>
+                    <input id="txtDireccion" class="form-control" type="text" v-model="vmSucursal.sucuDireccion" />
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="txtResponsable">Responsable</label>
+                    <input id="txtResponsable" class="form-control" type="text" v-model="vmSucursal.sucuResponsable" />
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-6">
+                    <label for="txtContactoTelefono">Teléfono</label>
+                    <input id="txtContactoTelefono" class="form-control" type="text" v-model="vmSucursal.sucuTelefono" />
+                </div>
+                <div class="col-lg-6">
+                    <label for="txtContactoEmail">Email</label>
+                    <input id="txtContactoEmail" class="form-control" type="text" v-model="vmSucursal.sucuEmail" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" v-on:click="updateSucursal()">Actualizar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var frmUpdateSucursal = new Vue({
+        el: '#frmUpdateSucursal',
+        data: {
+            vmSucursal: {}
+        },
+        mounted: function () {
+
+        },
+        created: function () {
+            this.vmSucursal = @Html.Raw(Json.Serialize(Model));
+            //console.log('vmSucursal: ' + JSON.stringify(this.vmSucursal));
+        },
+        methods: {
+            blockUI: function (msg) {
+                $(function () {
+                    //#region block UI
+                    $('#frmContent').block({
+                        message: msg,
+                        css: {
+                            backgroundColor: '#36404a',
+                            color: '#fff',
+                            height: 40,
+                            paddingTop: 10,
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            borderRadius: 7,
+                            border: '0',
+                            opacity: 0.5,
+                            zIndex: 9999999,
+                            cursor: 'wait'
+                        },
+                    });
+                    //#endregion
+                });
+            },
+            unblockUI: function () {
+                $(function () {
+                    $('#frmContent').unblock();
+                });
+            },
+            showAlert: function (title, msg, icon) {
+
+                const typeIcon = icon;
+
+                Swal.fire(
+                    {
+                        title: title,
+                        text: msg,
+                        icon: typeIcon,
+                        confirmButtonColor: '#0576b9'
+                    }
+                );
+            },
+            updateSucursal: function () {
+                let url = '/Empresa/EditSucursal/';
+
+                this.blockUI('Actualizando sucursal...');
+
+                axios.put(url, this.vmSucursal).
+                    then((resp) => {
+                        let rm = resp.data;
+
+                        if (rm.response) {
+                            rm.result = null;
+                            rm.result = 1;
+                            indexEmpresa.$emit('responseModel', rm);
+                            this.showAlert(rm.title, rm.message, 'success');
+                        } else {
+                            this.showAlert(rm.title, rm.message, 'warning');
+                        }
+
+                        this.unblockUI();
+                    }).
+                    catch((error) => {
+                        this.unblockUI();
+                        console.log('Ocurrió un error en updateSucursal: ' + error);
+                    });
+            }
+        }
+    });
+</script>

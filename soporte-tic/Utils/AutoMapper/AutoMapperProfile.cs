@@ -25,6 +25,20 @@ namespace soporte_tic.Utils.AutoMapper
                     opt => opt.Ignore()
                 );
             #endregion
+
+            #region usuario 
+            CreateMap<Usuario, VMUsuario>().
+                ForMember(dest =>
+                    dest.SucuCodigo,
+                    opt => opt.MapFrom(ori => ori.SucuCodigoNavigation.SucuCodigo)
+                );
+
+            CreateMap<VMUsuario, Usuario>().
+                ForMember(dest =>
+                    dest.SucuCodigoNavigation,
+                    opt => opt.Ignore()
+                );
+            #endregion
         }
     }
 }

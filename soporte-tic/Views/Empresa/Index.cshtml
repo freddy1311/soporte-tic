@@ -104,8 +104,8 @@
                                             <th scope="col">Nombre</th>
                                             <th scope="col">Dirección</th>
                                             <th scope="col">Ciudad</th>
-                                            <th scope="col">Teléfono</th>
-                                            <th scope="col">Contacto</th>
+                                            <th scope="col">Responsable</th>
+                                            <th scope="col">Email</th>
                                             <th scope="col" style="width: 120px; text-align: center;">Opciones</th>
                                         </tr>
                                     </thead>
@@ -118,15 +118,15 @@
                                                 <small>{{sucu.sucuDireccion}}</small>
                                             </td>
                                             <td>
-                                                {{sucu.paisNombre}}
+                                                {{sucu.sucuCiudad}}
                                             </td>
                                             <td>
-                                                <small>{{sucu.sucuTelefono}}</small>
+                                                <small>{{sucu.sucuResponsable}}</small>
                                             </td>
                                             <td>
                                                 <small class="text-primary">
-                                                    {{sucu.sucuContacto}}<br />
-                                                    {{sucu.sucuContactoTelefono}}
+                                                    {{sucu.sucuEmail}}<br />
+                                                    {{sucu.sucuTelefono}}
                                                 </small>
                                             </td>
                                             <td style="text-align: center;">

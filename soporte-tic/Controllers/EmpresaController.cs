@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Domain.Business.Interface;
 using Infrastructure.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using soporte_tic.Models.ViewModels;
 using soporte_tic.Services.LocalStorage;
 
 namespace soporte_tic.Controllers
 {
+    [Authorize]
     public class EmpresaController : Controller
     {
         #region properties

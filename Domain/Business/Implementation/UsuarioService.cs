@@ -197,6 +197,7 @@ namespace Domain.Business.Implementation
                     userUpdate.UsuaEmail = entity.UsuaEmail;
                     userUpdate.UsuaTelefono = entity.UsuaTelefono;
                     userUpdate.UsuaPerfil = entity.UsuaPerfil;
+                    userUpdate.UsuaFoto = entity.UsuaFoto;
 
                     var rmUpdate = await _context.Update(userUpdate);
 

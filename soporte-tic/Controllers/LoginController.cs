@@ -6,6 +6,7 @@ using soporte_tic.Models.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Security.Claims;
 using Domain.Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace soporte_tic.Controllers
 {
@@ -17,9 +18,16 @@ namespace soporte_tic.Controllers
             _userRepository = userRepository;
         }
 
+        [AllowAnonymous]
         [HttpGet]   
         public IActionResult Login()
         {
+            // Si el usuario ya está autenticado, redirige a Home/Index
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             return View();
         }
 
