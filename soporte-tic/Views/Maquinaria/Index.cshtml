@@ -1,90 +1,12 @@
 ﻿@{
-    ViewBag.Title = "Gestión Usuarios";
-    ViewBag.pagetitle = "Usuarios";
+    ViewBag.Title = "Gestión Maquinarias";
+    ViewBag.pagetitle = "Maquinarias";
 }
 
-<div class="row" id="index-usuarios">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex mb-3">
-                    <div class="flex-grow-1">
-                        <h4 class="card-title">Usuarios</h4>
-                        <p class="card-title-desc mb-0">
-                            Listado de usuarios disponibles en el sistema.
-                        </p>
-                        <p class="text-muted mt-1"><em>Total de usuarios: {{totalUsers}}</em></p>
-                    </div>
-                    <div class="flex-shrink-0">
-                        <button class="btn btn-warning" v-on:click="reloadingUsers()">
-                            <i class="mdi mdi-refresh"></i>
-                        </button>
-                        <button class="btn btn-primary" v-on:click="showCreateUsuario()">
-                            <i class="mdi mdi-plus"></i> Nuevo
-                        </button>
-                    </div>
-                </div>
-                <div id="tbl-usuarios" v-if="(usuarios.length > 0)">
-                    <table id="dtUsuarios" class="table dt-responsive nowrap w-100">
-                        <thead class="table-light">
-                            <tr>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Teléfono</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Usuario</th>
-                                <th scope="col">Perfil</th>
-                                <th scope="col" style="width: 120px; text-align: center;">Opciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="user in usuarios">
-                                <td>
-                                    <div class="d-flex align-items-start">
-                                        <img v-if="(user.usuaFoto != '' && user.usuaFoto != null)" :src="`/uploads/${user.usuaFoto}`" class="img-thumbnail rounded-circle avatar-sm me-2" loading="lazy" />
-                                        <img v-if="(user.usuaFoto == '' || user.usuaFoto == null)" src="/assets/images/users/no_user.jpg" class="img-thumbnail rounded-circle h-auto avatar-sm me-2" />
-                                        <span>
-                                            <small>
-                                                {{user.usuaNombre}}<br />
-                                                <span class="text-muted">CI: {{user.usuaCedula}}</span>
-                                            </small>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <small>{{user.usuaTelefono}}</small>
-                                </td>
-                                <td>
-                                    <small>{{user.usuaEmail}}</small>
-                                </td>
-                                <td>
-                                    <small>{{user.usuaUser}}</small>
-                                </td>
-                                <td>
-                                    <small v-if="(user.usuaPerfil == 0)">Root</small>
-                                    <small v-if="(user.usuaPerfil == 1)">Administrador</small>
-                                    <small v-if="(user.usuaPerfil == 2)">Supervisor</small>
-                                    <small v-if="(user.usuaPerfil == 3)">Técnico</small>
-                                    <small v-if="(user.usuaPerfil == 4)">Monitor</small>
-                                </td>
-                                <td style="text-align: center;">
-                                    <a class="text-info mr-2" href="javascript:void(0);" v-on:click="showInfoUser(user)">
-                                        <i class="mdi mdi-eye-outline"></i>
-                                    </a>
-                                    <a class="text-warning mr-2" href="javascript:void(0);" v-on:click="showUpdateUsuario(user.usuaCodigo)">
-                                        <i class="mdi mdi-square-edit-outline"></i>
-                                    </a>
-                                    <a class="text-danger" href="javascript:void(0);" v-on:click="deleteUsuario(user.usuaCodigo)">
-                                        <i class="mdi mdi-delete-outline"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="row" id="index-maquinarias">
+
 </div>
+
 @await Html.PartialAsync("~/Views/Shared/_modalStandard.cshtml")
 
 @section scripts {
@@ -96,14 +18,17 @@
     <script src="~/assets/js/app.js"></script>
 
     <script>
-        var indexUsuarios = new Vue({
-            el: '#index-usuarios',
+        var indexMaquinarias = new Vue({
+            el: '#index-maquinarias',
             data: {
-                vmUsuario: {
+                vmMaquinaria: {
 
                 },
-                usuarios: [],
-                totalUsers: 0
+                maquinarias: [],
+                maquinariasComponente: [],
+                totalMaquinarias: 0,
+                totalComponentes: 0,
+                codMaquinariaSelected: 0
             },
             mounted: function () {
                 var vm = this;
@@ -115,23 +40,23 @@
 
                         switch (resp.result) {
                             case 1:
-                                //creación usuario
-                                vm.getUsuarios();
+                                //maquinarias
+                                vm.getMaquinarias();
                                 break;
                             case 2:
-                                //edición usuario
-                                vm.getUsuarios();
+                                //maquinarias componente
+                                vm.getmaquinariasComponentes();
                                 break;
                         }
                     }
                 });
 
                 window.onload = () => {
-                    this.getUsuarios();
+                    this.getMaquinarias();
                 };
             },
             created: function () {
-                    
+
             },
             methods: {
                 blockUI: function (msg) {
@@ -176,11 +101,11 @@
                         }
                     );
                 },
-                initTableUsuarios: function () {
+                initTableMaquinarias: function () {
                     setTimeout(() => {
-                        $("#dtUsuarios").DataTable({
+                        $("#dtMaquinarias").DataTable({
                             "language": {
-                                "zeroRecords": "No se encontraron usuarios disponibles!",
+                                "zeroRecords": "No se encontraron maquinarias disponibles!",
                                 "info": "Mostrando pag. _PAGE_ de _PAGES_",
                                 "infoEmpty": "No se encontró coincidencias!",
                                 "infoFiltered": "(filtrado de _MAX_ registros en total)",
@@ -189,72 +114,134 @@
                                     "previous": "<i class='mdi mdi-chevron-left'>",
                                     "next": "<i class='mdi mdi-chevron-right'>"
                                 },
-                                "lengthMenu": "Mostrar <select class=\"custom-select custom-select-sm ml-1 mr-1\"><option value='10'>10</option><option value='20'>20</option><option value='-1'>Todas</option></select> usuarios"
+                                "lengthMenu": "Mostrar <select class=\"custom-select custom-select-sm ml-1 mr-1\"><option value='10'>10</option><option value='20'>20</option><option value='-1'>Todas</option></select> maquinarias"
                             },
                             pageLength: 10,
                             columns: [
-                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 }, { orderable: !0 }, { orderable: !0 }, { orderable: !0 }
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 }, 
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 }
                             ],
                             responsive: false,
                             destroy: true,
                             retrieve: true,
                             autoFill: true,
                             order: [],
-                            drawCallback: function () { 
+                            drawCallback: function () {
                                 $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
                                 $(".dataTables_paginate ").addClass('float-end');
                             }
                         });
                     }, 500);
                 },
-                getUsuarios: function () {
-                    const url = '/Usuario/GetListUsuarios/';
-                    this.usuarios = [];
-                    this.totalUsers = 0;
+                initTableMaquinariasComponente: function () {
+                    setTimeout(() => {
+                        $("#dtMaquinariasComponente").DataTable({
+                            "language": {
+                                "zeroRecords": "No se encontraron maquinarias disponibles!",
+                                "info": "Mostrando pag. _PAGE_ de _PAGES_",
+                                "infoEmpty": "No se encontró coincidencias!",
+                                "infoFiltered": "(filtrado de _MAX_ registros en total)",
+                                "search": "Buscar:",
+                                "paginate": {
+                                    "previous": "<i class='mdi mdi-chevron-left'>",
+                                    "next": "<i class='mdi mdi-chevron-right'>"
+                                },
+                                "lengthMenu": "Mostrar <select class=\"custom-select custom-select-sm ml-1 mr-1\"><option value='10'>10</option><option value='20'>20</option><option value='-1'>Todas</option></select> maquinarias"
+                            },
+                            pageLength: 10,
+                            columns: [
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 },
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 }
+                            ],
+                            responsive: false,
+                            destroy: true,
+                            retrieve: true,
+                            autoFill: true,
+                            order: [],
+                            drawCallback: function () {
+                                $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+                                $(".dataTables_paginate ").addClass('float-end');
+                            }
+                        });
+                    }, 500);
+                },
+                getMaquinarias: function () {
+                    const url = '/Maquinaria/GetListMaquinarias/';
+                    this.maquinarias = [];
+                    this.totalMaquinarias = 0;
 
-                    this.blockUI('Cargando usuarios...');
+                    this.blockUI('Cargando maquinarias...');
 
                     axios.get(url).then(response => {
                         let rm = response.data;
                         console.log(JSON.stringify(rm));
 
                         if (rm.response) {
-                            this.usuarios = rm.result;
+                            this.maquinarias = rm.result;
                             //console.log(JSON.stringify(this.usuarios));
                         } else {
-                            this.usuarios = [];
+                            this.maquinarias = [];
                         }
 
-                        this.totalUsers = this.usuarios.length;
+                        this.totalMaquinarias = this.maquinarias.length;
 
-                        this.initTableUsuarios();
+                        this.initTableMaquinarias();
 
                         this.unblockUI();
                     }).catch(error => {
-                        console.error('Error getUsuarios => ' + error);
+                        console.error('Error getMaquinarias => ' + error);
                         this.unblockUI();
                     });
                 },
-                reloadingUsers: function () {
-                    this.getUsuarios();
-                },
-                showCreateUsuario: function () {
-                    let url = '/Usuario/CreateUsuario/';
+                getMaquinariasComponente: function () {
+                    const url = '/Maquinaria/GetListMaquinariasComponente/';
+                    let codMaquinaria = this.codMaquinariaSelected;
+                    this.maquinarias = [];
+                    this.totalMaquinarias = 0;
 
-                    axios.get(url).
+                    this.blockUI('Cargando maquinarias...');
+
+                    axios.get(url, {params: {codMaquinaria: codMaquinaria}}).then(response => {
+                        let rm = response.data;
+                        console.log(JSON.stringify(rm));
+
+                        if (rm.response) {
+                            this.maquinarias = rm.result;
+                            //console.log(JSON.stringify(this.usuarios));
+                        } else {
+                            this.maquinarias = [];
+                        }
+
+                        this.totalMaquinarias = this.maquinarias.length;
+
+                        this.initTableMaquinarias();
+
+                        this.unblockUI();
+                    }).catch(error => {
+                        console.error('Error getMaquinarias => ' + error);
+                        this.unblockUI();
+                    });
+                },
+                reloadingMaquinarias: function () {
+                    this.getMaquinarias();
+                },
+                showCreateMaquinaria: function () {
+                    let url = '/Maquinaria/CreateMaquinaria/';
+
+                    axios.get(url, {params: {codMaquinaria: codMaquinaria}}).
                         then((response) => {
                             $('.modal').html(response.data);
                             $('#standardModal').modal('show');
                         }).
                         catch((error) => {
-                            console.log('Error en showCreateUsuario: ' + error);
+                            console.log('Error en showCreateMaquinaria: ' + error);
                         });
                 },
-                showUpdateUsuario: function (codUsuario) {
-                    if (codUsuario != 0) {
-                        let url = '/Usuario/UpdateUsuario/';
+                showUpdateMaquinaria: function (codMaquinaria) {
+                    if (codMaquinaria != 0) {
+                        let url = '/Maquinaria/UpdateMaquinaria/';
 
-                        axios.get(url, { params: { codUsuario: codUsuario } }).
+                        axios.get(url, { params: { codMaquinaria: codMaquinaria } }).
                             then((response) => {
 
                                 //console.log(response.data);
@@ -263,33 +250,33 @@
 
                             }).
                             catch((error) => {
-                                console.log('Error en showUpdateUsuario: ' + error);
+                                console.log('Error en showUpdateMaquinaria: ' + error);
                             });
                     } else {
-                        this.showAlert('Validación', 'No se detectó un usuario válido para actualizar!.', 'warning');
+                        this.showAlert('Validación', 'No se detectó una maquinaria válida para actualizar!.', 'warning');
                     }
                 },
-                deleteUsuario: function (codiUsuario) {
-                    if (codiUsuario != 0) {
+                deleteMaquinaria: function (codMaquinaria) {
+                    if (codMaquinaria != 0) {
                         Swal.fire({
-                            title: 'Está seguro de querer eliminar el usuario seleccionado?',
+                            title: 'Está seguro de querer eliminar la maquinaria seleccionada?',
                             showCancelButton: true,
                             confirmButtonText: 'Sí',
                             confirmButtonColor: '#d65530',
                             icon: 'question'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                let url = '/Usuario/DeleteUsuario/';
-                                console.log('código usuario: ' + codiUsuario);
-                                this.blockUI('Eliminando usuario...');
+                                let url = '/Maquinaria/DeleteMaquinaria/';
+                                console.log('código maquinaria: ' + codMaquinaria);
+                                this.blockUI('Eliminando maquinaria...');
 
-                                axios.get(url, { params: { codUsuario: codiUsuario } }).
+                                axios.get(url, { params: { codMaquinaria: codMaquinaria } }).
                                     then((response) => {
                                         let rm = response.data;
 
                                         if (rm.response) {
                                             this.showAlert(rm.title, rm.message, 'success');
-                                            this.getUsuarios();
+                                            this.getMaquinarias();
                                         } else {
                                             this.showAlert(rm.title, rm.message, 'warning');
                                         }
@@ -298,12 +285,12 @@
                                     }).
                                     catch((error) => {
                                         this.unblockUI();
-                                        console.log('Error en deleteUsuario: ' + error);
+                                        console.log('Error en deleteMaquinaria: ' + error);
                                     });
                             }
                         });
                     } else {
-                        this.showAlert('Validación', 'No se detectó un usuario válido para actualizar!.', 'warning');
+                        this.showAlert('Validación', 'No se detectó una maquinaria válida para eliminar!.', 'warning');
                     }
                 },
                 showInfoUser: function (user) {

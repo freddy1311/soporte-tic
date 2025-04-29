@@ -144,6 +144,7 @@ namespace Domain.Business.Implementation
 
                 string generateKey = _utilsService.GenerateKey();
                 entity.UsuaPassword = _encryptionService.Hash256Text(generateKey);
+                entity.UsuaFechaCreacion = _utilsService.GetCurrentDate();
 
                 var rmCreate = await _context.Insert(entity);
                 if (rmCreate.Response)
@@ -191,7 +192,7 @@ namespace Domain.Business.Implementation
                 if (queryUser != null)
                 {
                     Usuario userUpdate = queryUser.First();
-
+                    userUpdate.UsuaFechaAct = _utilsService.GetCurrentDate();
                     userUpdate.UsuaNombre = entity.UsuaNombre;
                     userUpdate.UsuaCedula = entity.UsuaCedula;
                     userUpdate.UsuaEmail = entity.UsuaEmail;
