@@ -113,7 +113,7 @@ namespace Domain.Business.Implementation
             try
             {
                 var rmQuery = await _ctx.GetAll(u => u.MaquCodigo == codMaquinaria);
-                IQueryable<Usuario> query = (IQueryable<Usuario>)rmQuery.Result;
+                IQueryable<Maquinaria> query = (IQueryable<Maquinaria>)rmQuery.Result;
 
                 if (query.ToList().Count > 0)
                 {
@@ -177,9 +177,10 @@ namespace Domain.Business.Implementation
                 if (query.ToList().Count > 0)
                 {
                     var users = query.
-                    OrderBy(m => m.MaquTipo).
-                    OrderBy(m => m.MaquNombre).
-                    ToList();
+                        Include(m => m.MaquCodigoFkNavigation).
+                        OrderBy(m => m.MaquTipo).
+                        OrderBy(m => m.MaquNombre).
+                        ToList();
                     rm.SetResponse(true, "Consulta realizada exitosamente!.", "Maquinarias", users);
                 }
                 else
@@ -226,7 +227,7 @@ namespace Domain.Business.Implementation
                     maquinariaUpdate.MaquTipo = entity.MaquTipo;
                     maquinariaUpdate.MaquEstado = entity.MaquEstado;
                     maquinariaUpdate.SucuCodigo = entity.SucuCodigo;
-                    maquinariaUpdate.MaquCodigoFk = entity.MaquCodigoFk;
+                    //maquinariaUpdate.MaquCodigoFk = entity.MaquCodigoFk;
 
                     var rmUpdate = await _ctx.Update(maquinariaUpdate);
 

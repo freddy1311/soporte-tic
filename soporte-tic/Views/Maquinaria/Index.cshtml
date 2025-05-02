@@ -424,42 +424,28 @@
                         this.showAlert('Validación', 'No se detectó una maquinaria válida para eliminar!.', 'warning');
                     }
                 },
-                showInfoUser: function (user) {
-                    if (user != null) {
-                        let estado = (user.usuaEstado == 0) ? 'INACTIVO' : 'ACTIVO';
-                        let logo = (user.usuaFoto != null && user.usuaFoto != '') ?
-                            user.usuaFoto : '/assets/images/users/no_user.jpg';
+                showInfoMaquinaria: function (maquinaria) {
+                    if (maquinaria != null) {
+                        let estado = (maquinaria.maquEstado == 2) ? 'INACTIVO' : 'ACTIVO';
+                        let tipo = (maquinaria.maquTipo == 1) ? 'MAQUINARIA' : 'COMPONENTE';
 
                         Swal.fire({
-                            title: "<strong>Información de Usuario</strong>",
+                            title: "<strong>Información de Maquinaria</strong>",
                             html: `
                                 <div style="text-align: center; margin-top: 10px; ">
-                                    <img class="img-thumbnail avatar-sm mt-2 mb-4" style="width: 120px!important; height: 120px!important;" src="${logo}" alt="Logo Empresa">
                                     <table style="border-collapse: collapse; width: 100%; margin: 0 auto; font-size: 16px;">
                                         <tbody>
                                             <tr>
                                                 <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Nombre:</td>
-                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaNombre}</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${maquinaria.maquNombre}</td>
                                             </tr>
                                             <tr>
-                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Cédula:</td>
-                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaCedula}</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Descripción:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${maquinaria.maquDescripcion}</td>
                                             </tr>
                                             <tr>
-                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Teléfono:</td>
-                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaTelefono}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Email:</td>
-                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaEmail}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Perfil:</td>
-                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.perfNombre}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">User:</td>
-                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaUser}</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Tipo:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${tipo}</td>
                                             </tr>
                                             <tr>
                                                 <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Estado:</td>
@@ -472,20 +458,111 @@
                         });
                     } else {
                         this.showAlert(
-                            'Ver Información de Usuario',
-                            'No se detectó un Usuario para mostar!.',
+                            'Ver Información de Maquinaria',
+                            'No se detectó una Maquinaria para mostar!.',
                             'warning'
                         );
                     }
                 },
                 showInfoComponenteMaquinaria: function (componente) {
+                    if (componente != null) {
+                        let estado = (componente.maquEstado == 2) ? 'INACTIVO' : 'ACTIVO';
+                        let tipo = (componente.maquTipo == 1) ? 'MAQUINARIA' : 'COMPONENTE';
 
+                        Swal.fire({
+                            title: "<strong>Información de Componente</strong>",
+                            html: `
+                                <div style="text-align: center; margin-top: 10px; ">
+                                    <table style="border-collapse: collapse; width: 100%; margin: 0 auto; font-size: 16px;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Maquinaria:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${componente.maquNombreFK}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Nombre:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${componente.maquNombre}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Descripción:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${componente.maquDescripcion}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Tipo:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${tipo}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Estado:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${estado}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            `,
+                        });
+                    } else {
+                        this.showAlert(
+                            'Ver Información de Componente',
+                            'No se detectó una Componente para mostar!.',
+                            'warning'
+                        );
+                    }
                 },
                 showUpdateComponenteMaquinaria: function (codComponente) {
+                    if (codComponente != 0) {
+                        let url = '/Maquinaria/UpdateMaquinaria/';
 
+                        axios.get(url, { params: { codMaquinaria: codComponente } }).
+                            then((response) => {
+
+                                //console.log(response.data);
+                                $('.modal').html(response.data);
+                                $('#standardModal').modal('show');
+
+                            }).
+                            catch((error) => {
+                                console.log('Error en showUpdateComponenteMaquinaria: ' + error);
+                            });
+                    } else {
+                        this.showAlert('Validación', 'No se detectó un componente válida para actualizar!.', 'warning');
+                    }
                 },
                 deleteComponenteMaquinaria: function (codComponente) {
+                    if (codComponente != 0) {
+                        Swal.fire({
+                            title: 'Está seguro de querer eliminar el componente seleccionada?',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí',
+                            confirmButtonColor: '#d65530',
+                            icon: 'question'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                let url = '/Maquinaria/DeleteMaquinaria/';
+                                console.log('código maquinaria: ' + codComponente);
+                                this.blockUI('Eliminando componente...');
 
+                                axios.get(url, { params: { codMaquinaria: codComponente } }).
+                                    then((response) => {
+                                        let rm = response.data;
+
+                                        if (rm.response) {
+                                            this.showAlert(rm.title, rm.message, 'success');
+                                            this.getMaquinariasComponente(this.codMaquinariaSelected, this.nombreMaquinariaSelected);
+                                        } else {
+                                            this.showAlert(rm.title, rm.message, 'warning');
+                                        }
+
+                                        this.unblockUI();
+                                    }).
+                                    catch((error) => {
+                                        this.unblockUI();
+                                        console.log('Error en deleteComponenteMaquinaria: ' + error);
+                                    });
+                            }
+                        });
+                    } else {
+                        this.showAlert('Validación', 'No se detectó un componente válida para eliminar!.', 'warning');
+                    }
                 },
                 reloadingComponenteMaquinarias: function () {
                     this.getMaquinariasComponente(this.codMaquinariaSelected, this.nombreMaquinariaSelected);

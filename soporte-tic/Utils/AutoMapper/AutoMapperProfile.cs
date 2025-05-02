@@ -42,14 +42,14 @@ namespace soporte_tic.Utils.AutoMapper
 
             #region maquinarias
             CreateMap<Maquinaria, VMMaquinaria>().
-               ForMember(dest =>
-                   dest.MaquNombreFK,
-                   opt => opt.MapFrom(ori => ori.MaquCodigoFkNavigation!.MaquNombre)
-               ).
-               ForMember(dest =>
-                   dest.MaquCodigoFK,
-                   opt => opt.MapFrom(ori => ori.MaquCodigoFkNavigation!.MaquCodigo)
-               );
+                ForMember(dest =>
+                    dest.MaquCodigoFK,
+                    opt => opt.MapFrom(ori => ori.MaquCodigoFkNavigation!.MaquCodigo)
+                ).
+                ForMember(dest =>
+                    dest.MaquNombreFK,
+                    opt => opt.MapFrom(ori => ori.MaquCodigoFkNavigation!.MaquNombre)
+                );
 
             CreateMap<VMMaquinaria, Maquinaria>().
                 ForMember(dest =>

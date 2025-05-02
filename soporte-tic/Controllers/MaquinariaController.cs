@@ -90,6 +90,47 @@ namespace soporte_tic.Controllers
 
             return Json(rm);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateMaquinaria(long codMaquinaria)
+        {
+            var rmMaquinaria = await _maquinariaService.GetMaquinaria(codMaquinaria);
+            Maquinaria maquinaria = rmMaquinaria.Result;
+
+            VMMaquinaria vmMaquinaria = _mapper.Map<VMMaquinaria>(maquinaria);
+
+            return PartialView(vmMaquinaria);
+        }
+
+        [HttpPut]
+        public async Task<JsonResult> UpdateMaquinaria([FromBody] VMMaquinaria model)
+        {
+            Maquinaria maquinariaUpdate = _mapper.Map<Maquinaria>(model);
+            maquinariaUpdate.MaquNombre = (maquinariaUpdate.MaquNombre != "") ? maquinariaUpdate.MaquNombre?.ToUpper() : "";
+            maquinariaUpdate.MaquDescripcion = (maquinariaUpdate.MaquDescripcion != "") ? maquinariaUpdate.MaquDescripcion?.ToUpper() : "";
+
+            var rm = await _maquinariaService.Update(maquinariaUpdate);
+
+            if (rm.Response)
+            {
+                VMMaquinaria maquinariaUpdated = _mapper.Map<VMMaquinaria>(rm.Result);
+                rm.Result = maquinariaUpdated;
+            }
+
+            return Json(rm);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> DeleteMaquinaria(long codMaquinaria)
+        {
+            var rmMaquinaria = await _maquinariaService.GetMaquinaria(codMaquinaria);
+            Maquinaria maquinariaDelete = rmMaquinaria.Result;
+            maquinariaDelete.MaquEstado = 3;
+
+            var rm = await _maquinariaService.Update(maquinariaDelete);
+
+            return Json(rm);
+        }
         #endregion
     }
 }
