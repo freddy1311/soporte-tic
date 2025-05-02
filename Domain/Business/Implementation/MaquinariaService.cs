@@ -139,7 +139,7 @@ namespace Domain.Business.Implementation
 
             try
             {
-                var rmQuery = await _ctx.GetAll(u => u.MaquEstado == 1 && u.SucuCodigo == sucuCodigo);
+                var rmQuery = await _ctx.GetAll(u => u.MaquEstado == 1 && u.SucuCodigo == sucuCodigo && u.MaquTipo == 1);
                 IQueryable<Maquinaria> query = (IQueryable<Maquinaria>)rmQuery.Result;
 
 
@@ -170,7 +170,7 @@ namespace Domain.Business.Implementation
 
             try
             {
-                var rmQuery = await _ctx.GetAll(u => u.MaquEstado == 1 && u.MaquCodigoFk == codMaquinariaPadre);
+                var rmQuery = await _ctx.GetAll(u => u.MaquEstado == 1 && u.MaquCodigoFk == codMaquinariaPadre && u.MaquTipo == 2);
                 IQueryable<Maquinaria> query = (IQueryable<Maquinaria>)rmQuery.Result;
 
 

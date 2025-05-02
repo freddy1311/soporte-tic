@@ -21,11 +21,11 @@ public partial class Maquinaria
 
     public long SucuCodigo { get; set; }
 
-    public long MaquCodigoFk { get; set; }
+    public long? MaquCodigoFk { get; set; }
 
     public virtual ICollection<Maquinaria> InverseMaquCodigoFkNavigation { get; set; } = new List<Maquinaria>();
 
-    public virtual Maquinaria MaquCodigoFkNavigation { get; set; } = null!;
+    public virtual Maquinaria? MaquCodigoFkNavigation { get; set; }
 
     public virtual ICollection<OrdenTrabajo> OrdenTrabajos { get; set; } = new List<OrdenTrabajo>();
 

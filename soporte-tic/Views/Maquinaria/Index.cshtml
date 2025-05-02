@@ -4,7 +4,136 @@
 }
 
 <div class="row" id="index-maquinarias">
-
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex mb-3">
+                    <div class="flex-grow-1">
+                        <h4 class="card-title">Maquinarias</h4>
+                        <p class="card-title-desc mb-0">
+                            Listado de maquinarias disponibles en el sistema.
+                        </p>
+                        <p class="text-muted mt-1"><em>Total de maquinarias: {{totalMaquinarias}}</em></p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button class="btn btn-warning" title="Recargar maquinarias" v-on:click="reloadingMaquinarias()">
+                            <i class="mdi mdi-refresh"></i>
+                        </button>
+                        <button class="btn btn-primary" title="Crear nueva maquinaria" v-on:click="showCreateMaquinaria()">
+                            <i class="mdi mdi-plus"></i> Nuevo
+                        </button>
+                    </div>
+                </div>
+                <div id="tbl-maquinarias" v-if="(maquinarias.length > 0)">
+                    <table id="dtMaquinarias" class="table dt-responsive nowrap w-100">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col" style="width: 120px; text-align: center;">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="maquina in maquinarias">
+                                <td>
+                                    <small class="badge badge-soft-success" v-if="(maquina.maquTipo==1)">Maquinaria</small>
+                                    <small class="badge badge-soft-warning" v-if="(maquina.maquTipo==2)">Componente</small>
+                                </td>
+                                <td>
+                                    <small><a href="javascript:void(0);" v-on:click="getMaquinariasComponente(maquina.maquCodigo, maquina.maquNombre)">{{maquina.maquNombre}}</a></small>
+                                </td>
+                                <td>
+                                    <small>{{maquina.maquDescripcion}}</small>
+                                </td>
+                                <td>
+                                    <small v-if="(maquina.maquEstado == 1)">ACTIVO</small>
+                                    <small v-if="(maquina.maquEstado == 2)">INACTIVO</small>
+                                </td>
+                                <td style="text-align: center;">
+                                    <a class="text-info mr-2" href="javascript:void(0);" v-on:click="showInfoMaquinaria(maquina)">
+                                        <i class="mdi mdi-eye-outline"></i>
+                                    </a>
+                                    <a class="text-warning mr-2" href="javascript:void(0);" v-on:click="showUpdateMaquinaria(maquina.maquCodigo)">
+                                        <i class="mdi mdi-square-edit-outline"></i>
+                                    </a>
+                                    <a class="text-danger" href="javascript:void(0);" v-on:click="deleteMaquinaria(maquina.maquCodigo)">
+                                        <i class="mdi mdi-delete-outline"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex mb-3">
+                    <div class="flex-grow-1">
+                        <h4 class="card-title">Componentes</h4>
+                        <p class="card-title-desc mb-0">
+                            Listado de componentes de maquinaria: {{nombreMaquinariaSelected}}.
+                        </p>
+                        <p class="text-muted mt-1"><em>Total de componentes: {{totalComponentes}}</em></p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button class="btn btn-warning" title="Recargar de componentes maquinarias" v-on:click="reloadingComponenteMaquinarias()">
+                            <i class="mdi mdi-refresh"></i>
+                        </button>
+                        <button class="btn btn-primary" title="Crear nuevo componente" v-on:click="showCreateComponenteMaquinaria()">
+                            <i class="mdi mdi-plus"></i> Nuevo
+                        </button>
+                    </div>
+                </div>
+                <div id="tbl-componentes" v-if="(maquinariasComponente.length > 0)">
+                    <table id="dtComponentes" class="table dt-responsive nowrap w-100">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col" style="width: 120px; text-align: center;">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="componente in maquinariasComponente">
+                                <td>
+                                    <small class="badge badge-soft-success" v-if="(componente.maquTipo==1)">Maquinaria</small>
+                                    <small class="badge badge-soft-warning" v-if="(componente.maquTipo==2)">Componente</small>
+                                </td>
+                                <td>
+                                    <small>{{componente.maquNombre}}</small>
+                                </td>
+                                <td>
+                                    <small>{{componente.maquDescripcion}}</small>
+                                </td>
+                                <td>
+                                    <small v-if="(componente.maquEstado == 1)">ACTIVO</small>
+                                    <small v-if="(componente.maquEstado == 2)">INACTIVO</small>
+                                </td>
+                                <td style="text-align: center;">
+                                    <a class="text-info mr-2" href="javascript:void(0);" v-on:click="showInfoComponenteMaquinaria(componente)">
+                                        <i class="mdi mdi-eye-outline"></i>
+                                    </a>
+                                    <a class="text-warning mr-2" href="javascript:void(0);" v-on:click="showUpdateComponenteMaquinaria(componente.maquCodigo)">
+                                        <i class="mdi mdi-square-edit-outline"></i>
+                                    </a>
+                                    <a class="text-danger" href="javascript:void(0);" v-on:click="deleteComponenteMaquinaria(componente.maquCodigo)">
+                                        <i class="mdi mdi-delete-outline"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @await Html.PartialAsync("~/Views/Shared/_modalStandard.cshtml")
@@ -28,7 +157,8 @@
                 maquinariasComponente: [],
                 totalMaquinarias: 0,
                 totalComponentes: 0,
-                codMaquinariaSelected: 0
+                codMaquinariaSelected: 0,
+                nombreMaquinariaSelected: ''
             },
             mounted: function () {
                 var vm = this;
@@ -45,7 +175,7 @@
                                 break;
                             case 2:
                                 //maquinarias componente
-                                vm.getmaquinariasComponentes();
+                                vm.getMaquinariasComponente(vm.codMaquinariaSelected, vm.nombreMaquinariaSelected);
                                 break;
                         }
                     }
@@ -62,7 +192,7 @@
                 blockUI: function (msg) {
                     $(function () {
                         //#region block UI
-                        $('#index-usuarios').block({
+                        $('#index-maquinarias').block({
                             message: msg,
                             css: {
                                 backgroundColor: '#36404a',
@@ -84,7 +214,7 @@
                 unblockUI: function () {
                     $(function () {
                         setTimeout(() => {
-                            $('#index-usuarios').unblock();
+                            $('#index-maquinarias').unblock();
                         }, 1000);
                     });
                 },
@@ -119,7 +249,7 @@
                             pageLength: 10,
                             columns: [
                                 { orderable: !0 }, { orderable: !0 }, { orderable: !0 }, 
-                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 }
+                                { orderable: !0 }, { orderable: !0 }
                             ],
                             responsive: false,
                             destroy: true,
@@ -135,7 +265,7 @@
                 },
                 initTableMaquinariasComponente: function () {
                     setTimeout(() => {
-                        $("#dtMaquinariasComponente").DataTable({
+                        $("#dtComponentes").DataTable({
                             "language": {
                                 "zeroRecords": "No se encontraron maquinarias disponibles!",
                                 "info": "Mostrando pag. _PAGE_ de _PAGES_",
@@ -151,7 +281,7 @@
                             pageLength: 10,
                             columns: [
                                 { orderable: !0 }, { orderable: !0 }, { orderable: !0 },
-                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 }
+                                { orderable: !0 }, { orderable: !0 }
                             ],
                             responsive: false,
                             destroy: true,
@@ -193,32 +323,33 @@
                         this.unblockUI();
                     });
                 },
-                getMaquinariasComponente: function () {
+                getMaquinariasComponente: function (codMaquinaria, txtMaquinaria) {
                     const url = '/Maquinaria/GetListMaquinariasComponente/';
-                    let codMaquinaria = this.codMaquinariaSelected;
-                    this.maquinarias = [];
-                    this.totalMaquinarias = 0;
+                    this.codMaquinariaSelected = codMaquinaria;
+                    this.nombreMaquinariaSelected = txtMaquinaria;
+                    this.maquinariasComponente = [];
+                    this.totalComponentes = 0;
 
-                    this.blockUI('Cargando maquinarias...');
+                    this.blockUI('Cargando componentes de maquinarias...');
 
                     axios.get(url, {params: {codMaquinaria: codMaquinaria}}).then(response => {
                         let rm = response.data;
                         console.log(JSON.stringify(rm));
 
                         if (rm.response) {
-                            this.maquinarias = rm.result;
+                            this.maquinariasComponente = rm.result;
                             //console.log(JSON.stringify(this.usuarios));
                         } else {
-                            this.maquinarias = [];
+                            this.maquinariasComponente = [];
                         }
 
-                        this.totalMaquinarias = this.maquinarias.length;
+                        this.totalComponentes = this.maquinariasComponente.length;
 
-                        this.initTableMaquinarias();
+                        this.initTableMaquinariasComponente();
 
                         this.unblockUI();
                     }).catch(error => {
-                        console.error('Error getMaquinarias => ' + error);
+                        console.error('Error getMaquinariasComponente => ' + error);
                         this.unblockUI();
                     });
                 },
@@ -228,7 +359,7 @@
                 showCreateMaquinaria: function () {
                     let url = '/Maquinaria/CreateMaquinaria/';
 
-                    axios.get(url, {params: {codMaquinaria: codMaquinaria}}).
+                    axios.get(url, {params: {codMaquinaria: this.codMaquinariaSelected}}).
                         then((response) => {
                             $('.modal').html(response.data);
                             $('#standardModal').modal('show');
@@ -346,6 +477,30 @@
                             'warning'
                         );
                     }
+                },
+                showInfoComponenteMaquinaria: function (componente) {
+
+                },
+                showUpdateComponenteMaquinaria: function (codComponente) {
+
+                },
+                deleteComponenteMaquinaria: function (codComponente) {
+
+                },
+                reloadingComponenteMaquinarias: function () {
+                    this.getMaquinariasComponente(this.codMaquinariaSelected, this.nombreMaquinariaSelected);
+                },
+                showCreateComponenteMaquinaria: function () {
+                    let url = '/Maquinaria/CreateMaquinaria/';
+
+                    axios.get(url, {params: {codMaquinaria: this.codMaquinariaSelected}}).
+                        then((response) => {
+                            $('.modal').html(response.data);
+                            $('#standardModal').modal('show');
+                        }).
+                        catch((error) => {
+                            console.log('Error en showCreateMaquinaria: ' + error);
+                        });
                 }
             }
         });

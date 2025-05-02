@@ -1,5 +1,149 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model soporte_tic.Models.ViewModels.VMMaquinaria
+
 @{
+    var modelMaquinaria = Model;
 }
+
+<div class="modal-dialog modal-dialog-centered" role="document" id="frmCreateMaquinaria">
+    <div class="modal-content" id="frmContent">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Crear Maquinaria</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="txtNombre">Nombre</label>
+                    <input id="txtNombre" class="form-control" style="text-transform: uppercase;" type="text" v-model="vmMaquinaria.maquNombre" />
+                </div>
+            </div>
+
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="txtDescripcion">Descripción</label>
+                    <input id="txtDescripcion" class="form-control" style="text-transform: uppercase;" type="text" v-model="vmMaquinaria.maquDescripcion" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" v-on:click="createMaquinaria()">Crear</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var frmCreateMaquinaria = new Vue({
+        el: '#frmCreateMaquinaria',
+        data: {
+            vmMaquinaria: {
+
+            }
+        },
+        mounted: function () {
+            
+        },
+        created: function () {
+            this.vmMaquinaria = @Html.Raw(Json.Serialize(Model));
+            console.log('vmMaquinaria: ', this.vmMaquinaria);
+        },
+        methods: {
+            blockUI: function (msg) {
+                $(function () {
+                    //#region block UI
+                    $('#frmContent').block({
+                        message: msg,
+                        css: {
+                            backgroundColor: '#36404a',
+                            color: '#fff',
+                            height: 40,
+                            paddingTop: 10,
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            borderRadius: 7,
+                            border: '0',
+                            opacity: 0.5,
+                            zIndex: 9999999,
+                            cursor: 'wait'
+                        },
+                    });
+                    //#endregion
+                });
+            },
+            unblockUI: function () {
+                $(function () {
+                    $('#frmContent').unblock();
+                });
+            },
+            showAlert: function (title, msg, icon) {
+
+                const typeIcon = icon;
+
+                Swal.fire(
+                    {
+                        title: title,
+                        text: msg,
+                        icon: typeIcon,
+                        confirmButtonColor: '#0576b9'
+                    }
+                );
+            },
+            validateFields: function () {
+
+                let isValid = true;
+
+                //#region nombre
+                if (this.vmMaquinaria.maquNombre == '' ||
+                    this.vmMaquinaria.maquNombre == null) {
+                    $('#txtNombre').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#txtNombre').removeClass('is-invalid');
+                }
+                //#endregion
+
+                //#region descripcion
+                if (this.vmMaquinaria.maquDescripcion == '' ||
+                    this.vmMaquinaria.maquDescripcion == null) {
+                    $('#txtDescripcion').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#txtDescripcion').removeClass('is-invalid');
+                }
+                //#endregion
+
+                return isValid;
+            },
+            createMaquinaria: function () {
+                let url = '/Maquinaria/CreateMaquinaria/';
+
+                if (!this.validateFields()) {
+                    return;
+                }
+
+                console.log('vmMaquinaria: ' + JSON.stringify(this.vmMaquinaria));
+                let tipo = this.vmMaquinaria.maquTipo;
+
+                this.blockUI('Creando maquinaria...');
+
+                axios.post(url, this.vmMaquinaria).then((resp) => {
+                    let rm = resp.data;
+
+                    if (rm.response) {
+                        rm.result = null;
+                        rm.result = tipo;
+                        indexMaquinarias.$emit('responseModel', rm);
+                        this.showAlert(rm.title, rm.message, 'success');
+                    } else {
+                        this.showAlert(rm.title, rm.message, 'warning');
+                    }
+
+                    this.unblockUI();
+                }).catch((error) => {
+                    this.unblockUI();
+                    console.log('Ocurrió un error en createMaquinaria: ' + error);
+                });
+            }
+        }
+    });
+</script>

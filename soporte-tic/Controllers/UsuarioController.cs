@@ -60,7 +60,7 @@ namespace soporte_tic.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CreateUsuario(VMUsuario model)
+        public async Task<JsonResult> CreateUsuario([FromBody] VMUsuario model)
         {
             Usuario usuarioCreate = _mapper.Map<Usuario>(model);
             usuarioCreate.UsuaNombre = (usuarioCreate.UsuaNombre != "") ? usuarioCreate.UsuaNombre.ToUpper() : "";

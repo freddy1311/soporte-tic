@@ -65,10 +65,30 @@ namespace soporte_tic.Controllers
             VMMaquinaria vmMaquinaria = new VMMaquinaria();
             vmMaquinaria.MaquEstado = 1;
             vmMaquinaria.MaquTipo = (codMaquinaria > 0) ? 2 : 1;
-            vmMaquinaria.MaquCodigoFK = codMaquinaria;
+            if (codMaquinaria > 0)
+            {
+                vmMaquinaria.MaquCodigoFK = codMaquinaria;
+            }
             vmMaquinaria.SucuCodigo = codSucursal;
 
             return PartialView(vmMaquinaria);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreateMaquinaria([FromBody] VMMaquinaria model)
+        {
+            Maquinaria maquinariaCreate = _mapper.Map<Maquinaria>(model);
+            maquinariaCreate.MaquNombre = (maquinariaCreate.MaquNombre != "") ? maquinariaCreate.MaquNombre?.ToUpper() : "";
+            maquinariaCreate.MaquDescripcion = (maquinariaCreate.MaquDescripcion != "") ? maquinariaCreate.MaquDescripcion?.ToUpper() : "";
+          
+            var rm = await _maquinariaService.Create(maquinariaCreate);
+            if (rm.Response)
+            {
+                VMMaquinaria maquinariaAdd = _mapper.Map<VMMaquinaria>(rm.Result);
+                rm.Result = maquinariaAdd;
+            }
+
+            return Json(rm);
         }
         #endregion
     }
