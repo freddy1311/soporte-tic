@@ -1,0 +1,218 @@
+﻿@model soporte_tic.Models.ViewModels.VMMaquinariaTarea
+
+@{
+    var modelTarea = Model;
+}
+
+<div class="modal-dialog modal-dialog-centered" role="document" id="frmCreateTarea">
+    <div class="modal-content" id="frmContent">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Crear Tarea Maquinaria</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="cboMaquinaria">Maquinaria</label>
+                    <select id="cboMaquinaria" class="form-select" name="maquNombre" v-model="codMaquinaria" v-on:change="selectMaquinaria()">
+                        <option selected class="text-muted" value="-1">Seleccione una maquinaria...</option>
+                        <option v-for="maqui in maquinarias" :value="maqui.maquCodigo">{{maqui.maquNombre}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="cboComponente">Componente</label>
+                    <select id="cboComponente" class="form-select" name="maquNombre" v-model="codComponente" v-on:change="selectComponente()">
+                        <option selected class="text-muted" value="-1">Seleccione un componente...</option>
+                        <option v-for="maqui in componentes" :value="maqui.maquCodigo">{{maqui.maquNombre}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="txtNombre">Nombre</label>
+                    <input id="txtNombre" class="form-control" style="text-transform: uppercase;" type="text" v-model="vmMaquinariaTarea.tamaNombre" />
+                </div>
+            </div>
+
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="txtDescripcion">Descripción</label>
+                    <input id="txtDescripcion" class="form-control" style="text-transform: uppercase;" type="text" v-model="vmMaquinariaTarea.tamaDescripcion" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" v-on:click="createTarea()">Crear</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var frmCreateMaquinaria = new Vue({
+        el: '#frmCreateTarea',
+        data: {
+            maquinarias: [],
+            componentes: [],
+            codMaquinaria: 0,
+            codComponente: 0,
+            codMaquinariaTarea: 0,
+            vmMaquinariaTarea: {
+
+            }
+        },
+        mounted: function () {
+
+        },
+        created: function () {
+            this.vmMaquinariaTarea = @Html.Raw(Json.Serialize(Model));
+            console.log('vmMaquinariaTarea: ', this.vmMaquinariaTarea);
+            this.loadMaquinarias();
+        },
+        methods: {
+            blockUI: function (msg) {
+                $(function () {
+                    //#region block UI
+                    $('#frmContent').block({
+                        message: msg,
+                        css: {
+                            backgroundColor: '#36404a',
+                            color: '#fff',
+                            height: 40,
+                            paddingTop: 10,
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            borderRadius: 7,
+                            border: '0',
+                            opacity: 0.5,
+                            zIndex: 9999999,
+                            cursor: 'wait'
+                        },
+                    });
+                    //#endregion
+                });
+            },
+            unblockUI: function () {
+                $(function () {
+                    $('#frmContent').unblock();
+                });
+            },
+            showAlert: function (title, msg, icon) {
+
+                const typeIcon = icon;
+
+                Swal.fire(
+                    {
+                        title: title,
+                        text: msg,
+                        icon: typeIcon,
+                        confirmButtonColor: '#0576b9'
+                    }
+                );
+            },
+            validateFields: function () {
+
+                let isValid = true;
+
+                //#region nombre
+                if (this.vmMaquinariaTarea.tamaNombre == '' ||
+                    this.vmMaquinariaTarea.tamaNombre == null) {
+                    $('#txtNombre').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#txtNombre').removeClass('is-invalid');
+                }
+                //#endregion
+
+                //#region descripcion
+                if (this.vmMaquinariaTarea.tamaDescripcion == '' ||
+                    this.vmMaquinariaTarea.tamaDescripcion == null) {
+                    $('#txtDescripcion').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#txtDescripcion').removeClass('is-invalid');
+                }
+                //#endregion
+
+                return isValid;
+            },
+            loadMaquinarias: function () {
+                const url = '/Maquinaria/GetListMaquinarias/';
+                    this.maquinarias = [];
+
+                    axios.get(url).then(response => {
+                        let rm = response.data;
+
+                        if (rm.response) {
+                            this.maquinarias = rm.result;
+                        } else {
+                            this.maquinarias = [];
+                        }
+                    }).catch(error => {
+                        console.error('Error loadMaquinarias => ' + error);
+                    });
+            },
+            selectMaquinaria: function () {
+                let maquinariaSelected = $('#cboMaquinaria').val();
+                console.log('producto: ' + maquinariaSelected);
+                this.loadComponentes(maquinariaSelected);
+            },
+            loadComponentes: function (codMaquinaria) {
+                const url = '/Maquinaria/GetListMaquinariasComponente/';
+                    this.codMaquinariaSelected = codMaquinaria;
+                    this.componentes = [];
+
+                    axios.get(url, {params: {codMaquinaria: codMaquinaria}}).then(response => {
+                        let rm = response.data;
+
+                        if (rm.response) {
+                            this.componentes = rm.result;
+                        } else {
+                            this.componentes = [];
+                        }
+                    }).catch(error => {
+                        console.error('Error loadComponentes => ' + error);
+                        this.unblockUI();
+                    });
+            },
+            selectComponente: function () {
+                let componenteSelected = $('#cboComponente').val();
+                console.log('componente: ' + componenteSelected);
+                this.vmMaquinariaTarea.maquCodigo = componenteSelected;
+            },
+            createTarea: function () {
+                let url = '/MaquinariaTarea/CreateTareaMaquinaria/';
+
+                if (!this.validateFields()) {
+                    return;
+                }
+
+                console.log('vmMaquinariaTarea: ' + JSON.stringify(this.vmMaquinariaTarea));
+                
+                this.blockUI('Creando tarea...');
+
+                axios.post(url, this.vmMaquinariaTarea).then((resp) => {
+                    let rm = resp.data;
+
+                    if (rm.response) {
+                        rm.result = null;
+                        rm.result = 1;
+                        indexTareas.$emit('responseModel', rm);
+                        this.showAlert(rm.title, rm.message, 'success');
+                    } else {
+                        this.showAlert(rm.title, rm.message, 'warning');
+                    }
+
+                    this.unblockUI();
+                }).catch((error) => {
+                    this.unblockUI();
+                    console.log('Ocurrió un error en createTarea: ' + error);
+                });
+            }
+        }
+    });
+</script>

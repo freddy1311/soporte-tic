@@ -1,0 +1,339 @@
+﻿@{
+    ViewBag.Title = "Tareas Maquinarias";
+    ViewBag.pagetitle = "Tareas";
+}
+
+<div class="row" id="index-tareas">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex mb-3">
+                    <div class="flex-grow-1">
+                        <h4 class="card-title">Tareas</h4>
+                        <p class="card-title-desc mb-0">
+                            Listado de tareas de maquinarias disponibles en el sistema.
+                        </p>
+                        <p class="text-muted mt-1"><em>Total de tareas: {{totalTareasMaquinarias}}</em></p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button class="btn btn-warning" title="Recargar tareas" v-on:click="reloadingTareas()">
+                            <i class="mdi mdi-refresh"></i>
+                        </button>
+                        <button class="btn btn-primary" title="Crear nueva tarea" v-on:click="showCreateTarea()">
+                            <i class="mdi mdi-plus"></i> Nuevo
+                        </button>
+                    </div>
+                </div>
+                <div id="tbl-tareas" v-if="(tareas.length > 0)">
+                    <table id="dtTareas" class="table dt-responsive nowrap w-100">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Maquinaria</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col" style="width: 120px; text-align: center;">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="tarea in tareas">
+                                <td>
+                                    <small>{{tarea.maquNombre}}</small>
+                                </td>
+                                <td>
+                                    <small>{{tarea.tamaNombre}}</small>
+                                </td>
+                                <td>
+                                    <small>{{tarea.tamaDescripcion}}</small>
+                                </td>
+                                <td>
+                                    <small v-if="(tarea.tamaEstado == 1)">ACTIVO</small>
+                                    <small v-if="(tarea.tamaEstado == 2)">INACTIVO</small>
+                                </td>
+                                <td style="text-align: center;">
+                                    <a class="text-info mr-2" href="javascript:void(0);" v-on:click="showInfoTarea(tarea)">
+                                        <i class="mdi mdi-eye-outline"></i>
+                                    </a>
+                                    <a class="text-warning mr-2" href="javascript:void(0);" v-on:click="showUpdateTarea(tarea.tamaCodigo)">
+                                        <i class="mdi mdi-square-edit-outline"></i>
+                                    </a>
+                                    <a class="text-danger" href="javascript:void(0);" v-on:click="deleteTarea(tarea.tamaCodigo)">
+                                        <i class="mdi mdi-delete-outline"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Shared/_modalStandard.cshtml")
+
+@section scripts {
+    <!-- Required datatable js -->
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+
+    <script>
+        var indexTareas = new Vue({
+            el: '#index-tareas',
+            data: {
+                vmMaquinariaTarea: {
+
+                },
+                tareas: [],
+                totalTareasMaquinarias: 0,
+                codTareaSelected: 0,
+                nombreTareaSelected: '',
+                codMaquinaria: 0
+            },
+            mounted: function () {
+                var vm = this;
+                this.$on('responseModel', (resp) => {
+                    //console.log('response modal', JSON.stringify(resp));
+                    if (resp.response) {
+                        $('#standardModal').hide();
+                        $('#standardModal').modal('hide');
+
+                        switch (resp.result) {
+                            case 1:
+                                //tareas
+                                vm.getTareas();
+                                break;
+                            case 2:
+                                
+                                break;
+                        }
+                    }
+                });
+
+                window.onload = () => {
+                    this.getTareas();
+                };
+            },
+            created: function () {
+
+            },
+            methods: {
+                blockUI: function (msg) {
+                    $(function () {
+                        //#region block UI
+                        $('#index-tareas').block({
+                            message: msg,
+                            css: {
+                                backgroundColor: '#36404a',
+                                color: '#fff',
+                                height: 40,
+                                paddingTop: 10,
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                borderRadius: 7,
+                                border: '0',
+                                opacity: 0.5,
+                                zIndex: 9999999,
+                                cursor: 'wait'
+                            },
+                        });
+                        //#endregion
+                    });
+                },
+                unblockUI: function () {
+                    $(function () {
+                        setTimeout(() => {
+                            $('#index-tareas').unblock();
+                        }, 1000);
+                    });
+                },
+                showAlert: function (title, msg, icon) {
+
+                    const typeIcon = icon;
+
+                    Swal.fire(
+                        {
+                            title: title,
+                            text: msg,
+                            icon: typeIcon,
+                            confirmButtonColor: '#0576b9'
+                        }
+                    );
+                },
+                initTableTareas: function () {
+                    setTimeout(() => {
+                        $("#dtTareas").DataTable({
+                            "language": {
+                                "zeroRecords": "No se encontraron tareas disponibles!",
+                                "info": "Mostrando pag. _PAGE_ de _PAGES_",
+                                "infoEmpty": "No se encontró coincidencias!",
+                                "infoFiltered": "(filtrado de _MAX_ registros en total)",
+                                "search": "Buscar:",
+                                "paginate": {
+                                    "previous": "<i class='mdi mdi-chevron-left'>",
+                                    "next": "<i class='mdi mdi-chevron-right'>"
+                                },
+                                "lengthMenu": "Mostrar <select class=\"custom-select custom-select-sm ml-1 mr-1\"><option value='10'>10</option><option value='20'>20</option><option value='-1'>Todas</option></select> tareas"
+                            },
+                            pageLength: 10,
+                            columns: [
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 },
+                                { orderable: !0 }, { orderable: !0 }
+                            ],
+                            responsive: false,
+                            destroy: true,
+                            retrieve: true,
+                            autoFill: true,
+                            order: [],
+                            drawCallback: function () {
+                                $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+                                $(".dataTables_paginate ").addClass('float-end');
+                            }
+                        });
+                    }, 500);
+                },
+                getTareas: function () {
+                    const url = '/MaquinariaTarea/GetListTareasMaquinaria/';
+                    this.tareas = [];
+                    this.totalTareasMaquinarias = 0;
+
+                    this.blockUI('Cargando tareas...');
+
+                    axios.get(url).then(response => {
+                        let rm = response.data;
+                        console.log(JSON.stringify(rm));
+
+                        if (rm.response) {
+                            this.tareas = rm.result;
+                            //console.log(JSON.stringify(this.usuarios));
+                        } else {
+                            this.tareas = [];
+                        }
+
+                        this.totalTareasMaquinarias = this.tareas.length;
+
+                        this.initTableTareas();
+
+                        this.unblockUI();
+                    }).catch(error => {
+                        console.error('Error getTareas => ' + error);
+                        this.unblockUI();
+                    });
+                },
+                reloadingTareas: function () {
+                    this.getTareas();
+                },
+                showCreateTarea: function () {
+                    let url = '/MaquinariaTarea/CreateTareaMaquinaria/';
+
+                    axios.get(url, {params: {codMaquinaria: this.codMaquinaria}}).
+                        then((response) => {
+                            $('.modal').html(response.data);
+                            $('#standardModal').modal('show');
+                        }).
+                        catch((error) => {
+                            console.log('Error en showCreateTarea: ' + error);
+                        });
+                },
+                showUpdateTarea: function (codTarea) {
+                    if (codTarea != 0) {
+                        let url = '/MaquinariaTarea/UpdateTareaMaquinaria/';
+
+                        axios.get(url, { params: { codTarea: codTarea } }).
+                            then((response) => {
+
+                                //console.log(response.data);
+                                $('.modal').html(response.data);
+                                $('#standardModal').modal('show');
+
+                            }).
+                            catch((error) => {
+                                console.log('Error en showUpdateTarea: ' + error);
+                            });
+                    } else {
+                        this.showAlert('Validación', 'No se detectó una tarea de maquinaria válida para actualizar!.', 'warning');
+                    }
+                },
+                deleteTarea: function (codTarea) {
+                    if (codTarea != 0) {
+                        Swal.fire({
+                            title: 'Está seguro de querer eliminar la tarea seleccionada?',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí',
+                            confirmButtonColor: '#d65530',
+                            icon: 'question'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                let url = '/MaquinariaTarea/DeleteTareaMaquinaria/';
+                                console.log('código tarea: ' + codTarea);
+                                this.blockUI('Eliminando tarea...');
+
+                                axios.get(url, { params: { codTarea: codTarea } }).
+                                    then((response) => {
+                                        let rm = response.data;
+
+                                        if (rm.response) {
+                                            this.showAlert(rm.title, rm.message, 'success');
+                                            this.getTareas();
+                                        } else {
+                                            this.showAlert(rm.title, rm.message, 'warning');
+                                        }
+
+                                        this.unblockUI();
+                                    }).
+                                    catch((error) => {
+                                        this.unblockUI();
+                                        console.log('Error en deleteTarea: ' + error);
+                                    });
+                            }
+                        });
+                    } else {
+                        this.showAlert('Validación', 'No se detectó una tarea de maquinaria válida para eliminar!.', 'warning');
+                    }
+                },
+                showInfoTarea: function (tarea) {
+                    if (tarea != null) {
+                        let estado = (tarea.tamaEstado == 2) ? 'INACTIVO' : 'ACTIVO';
+
+                        Swal.fire({
+                            title: "<strong>Información de Maquinaria</strong>",
+                            html: `
+                                <div style="text-align: center; margin-top: 10px; ">
+                                    <table style="border-collapse: collapse; width: 100%; margin: 0 auto; font-size: 16px;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Nombre:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${maquinaria.maquNombre}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Descripción:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${maquinaria.maquDescripcion}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Tipo:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${tipo}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Estado:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${estado}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            `,
+                        });
+                    } else {
+                        this.showAlert(
+                            'Ver Información de Tarea',
+                            'No se detectó una Tarea para mostar!.',
+                            'warning'
+                        );
+                    }
+                }
+            }
+        });
+    </script>
+}
