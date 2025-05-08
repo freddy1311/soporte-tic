@@ -1,5 +1,166 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model soporte_tic.Models.ViewModels.VMMaquinariaTarea
+
 @{
+    var modelMaquinariaTarea = Model;
 }
+
+<div class="modal-dialog modal-dialog-centered" role="document" id="frmUpdateTareaMaquinaria">
+    <div class="modal-content" id="frmContent">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Editar Tarea Maquinaria</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row mb-1">
+                <div class="col-lg-12 ">
+                    <label for="txtComponente">Componente Maquinaria</label>
+                    <input id="txtComponente" class="form-control" disabled style="text-transform: uppercase; background-color:#e9ecef; opacity:1;" type="text" v-model="VMMaquinariaTarea.maquNombre" />
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="txtNombre">Nombre</label>
+                    <input id="txtNombre" class="form-control" style="text-transform: uppercase;" type="text" v-model="VMMaquinariaTarea.tamaNombre" />
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="txtNombre">Nombre</label>
+                    <input id="txtNombre" class="form-control" style="text-transform: uppercase;" type="text" v-model="VMMaquinariaTarea.tamaDescripcion" />
+                </div>
+            </div>
+
+            <div class="row mb-1">
+
+                <div class="col-lg-12">
+                    <label for="cboEstado">Estado</label>
+                    <select id="cboEstado" class="form-select" name="tamaEstado" v-model="VMMaquinariaTarea.tamaEstado">
+                        @*                         <option selected class="text-muted" value="-1">Seleccione un perfil...</option>
+ *@                     <option value="1">ACTIVO</option>
+                        <option value="2">INACTIVO</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" v-on:click="updateTarea()">Actualizar</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var frmUpdateTareaMaquinaria = new Vue({
+        el: '#frmUpdateTareaMaquinaria',
+        data: {
+            perfiles: [],
+            VMMaquinariaTarea: {
+            }
+        },
+        mounted: function () {
+
+        },
+        created: function () {
+            this.VMMaquinariaTarea = @Html.Raw(Json.Serialize(Model));
+            console.log('vmMaquinariaTarea: ', JSON.stringify(this.VMMaquinariaTarea));
+        },
+        methods: {
+            blockUI: function (msg) {
+                $(function () {
+                    //#region block UI
+                    $('#frmContent').block({
+                        message: msg,
+                        css: {
+                            backgroundColor: '#36404a',
+                            color: '#fff',
+                            height: 40,
+                            paddingTop: 10,
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            borderRadius: 7,
+                            border: '0',
+                            opacity: 0.5,
+                            zIndex: 9999999,
+                            cursor: 'wait'
+                        },
+                    });
+                    //#endregion
+                });
+            },
+            unblockUI: function () {
+                $(function () {
+                    $('#frmContent').unblock();
+                });
+            },
+            showAlert: function (title, msg, icon) {
+
+                const typeIcon = icon;
+
+                Swal.fire(
+                    {
+                        title: title,
+                        text: msg,
+                        icon: typeIcon,
+                        confirmButtonColor: '#0576b9'
+                    }
+                );
+            },
+            validateFields: function () {
+
+                let isValid = true;
+
+                //#region nombre
+                if (this.VMMaquinariaTarea.tamaNombre == '' ||
+                    this.VMMaquinariaTarea.tamaNombre == null) {
+                    $('#txtNombre').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#txtNombre').removeClass('is-invalid');
+                }
+                //#endregion
+
+                //#region descripcion
+                if (this.VMMaquinariaTarea.tamaDescripcion == '' ||
+                    this.VMMaquinariaTarea.tamaDescripcion == null) {
+                    $('#txtDescripcion').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#txtDescripcion').removeClass('is-invalid');
+                }
+                //#endregion
+
+                return isValid;
+            },
+            updateTarea: function () {
+                let url = '/MaquinariaTarea/UpdateTareaMaquinaria/';
+
+                if (!this.validateFields()) {
+                    return;
+                }
+
+                console.log('VMMaquinariaTarea: ' + JSON.stringify(this.VMMaquinariaTarea));
+
+                this.blockUI('Actualizando tarea de maquinaria...');
+
+                axios.put(url, this.VMMaquinariaTarea).then((resp) => {
+                    let rm = resp.data;
+
+                    if (rm.response) {
+                        rm.result = null;
+                        rm.result = 1;
+                        indexTareas.$emit('responseModel', rm);
+                        this.showAlert(rm.title, rm.message, 'success');
+                    } else {
+                        this.showAlert(rm.title, rm.message, 'warning');
+                    }
+
+                    this.unblockUI();
+                }).catch((error) => {
+                    this.unblockUI();
+                    console.log('Ocurrió un error en updateTarea: ' + error);
+                });
+            }
+        }
+    });
+</script>

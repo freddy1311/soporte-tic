@@ -299,22 +299,22 @@
                         let estado = (tarea.tamaEstado == 2) ? 'INACTIVO' : 'ACTIVO';
 
                         Swal.fire({
-                            title: "<strong>Información de Maquinaria</strong>",
+                            title: "<strong>Información de Tarea de Maquinaria</strong>",
                             html: `
                                 <div style="text-align: center; margin-top: 10px; ">
                                     <table style="border-collapse: collapse; width: 100%; margin: 0 auto; font-size: 16px;">
                                         <tbody>
                                             <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Componente:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${tarea.maquNombre}</td>
+                                            </tr>
+                                            <tr>
                                                 <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Nombre:</td>
-                                                <td style="border: 1px solid #ddd; padding: 8px;">${maquinaria.maquNombre}</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${tarea.tamaNombre}</td>
                                             </tr>
                                             <tr>
                                                 <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Descripción:</td>
-                                                <td style="border: 1px solid #ddd; padding: 8px;">${maquinaria.maquDescripcion}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Tipo:</td>
-                                                <td style="border: 1px solid #ddd; padding: 8px;">${tipo}</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${tarea.tamaDescripcion}</td>
                                             </tr>
                                             <tr>
                                                 <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Estado:</td>

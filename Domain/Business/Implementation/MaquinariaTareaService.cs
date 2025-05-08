@@ -151,7 +151,9 @@ namespace Domain.Business.Implementation
 
                 if (query.ToList().Count > 0)
                 {
-                    var users = query.FirstOrDefault();
+                    var users = query.
+                        Include(t => t.MaquCodigoNavigation).
+                        FirstOrDefault();
                     rm.SetResponse(true, "Consulta realizada exitosamente!.", "Tareas Maquinarias", users);
                 }
                 else
@@ -227,7 +229,7 @@ namespace Domain.Business.Implementation
                     maquinariaUpdate.TamaNombre = entity.TamaNombre;
                     maquinariaUpdate.TamaDescripcion = entity.TamaDescripcion;
                     maquinariaUpdate.TamaEstado = entity.TamaEstado;
-                    maquinariaUpdate.MaquCodigo = entity.MaquCodigo;
+                    //maquinariaUpdate.MaquCodigo = entity.MaquCodigo;
 
                     var rmUpdate = await _ctx.Update(maquinariaUpdate);
 
