@@ -229,7 +229,6 @@ namespace Domain.Business.Implementation
                     maquinariaUpdate.TamaNombre = entity.TamaNombre;
                     maquinariaUpdate.TamaDescripcion = entity.TamaDescripcion;
                     maquinariaUpdate.TamaEstado = entity.TamaEstado;
-                    //maquinariaUpdate.MaquCodigo = entity.MaquCodigo;
 
                     var rmUpdate = await _ctx.Update(maquinariaUpdate);
 
