@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Órdenes de Trabajo";
+    ViewBag.pagetitle = "ODT's";
+}
+
+<div id="index-odt">
+
+</div>
+
+@await Html.PartialAsync("~/Views/Shared/_modalStandard.cshtml")
+
+@section scripts {
+    <!-- Required datatable js -->
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+
+    <script>
+        var indexODT = new Vue({
+            el: '#index-odt',
+            data: {
+
+            },
+            mounted: function () {
+
+            },
+            created: function () {
+
+            },
+            methods: {
+                blockUI: function (msg) {
+                    $(function () {
+                        //#region block UI
+                        $('#index-odt').block({
+                            message: msg,
+                            css: {
+                                backgroundColor: '#36404a',
+                                color: '#fff',
+                                height: 40,
+                                paddingTop: 10,
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                borderRadius: 7,
+                                border: '0',
+                                opacity: 0.5,
+                                zIndex: 9999999,
+                                cursor: 'wait'
+                            },
+                        });
+                        //#endregion
+                    });
+                },
+                unblockUI: function () {
+                    $(function () {
+                        setTimeout(() => {
+                            $('#index-odt').unblock();
+                        }, 1000);
+                    });
+                },
+                showAlert: function (title, msg, icon) {
+
+                    const typeIcon = icon;
+
+                    Swal.fire(
+                        {
+                            title: title,
+                            text: msg,
+                            icon: typeIcon,
+                            confirmButtonColor: '#0576b9'
+                        }
+                    );
+                },
+            }
+        });
+    </script>
+}

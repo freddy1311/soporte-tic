@@ -41,6 +41,9 @@ builder.Services.AddScoped<ISucursalService, SucursalService>();
 builder.Services.AddScoped<IConfiguracionService, ConfiguracionService>();
 builder.Services.AddScoped<IMaquinariaService, MaquinariaService>();
 builder.Services.AddScoped<IMaquinariaTareaService, MaquinariaTareaService>();
+builder.Services.AddScoped<IMantenimientoService, MantenimientoService>();
+builder.Services.AddScoped<IMantenimientoDetalleService, MantenimientoDetalleService>();
+builder.Services.AddScoped<IConfiguracionODTService, ConfiguracionODTService>();
 #endregion
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
