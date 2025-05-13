@@ -3,8 +3,83 @@
     ViewBag.pagetitle = "ODT's";
 }
 
-<div id="index-odt">
-
+<div class="row" id="index-odt">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex mb-3">
+                    <div class="flex-grow-1">
+                        <h4 class="card-title">Órdenes de Trabajo</h4>
+                        <p class="card-title-desc mb-0">
+                            Listado de órdenes de trabajo vigentes.
+                        </p>
+                        <p class="text-muted mt-1"><em>Total de ODT's': {{totalOrdenes}}</em></p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button class="btn btn-warning" title="Recargar órdenes de trabajo" v-on:click="reloadingOrdenes()">
+                            <i class="mdi mdi-refresh"></i>
+                        </button>
+                        <button class="btn btn-primary" title="Crear nueva orden de trabajo" v-on:click="showCreateOrdenTrabajo()">
+                            <i class="mdi mdi-plus"></i> Nuevo
+                        </button>
+                    </div>
+                </div>
+                <div id="tbl-ordenes" v-if="(ordenes.length > 0)">
+                    <table id="dtOrdenes" class="table dt-responsive nowrap w-100">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Semana</th>
+                                <th scope="col">F. Prevista</th>
+                                <th scope="col">F. Ejecución</th>
+                                <th scope="col">Código</th>
+                                <th scope="col">Maquinaria</th>
+                                <th scope="col">Responsable</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col" style="width: 120px; text-align: center;">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="orden in ordenes">
+                                <td>
+                                    <small class="badge badge-soft-primary">{{orden.ortrSemana}}</small>
+                                </td>
+                                <td>
+                                    <small>{{orden.ortrFechaPrevistaInicio}}</small><br />
+                                    <small>{{orden.ortrFechaPrevistaFin}}</small>
+                                </td>
+                                <td>
+                                    <small>{{orden.ortrFechaEjecucionInicio}}</small><br />
+                                    <small>{{orden.ortrFechaEjecucionFin}}</small>
+                                </td>
+                                <td>
+                                    <small>{{orden.ortrNumero}}</small>
+                                </td>
+                                <td>
+                                    <small>{{orden.maquNombreF}}</small><br />
+                                    <small><em>{{orden.maquNombre}}</em></small>
+                                </td>
+                                <td>
+                                    <small v-if="(maquina.maquEstado == 1)">ACTIVO</small>
+                                    <small v-if="(maquina.maquEstado == 2)">INACTIVO</small>
+                                </td>
+                                <td style="text-align: center;">
+                                    <a class="text-info mr-2" href="javascript:void(0);" v-on:click="showInfoOrdenesTrabajo(orden)">
+                                        <i class="mdi mdi-eye-outline"></i>
+                                    </a>
+                                    <a class="text-warning mr-2" href="javascript:void(0);" v-on:click="showUpdateOrdenesTrabajo(orden.ortrCodigo)">
+                                        <i class="mdi mdi-square-edit-outline"></i>
+                                    </a>
+                                    <a class="text-danger" href="javascript:void(0);" v-on:click="deleteOrdenesTrabao(orden.ortrCodigo)">
+                                        <i class="mdi mdi-delete-outline"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @await Html.PartialAsync("~/Views/Shared/_modalStandard.cshtml")
@@ -21,10 +96,35 @@
         var indexODT = new Vue({
             el: '#index-odt',
             data: {
-
+                ordenes: [],
+                totalOrdenes: 0,
+                vmOrdenTrabajo: {},
+                codOrdenSelected: 0
             },
             mounted: function () {
+                var vm = this;
+                this.$on('responseModel', (resp) => {
+                    
+                    if (resp.response) {
+                        $('#standardModal').hide();
+                        $('#standardModal').modal('hide');
 
+                        switch (resp.result) {
+                            case 1:
+                                //maquinarias
+                                //vm.getMaquinarias();
+                                break;
+                            case 2:
+                                //maquinarias componente
+                                //vm.getMaquinariasComponente(vm.codMaquinariaSelected, vm.nombreMaquinariaSelected);
+                                break;
+                        }
+                    }
+                });
+
+                window.onload = () => {
+                    this.getOrdenesTrabajo();
+                };
             },
             created: function () {
 
@@ -72,6 +172,37 @@
                         }
                     );
                 },
+                initTableOrdenes: function () {
+
+                },
+                getOrdenesTrabajo: function () {
+
+                },
+                reloadingOrdenes: function () {
+
+                },
+                showCreateOrdenTrabajo: function () {
+                    let url = '/Mantenimiento/CreateOrdenTrabajo/';
+
+                    axios.get(url).
+                        then((response) => {
+                            $('.modal').html(response.data);
+                            $('#standardModal').modal('show');
+                        }).
+                        catch((error) => {
+                            console.log('Error en showCreateOrdenTrabajo: ' + error);
+                        });
+                },
+                showUpdateOrdenTrabajo: function (codOrden) {
+
+                },
+                deleteOrdenTrabajo: function (codOrden) {
+
+                },
+                showInfoOrdenTrabajo: function (orden) {
+
+                }
+
             }
         });
     </script>

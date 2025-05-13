@@ -55,6 +55,34 @@ namespace soporte_tic.Controllers
             return Json(rmOrdenesAbiertas);
         }
 
+        [HttpGet]
+        public IActionResult CreateOrdenTrabajo()
+        {
+            VMOrdenTrabajo vmOrdenTrabajo = new VMOrdenTrabajo();
+            return PartialView(vmOrdenTrabajo);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreateOrdenTrabajo([FromBody] VMOrdenTrabajo model)
+        {
+            #region get config ODTs
+            var rmConfigOrdenes = await _configuracionODTService.GetConfiguracionODTActivo();
+            var configOrdenes = (ConfiguracionOdt)rmConfigOrdenes.Result;
+            #endregion 
+
+            OrdenTrabajo ordenCreate = _mapper.Map<OrdenTrabajo>(model);
+            ordenCreate.CodtCodigo = configOrdenes.CodtCodigo;
+
+            var rm = await _mantenimientoService.Create(ordenCreate);
+            if (rm.Response)
+            {
+                VMOrdenTrabajo ordenMaquinariaAdd = _mapper.Map<VMOrdenTrabajo>(rm.Result);
+                rm.Result = ordenMaquinariaAdd;
+            }
+
+            return Json(rm);
+        }
+
         #endregion
     }
 }
