@@ -76,7 +76,7 @@ namespace Domain.Business.Implementation
 
             try
             {
-                var rmQuery = await _context.GetAll(u => u.UsuaEstado == 1 && u.UsuaPerfil == 5);
+                var rmQuery = await _context.GetAll(u => u.UsuaEstado == 1 && u.UsuaPerfil == 3);
                 IQueryable<Usuario> query = (IQueryable<Usuario>)rmQuery.Result;
 
                 if (query.ToList().Count > 0)

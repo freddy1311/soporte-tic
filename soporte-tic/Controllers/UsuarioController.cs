@@ -49,6 +49,18 @@ namespace soporte_tic.Controllers
         }
 
         [HttpGet]
+        public async Task<JsonResult> GetListTecnicos()
+        {
+            var rmUsuarios = await _usuarioRepository.GetUsersTecnico();
+            List<Usuario> usuarios = rmUsuarios.Result;
+
+            List<VMUsuario> vmUsuarios = _mapper.Map<List<VMUsuario>>(usuarios);
+            rmUsuarios.Result = vmUsuarios;
+
+            return Json(rmUsuarios);
+        }
+
+        [HttpGet]
         public IActionResult CreateUsuario()
         {
             VMUsuario vmUsuario = new VMUsuario();

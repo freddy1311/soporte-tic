@@ -2,6 +2,7 @@
 
 @{
     var modelOrdenTrabajo = Model;
+    var fechaEstablecida = ViewData["CurrentDate"];
 }
 
 <div class="modal-dialog modal-dialog-centered" role="document" id="frmCreateOrdenTrabajo">
@@ -11,7 +12,115 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="cboSemana">Semana:</label>
+                    <select id="cboSemana" class="form-select">
+                        <option selected class="text-muted" value="-1">Seleccione un tipo...</option>
+                        <option value="1">Semana 1</option>
+                        <option value="2">Semana 2</option>
+                        <option value="3">Semana 3</option>
+                        <option value="4">Semana 4</option>
+                        <option value="5">Semana 5</option>
+                        <option value="6">Semana 6</option>
+                        <option value="7">Semana 7</option>
+                        <option value="8">Semana 8</option>
+                        <option value="9">Semana 9</option>
+                        <option value="10">Semana 10</option>
+                        <option value="11">Semana 11</option>
+                        <option value="12">Semana 12</option>
+                        <option value="13">Semana 13</option>
+                        <option value="14">Semana 14</option>
+                        <option value="15">Semana 15</option>
+                        <option value="16">Semana 16</option>
+                        <option value="17">Semana 17</option>
+                        <option value="18">Semana 18</option>
+                        <option value="19">Semana 19</option>
+                        <option value="20">Semana 20</option>
+                        <option value="21">Semana 21</option>
+                        <option value="22">Semana 22</option>
+                        <option value="23">Semana 23</option>
+                        <option value="24">Semana 24</option>
+                        <option value="25">Semana 25</option>
+                        <option value="26">Semana 26</option>
+                        <option value="27">Semana 27</option>
+                        <option value="28">Semana 28</option>
+                        <option value="29">Semana 29</option>
+                        <option value="30">Semana 30</option>
+                        <option value="31">Semana 31</option>
+                        <option value="32">Semana 32</option>
+                        <option value="33">Semana 33</option>
+                        <option value="34">Semana 34</option>
+                        <option value="35">Semana 35</option>
+                        <option value="36">Semana 36</option>
+                        <option value="37">Semana 37</option>
+                        <option value="38">Semana 38</option>
+                        <option value="39">Semana 39</option>
+                        <option value="40">Semana 40</option>
+                        <option value="41">Semana 41</option>
+                        <option value="42">Semana 42</option>
+                        <option value="43">Semana 43</option>
+                        <option value="44">Semana 44</option>
+                        <option value="45">Semana 45</option>
+                        <option value="46">Semana 46</option>
+                        <option value="47">Semana 47</option>
+                        <option value="48">Semana 48</option>
+                        <option value="49">Semana 49</option>
+                        <option value="50">Semana 50</option>
+                        <option value="51">Semana 51</option>
+                        <option value="52">Semana 52</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-6">
+                    <label for="fechaPrevistaInicio" class="form-label">Fecha prevista desde:</label>
+                    <input class="form-control" type="date" value="@fechaEstablecida"
+                           id="fechaPrevistaInicio">
+                </div>
+                <div class="col-lg-6">
+                    <label for="fechaPrevistaFin" class="form-label">Fecha prevista hasta:</label>
+                    <input class="form-control" type="date" value="@fechaEstablecida"
+                           id="fechaPrevistaFin">
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="cboTipo">Tipo:</label>
+                    <select id="cboTipo" class="form-select">
+                        <option selected class="text-muted" value="-1">Seleccione un tipo...</option>
+                        <option value="1">MECÁNICO</option>
+                        <option value="2">ELÉCTRICO</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="cboMaquinariaPadre">Línea:</label>
+                    <select id="cboMaquinariaPadre" class="form-select" v-on:change="selectLinea()">
+                        <option selected class="text-muted" value="-1">Seleccione un línea...</option>
+                        <option v-for="linea of lineas" :value="linea.maquCodigo">{{linea.maquNombre}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="cboMaquinaria">Maquinaria:</label>
+                    <select id="cboMaquinaria" class="form-select" v-on:change="selectMaquinaria()">
+                        <option selected class="text-muted" value="-1">Seleccione un maquinaria...</option>
+                        <option v-for="maqui of maquinarias" :value="maqui.maquCodigo">{{maqui.maquNombre}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="cboResponsable">Responsable:</label>
+                    <select id="cboResponsable" class="form-select" v-on:change="selectResponsable()">
+                        <option selected class="text-muted" value="-1">Seleccione un responsable...</option>
+                        <option v-for="resp of responsables" :value="resp.usuaCodigo">{{resp.usuaNombre}}</option>
+                    </select>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -24,6 +133,9 @@
     var frmCreateOrdenTrabajo = new Vue({
         el: '#frmCreateOrdenTrabajo',
         data: {
+            lineas: [],
+            maquinarias: [],
+            responsables: [],
             vmOrdenTrabajo: {
 
             }
@@ -34,6 +146,8 @@
         created: function () {
             this.vmOrdenTrabajo = @Html.Raw(Json.Serialize(Model));
             console.log('vmOrdenTrabajo: ', this.vmOrdenTrabajo);
+            this.getLineas();
+            this.getUsuarios();
         },
         methods: {
             blockUI: function (msg) {
@@ -101,6 +215,75 @@
                 //#endregion
 
                 return isValid;
+            },
+            getLineas: function () {
+                const url = '/Maquinaria/GetListMaquinarias/';
+                this.lineas = [];
+
+                axios.get(url).then(response => {
+                    let rm = response.data;
+
+                    if (rm.response) {
+                        this.lineas = rm.result;
+                    } else {
+                        this.lineas = [];
+                    }
+
+                }).catch(error => {
+                    console.error('Error getLineas => ' + error);
+                });
+            },
+            selectLinea: function () {
+                let lineaSelected = $('#cboMaquinariaPadre').val();
+                this.maquinarias = [];
+                this.getMaquinarias(lineaSelected);
+            },
+            getMaquinarias: function (codLinea) {
+                if (codLinea) {
+                    const url = '/Maquinaria/GetListMaquinariasComponente/';
+                    this.maquinarias = [];
+
+                    axios.get(url, {params: { codMaquinaria: codLinea }}).then(response => {
+                        let rm = response.data;
+
+                        if (rm.response) {
+                            this.maquinarias = rm.result;
+                        } else {
+                            this.maquinarias = [];
+                        }
+
+                    }).catch(error => {
+                        console.error('Error getMaquinarias => ' + error);
+                    });
+                } else {
+                    this.showAlert('Validación', 'No se detectó código de Línea!.', 'warning');
+                }
+            },
+            selectMaquinaria: function () {
+                let maquinariaSelected = $('#cboMaquinaria').val();
+                this.vmOrdenTrabajo.maquCodigo = maquinariaSelected;
+            },
+            getUsuarios: function () {
+                const url = '/Usuario/GetListTecnicos/';
+                this.responsables = [];
+
+                axios.get(url).then(response => {
+                    let rm = response.data;
+                    console.log(`getUsuarios() ${rm.response}`);
+
+                    if (rm.response) {
+                        this.responsables = rm.result;
+                    } else {
+                        this.responsables = [];
+                    }
+
+                }).catch(error => {
+                    console.error('Error getUsuarios => ' + error);
+                });
+            },
+            selectResponsable: function () {
+                let responsableSelected = $('#cboResponsable').val();
+                this.vmOrdenTrabajo.usuaResponsable = responsableSelected;
             },
             createOrdenTrabajo: function () {
                 let url = '/Mantenimiento/CreateOrdenTrabajo/';
