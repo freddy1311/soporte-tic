@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Business.Implementation;
 using Domain.Business.Interface;
+using Domain.Utils;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,6 +45,67 @@ namespace soporte_tic.Controllers
         }
 
         [HttpGet]
+        public IActionResult CreateConfiguracionODT()
+        {
+            VMConfiguracionODT vmConfiguracionODT = new VMConfiguracionODT();
+            return PartialView(vmConfiguracionODT);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreateConfiguracionODT([FromBody] VMConfiguracionODT model)
+        {
+            ConfiguracionOdt configuracionCreate = _mapper.Map<ConfiguracionOdt>(model);
+
+            var rm = await _configuracionODTService.Create(configuracionCreate);
+            if (rm.Response)
+            {
+                VMConfiguracionODT configuracionAdd = _mapper.Map<VMConfiguracionODT>(rm.Result);
+                rm.Result = configuracionAdd;
+            }
+
+            return Json(rm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateConfiguracionODT(long codConfiguracion)
+        {
+            var rmConfiguracion = await _configuracionODTService.GetConfiguracionODT(codConfiguracion);
+            ConfiguracionOdt configuracion = rmConfiguracion.Result;
+
+            VMConfiguracionODT vmConfiguracion = _mapper.Map<VMConfiguracionODT>(configuracion);
+
+            return PartialView(vmConfiguracion);
+        }
+
+        [HttpPut]
+        public async Task<JsonResult> UpdateConfiguracionODT(VMConfiguracionODT model)
+        {
+            ConfiguracionOdt configuracionUpdate = _mapper.Map<ConfiguracionOdt>(model);
+
+            var rm = await _configuracionODTService.Update(configuracionUpdate);
+
+            if (rm.Response)
+            {
+                VMConfiguracionODT configuracionUpdated = _mapper.Map<VMConfiguracionODT>(rm.Result);
+                rm.Result = configuracionUpdated;
+            }
+
+            return Json(rm);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> DeleteConfiguracionODT(long codConfiguracion)
+        {
+            var rmConfiguracion = await _configuracionODTService.GetConfiguracionODT(codConfiguracion);
+            ConfiguracionOdt configuracionDelete = rmConfiguracion.Result;
+            configuracionDelete.CodtEstado = 2;
+
+            var rm = await _configuracionODTService.Update(configuracionDelete);
+
+            return Json(rm);
+        }
+
+        [HttpGet]
         public async Task<JsonResult> GetListODTSOpen()
         {
             var rmOrdenesAbiertas = await _mantenimientoService.GetListODTOpen();
@@ -68,6 +130,13 @@ namespace soporte_tic.Controllers
             #region get config ODTs
             var rmConfigOrdenes = await _configuracionODTService.GetConfiguracionODTActivo();
             var configOrdenes = (ConfiguracionOdt)rmConfigOrdenes.Result;
+            if (configOrdenes == null)
+            {
+                var rm1 = new ResponseModel();
+                rm1.SetResponse(false, "No se encontró configuración de ODT's.");
+
+                return Json(rm1);
+            }
             #endregion 
 
             OrdenTrabajo ordenCreate = _mapper.Map<OrdenTrabajo>(model);
@@ -82,6 +151,7 @@ namespace soporte_tic.Controllers
 
             return Json(rm);
         }
+
 
         #endregion
     }

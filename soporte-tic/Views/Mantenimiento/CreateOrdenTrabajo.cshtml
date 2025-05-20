@@ -15,7 +15,7 @@
             <div class="row mb-1">
                 <div class="col-lg-12">
                     <label for="cboSemana">Semana:</label>
-                    <select id="cboSemana" class="form-select">
+                    <select id="cboSemana" class="form-select" v-on:change="selectWeek($event)" v-model="vmOrdenTrabajo.ortrSemana">
                         <option selected class="text-muted" value="-1">Seleccione un tipo...</option>
                         <option value="1">Semana 1</option>
                         <option value="2">Semana 2</option>
@@ -75,19 +75,19 @@
             <div class="row mb-1">
                 <div class="col-lg-6">
                     <label for="fechaPrevistaInicio" class="form-label">Fecha prevista desde:</label>
-                    <input class="form-control" type="date" value="@fechaEstablecida"
+                    <input class="form-control" type="date" v-model="fechaInicio" value="fechaInicio"
                            id="fechaPrevistaInicio">
                 </div>
                 <div class="col-lg-6">
                     <label for="fechaPrevistaFin" class="form-label">Fecha prevista hasta:</label>
-                    <input class="form-control" type="date" value="@fechaEstablecida"
+                    <input class="form-control" type="date" v-model="fechaFin" value="fechaFin"
                            id="fechaPrevistaFin">
                 </div>
             </div>
             <div class="row mb-1">
                 <div class="col-lg-12">
                     <label for="cboTipo">Tipo:</label>
-                    <select id="cboTipo" class="form-select">
+                    <select id="cboTipo" class="form-select" v-model="vmOrdenTrabajo.ortrTipo">
                         <option selected class="text-muted" value="-1">Seleccione un tipo...</option>
                         <option value="1">MECÁNICO</option>
                         <option value="2">ELÉCTRICO</option>
@@ -106,7 +106,7 @@
             <div class="row mb-1">
                 <div class="col-lg-12">
                     <label for="cboMaquinaria">Maquinaria:</label>
-                    <select id="cboMaquinaria" class="form-select" v-on:change="selectMaquinaria()">
+                    <select id="cboMaquinaria" class="form-select" v-on:change="selectMaquinaria()" v-model="vmOrdenTrabajo.maquCodigo">
                         <option selected class="text-muted" value="-1">Seleccione un maquinaria...</option>
                         <option v-for="maqui of maquinarias" :value="maqui.maquCodigo">{{maqui.maquNombre}}</option>
                     </select>
@@ -115,7 +115,7 @@
             <div class="row mb-1">
                 <div class="col-lg-12">
                     <label for="cboResponsable">Responsable:</label>
-                    <select id="cboResponsable" class="form-select" v-on:change="selectResponsable()">
+                    <select id="cboResponsable" class="form-select" v-on:change="selectResponsable()" v-model="vmOrdenTrabajo.usuaResponsable">
                         <option selected class="text-muted" value="-1">Seleccione un responsable...</option>
                         <option v-for="resp of responsables" :value="resp.usuaCodigo">{{resp.usuaNombre}}</option>
                     </select>
@@ -138,7 +138,9 @@
             responsables: [],
             vmOrdenTrabajo: {
 
-            }
+            },
+            fechaInicio: '',
+            fechaFin: ''
         },
         mounted: function () {
 
@@ -194,25 +196,64 @@
 
                 let isValid = true;
 
-                //#region nombre
-                if (this.vmMaquinaria.maquNombre == '' ||
-                    this.vmMaquinaria.maquNombre == null) {
-                    $('#txtNombre').addClass('is-invalid');
+                //#region semana
+                if (this.vmOrdenTrabajo.ortrSemana == 0 ||
+                    this.vmOrdenTrabajo.ortrSemana == null) {
+                    $('#cboSemana').addClass('is-invalid');
                     isValid = false;
                 } else {
-                    $('#txtNombre').removeClass('is-invalid');
+                    $('#cboSemana').removeClass('is-invalid');
                 }
                 //#endregion
 
-                //#region descripcion
-                if (this.vmMaquinaria.maquDescripcion == '' ||
-                    this.vmMaquinaria.maquDescripcion == null) {
-                    $('#txtDescripcion').addClass('is-invalid');
+                //#region fechas previstas
+                if (this.vmOrdenTrabajo.ortrFechaPrevistaInicio == '' ||
+                    this.vmOrdenTrabajo.ortrFechaPrevistaInicio == null) {
+                    $('#fechaPrevistaInicio').addClass('is-invalid');
                     isValid = false;
                 } else {
-                    $('#txtDescripcion').removeClass('is-invalid');
+                    $('#fechaPrevistaInicio').removeClass('is-invalid');
+                }
+
+                if (this.vmOrdenTrabajo.ortrFechaPrevistaFin == '' ||
+                    this.vmOrdenTrabajo.ortrFechaPrevistaFin == null) {
+                    $('#fechaPrevistaFin').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#fechaPrevistaFin').removeClass('is-invalid');
                 }
                 //#endregion
+
+                //#region tipo
+                if (this.vmOrdenTrabajo.ortrTipo == 0 ||
+                    this.vmOrdenTrabajo.ortrTipo == null) {
+                    $('#cboTipo').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#cboTipo').removeClass('is-invalid');
+                }
+                //#endregion
+
+                //#region maquinaria
+                if (this.vmOrdenTrabajo.maquCodigo == 0 ||
+                    this.vmOrdenTrabajo.maquCodigo == null) {
+                    $('#cboMaquinaria').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#cboMaquinaria').removeClass('is-invalid');
+                }
+                //#endregion
+
+                //#region responsable
+                if (this.vmOrdenTrabajo.usuaResponsable == 0 ||
+                    this.vmOrdenTrabajo.usuaResponsable == null) {
+                    $('#cboResponsable').addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $('#cboResponsable').removeClass('is-invalid');
+                }
+                //#endregion
+
 
                 return isValid;
             },
@@ -285,14 +326,50 @@
                 let responsableSelected = $('#cboResponsable').val();
                 this.vmOrdenTrabajo.usuaResponsable = responsableSelected;
             },
+            selectWeek: function (event) {
+                console.log(`Semana seleccionada: ${JSON.stringify(event.target.value)}`);
+                let numSemana = parseInt(event.target.value);
+
+                const anio = new Date().getFullYear();
+                const primerJueves = new Date(anio, 0, 4);
+                const diaSemana = primerJueves.getDay();
+                const diferenciaAlLunes = ((diaSemana + 6) % 7);
+
+                const primerLunes = new Date(primerJueves);
+                primerLunes.setDate(primerJueves.getDate() - diferenciaAlLunes);
+
+                const inicio = new Date(primerLunes);
+                inicio.setDate(primerLunes.getDate() + (numSemana - 1) * 7);
+
+                const fin = new Date(inicio);
+                fin.setDate(inicio.getDate() + 6);
+                
+                const formatear = (fecha) => {
+                    const yyyy = fecha.getFullYear();
+                    const MM = String(fecha.getMonth() + 1).padStart(2, '0');
+                    const dd = String(fecha.getDate()).padStart(2, '0');
+                    const HH = String(fecha.getHours()).padStart(2, '0');
+                    const mm = String(fecha.getMinutes()).padStart(2, '0');
+                    return `${yyyy}-${MM}-${dd}`;
+                };
+
+                this.fechaInicio = formatear(inicio);
+                this.fechaFin = formatear(fin);
+                console.log(`Fechas de Semana seleccionada: ${this.fechaInicio} - ${this.fechaFin}`);
+            },
             createOrdenTrabajo: function () {
                 let url = '/Mantenimiento/CreateOrdenTrabajo/';
+
+                this.vmOrdenTrabajo.ortrFechaPrevistaInicio = this.fechaInicio;
+                this.vmOrdenTrabajo.ortrFechaPrevistaFin = this.fechaFin;
+
+                console.log('vmOrdenTrabajo: ' + JSON.stringify(this.vmOrdenTrabajo));
 
                 if (!this.validateFields()) {
                     return;
                 }
 
-                console.log('vmOrdenTrabajo: ' + JSON.stringify(this.vmOrdenTrabajo));
+                
                 //let tipo = this.vmOrdenTrabajo.maquTipo;
 
                 this.blockUI('Creando orden de trabajo...');
