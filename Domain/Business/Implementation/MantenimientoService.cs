@@ -41,6 +41,11 @@ namespace Domain.Business.Implementation
                 entity.OrtrFechaEmision = _utilsService.GetCurrentDate();
                 entity.OrtrNúmero = await GetLastNumeroODT();
 
+                if (entity.OrtrNúmero == 0)
+                {
+                    entity.OrtrNúmero = 1;
+                }
+
                 var rmCreate = await _ctx.Insert(entity);
                 if (rmCreate.Response)
                 {
@@ -186,6 +191,7 @@ namespace Domain.Business.Implementation
                 {
                     var odts = query.
                         Include(m => m.CodtCodigoNavigation).
+                        Include(m => m.MaquCodigoNavigation.MaquCodigoFkNavigation).
                         Include(m => m.MaquCodigoNavigation).
                         Include(m => m.UsuaResponsableNavigation).
                         Include(m => m.UsuaRevisaNavigation).

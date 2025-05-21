@@ -231,11 +231,13 @@ public partial class soporteContext : DbContext
             entity.HasOne(d => d.UsuaResponsableNavigation).WithMany(p => p.OrdenTrabajoUsuaResponsableNavigations)
                 .HasForeignKey(d => d.UsuaResponsable)
                 .OnDelete(DeleteBehavior.ClientSetNull)
+                .IsRequired(false)
                 .HasConstraintName("FK_OrdenTrabajo_Usuario");
 
             entity.HasOne(d => d.UsuaRevisaNavigation).WithMany(p => p.OrdenTrabajoUsuaRevisaNavigations)
                 .HasForeignKey(d => d.UsuaRevisa)
                 .OnDelete(DeleteBehavior.ClientSetNull)
+                .IsRequired(false)
                 .HasConstraintName("FK_OrdenTrabajo_Usuario1");
         });
 

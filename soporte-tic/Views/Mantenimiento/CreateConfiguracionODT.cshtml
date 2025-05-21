@@ -1,5 +1,132 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model soporte_tic.Models.ViewModels.VMConfiguracionODT
+
 @{
+    var modelConfiguracion = Model;
 }
+
+<div class="modal-dialog modal-dialog-centered" role="document" id="frmCreateConfiguracion">
+    <div class="modal-content" id="frmContent">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Crear Configuración de ODT</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row mb-1">
+                <div class="col-lg-6">
+                    <label for="txtVersion">Versión</label>
+                    <input id="txtVersion" class="form-control" style="text-transform: uppercase;" type="text" v-model="vmConfiguracionODT.codtVersion" />
+                </div>
+                <div class="col-lg-6">
+                    <label for="txtID">ID</label>
+                    <input id="txtID" class="form-control" type="text" v-model="vmConfiguracionODT.codtId" />
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-6">
+                    <label for="cboEstado">Estado</label>
+                    <select id="cboEstado" class="form-select" name="codtEstado" v-model="vmConfiguracionODT.codtEstado">
+                        <option selected class="text-muted" value="-1">Seleccione un estado...</option>
+                        <option value="1">ACTIVO</option>
+                        <option value="2">INACTIVO</option>
+                    </select>
+                </div>
+                <div class="col-lg-6">
+                    <label for="txtObservacion">Observación:</label>
+                    <input id="txtObservacion" class="form-control" type="text" v-model="vmConfiguracionODT.codtObservacion" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" v-on:click="createConfiguracion()">Crear</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var frmCreateConfiguracion = new Vue({
+        el: '#frmCreateConfiguracion',
+        data: {
+            vmConfiguracionODT: {
+            }
+        },
+        mounted: function () {
+
+        },
+        created: function () {
+            this.vmConfiguracionODT = @Html.Raw(Json.Serialize(Model));
+        },
+        methods: {
+            blockUI: function (msg) {
+                $(function () {
+                    //#region block UI
+                    $('#frmContent').block({
+                        message: msg,
+                        css: {
+                            backgroundColor: '#36404a',
+                            color: '#fff',
+                            height: 40,
+                            paddingTop: 10,
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            borderRadius: 7,
+                            border: '0',
+                            opacity: 0.5,
+                            zIndex: 9999999,
+                            cursor: 'wait'
+                        },
+                    });
+                    //#endregion
+                });
+            },
+            unblockUI: function () {
+                $(function () {
+                    $('#frmContent').unblock();
+                });
+            },
+            showAlert: function (title, msg, icon) {
+
+                const typeIcon = icon;
+
+                Swal.fire(
+                    {
+                        title: title,
+                        text: msg,
+                        icon: typeIcon,
+                        confirmButtonColor: '#0576b9'
+                    }
+                );
+            },
+            createConfiguracion: function () {
+                let url = '/Mantenimiento/CreateConfiguracionODT/';
+
+                // if (!this.validateFields()) {
+                //     return;
+                // }
+
+                console.log('vmConfiguracionODT: ' + JSON.stringify(this.vmConfiguracionODT));
+
+                this.blockUI('Creando configuración...');
+
+
+                axios.post(url, this.vmConfiguracionODT).then((resp) => {
+                    let rm = resp.data;
+
+                    if (rm.response) {
+                        rm.result = null;
+                        rm.result = 1;
+                        configODT.$emit('responseModel', rm);
+                        this.showAlert(rm.title, rm.message, 'success');
+                    } else {
+                        this.showAlert(rm.title, rm.message, 'warning');
+                    }
+
+                    this.unblockUI();
+                }).catch((error) => {
+                    this.unblockUI();
+                    console.log('Ocurrió un error en createConfiguracion: ' + error);
+                });
+            }
+        }
+    });
+</script>

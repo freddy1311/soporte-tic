@@ -48,7 +48,7 @@ namespace soporte_tic.Utils.AutoMapper
                 ).
                 ForMember(dest =>
                     dest.MaquNombreFK,
-                    opt => opt.MapFrom(ori => ori.MaquCodigoFkNavigation!.MaquNombre)
+                    opt => opt.MapFrom(ori => ori.MaquCodigoFkNavigation!.MaquCodigoFkNavigation.MaquNombre)
                 );
 
             CreateMap<VMMaquinaria, Maquinaria>().

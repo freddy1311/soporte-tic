@@ -29,9 +29,9 @@ public partial class OrdenTrabajo
 
     public string? OrtrObservacion { get; set; }
 
-    public long UsuaResponsable { get; set; }
+    public long? UsuaResponsable { get; set; }
 
-    public long UsuaRevisa { get; set; }
+    public long? UsuaRevisa { get; set; }
 
     public long CodtCodigo { get; set; }
 
@@ -41,7 +41,7 @@ public partial class OrdenTrabajo
 
     public virtual Maquinaria MaquCodigoNavigation { get; set; } = null!;
 
-    public virtual Usuario UsuaResponsableNavigation { get; set; } = null!;
+    public virtual Usuario? UsuaResponsableNavigation { get; set; } = null!;
 
-    public virtual Usuario UsuaRevisaNavigation { get; set; } = null!;
+    public virtual Usuario? UsuaRevisaNavigation { get; set; } = null!;
 }

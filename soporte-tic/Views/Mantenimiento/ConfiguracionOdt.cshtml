@@ -19,7 +19,7 @@
                         <button class="btn btn-warning" title="Recargar configuraciones de ODT" v-on:click="reloadingConfiguracionesODT()">
                             <i class="mdi mdi-refresh"></i>
                         </button>
-                        <button class="btn btn-primary" title="Crear nueva configuración ODT" v-on:click="showCreateConfiguracionesODT()">
+                        <button class="btn btn-primary" title="Crear nueva configuración ODT" v-on:click="showCreateConfiguracionODT()">
                             <i class="mdi mdi-plus"></i> Nuevo
                         </button>
                     </div>
@@ -30,6 +30,7 @@
                             <tr>
                                 <th scope="col">Versión</th>
                                 <th scope="col">ID</th>
+                                <th scope="col">Observación</th>
                                 <th scope="col">Estado</th>
                                 <th scope="col" style="width: 120px; text-align: center;">Opciones</th>
                             </tr>
@@ -41,7 +42,9 @@
                                 </td>
                                 <td>
                                     <small>{{conf.codtId}}</small>
-                                    
+                                </td>
+                                <td>
+                                    <small>{{conf.codtObservacion}}</small>
                                 </td>
                                 <td>
                                     <small v-if="(conf.codtEstado == 1)">ACTIVO</small>
@@ -159,6 +162,31 @@
 
                 },
                 getConfiguracionesODT: function () {
+                    let url = '/Mantenimiento/GetConfiguraciones/';
+
+                    this.blockUI('Cargando configuraciones de ODT...');
+
+                    this.configuraciones = [];
+                    this.totalConfiguraciones = 0;
+
+                    axios.get(url).
+                        then((response) => {
+                            let rm = response.data;
+
+                            if (rm.response) {
+                                this.configuraciones = rm.result;
+                                this.totalConfiguraciones = this.configuraciones.length;
+                            } else {
+                                this.configuraciones = [];
+                                this.totalConfiguraciones = 0;
+                            }
+
+                            this.unblockUI();
+                        }).
+                        catch((error) => {
+                            console.log('Error en getConfiguracionesODT: ' + error);
+                            this.unblockUI();
+                        });
 
                 },
                 reloadingConfiguracionesODT: function () {
@@ -177,7 +205,16 @@
                         });
                 },
                 showUpdateConfiguracionODT: function (codConfig) {
+                    let url = '/Mantenimiento/UpdateConfiguracionODT/';
 
+                    axios.get(url, { params: { codConfiguracion: codConfig }}).
+                        then((response) => {
+                            $('.modal').html(response.data);
+                            $('#standardModal').modal('show');
+                        }).
+                        catch((error) => {
+                            console.log('Error en showUpdateConfiguracionODT: ' + error);
+                        });
                 },
                 deleteConfiguracionODT: function (codConfig) {
 

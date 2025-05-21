@@ -45,6 +45,18 @@ namespace soporte_tic.Controllers
         }
 
         [HttpGet]
+        public async Task<JsonResult> GetConfiguraciones()
+        {
+            var rmConfiguraciones = await _configuracionODTService.GetListConfiguracionODT();
+            List<ConfiguracionOdt> configuraciones = rmConfiguraciones.Result;
+
+            List<VMConfiguracionODT> vmConfiguraciones = _mapper.Map<List<VMConfiguracionODT>>(configuraciones);
+            rmConfiguraciones.Result = vmConfiguraciones;
+
+            return Json(rmConfiguraciones);
+        }
+
+        [HttpGet]
         public IActionResult CreateConfiguracionODT()
         {
             VMConfiguracionODT vmConfiguracionODT = new VMConfiguracionODT();
@@ -55,7 +67,8 @@ namespace soporte_tic.Controllers
         public async Task<JsonResult> CreateConfiguracionODT([FromBody] VMConfiguracionODT model)
         {
             ConfiguracionOdt configuracionCreate = _mapper.Map<ConfiguracionOdt>(model);
-
+            configuracionCreate.CodtId = (configuracionCreate.CodtId != "") ? configuracionCreate.CodtId!.ToUpper() : "";
+            
             var rm = await _configuracionODTService.Create(configuracionCreate);
             if (rm.Response)
             {
@@ -81,6 +94,7 @@ namespace soporte_tic.Controllers
         public async Task<JsonResult> UpdateConfiguracionODT(VMConfiguracionODT model)
         {
             ConfiguracionOdt configuracionUpdate = _mapper.Map<ConfiguracionOdt>(model);
+            configuracionUpdate.CodtId = (configuracionUpdate.CodtId != "") ? configuracionUpdate.CodtId!.ToUpper() : "";
 
             var rm = await _configuracionODTService.Update(configuracionUpdate);
 
@@ -121,6 +135,8 @@ namespace soporte_tic.Controllers
         public IActionResult CreateOrdenTrabajo()
         {
             VMOrdenTrabajo vmOrdenTrabajo = new VMOrdenTrabajo();
+            vmOrdenTrabajo.UsuaResponsable = null;
+            vmOrdenTrabajo.UsuaRevisa = null;
             return PartialView(vmOrdenTrabajo);
         }
 

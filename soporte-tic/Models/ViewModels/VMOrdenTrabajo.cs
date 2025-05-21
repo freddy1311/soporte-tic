@@ -16,9 +16,9 @@
         public long MaquCodigo { get; set; }
         public string? MaquNombre { get; set; }
         public string? OrtrObservacion { get; set; }
-        public long UsuaResponsable { get; set; }
+        public long? UsuaResponsable { get; set; }
         public string? UsuaResponsableNombre { get; set; }
-        public long UsuaRevisa { get; set; }
+        public long? UsuaRevisa { get; set; }
         public string? UsuaRevisaNombre { get; set; }
         public long CodtCodigo { get; set; }
         #endregion

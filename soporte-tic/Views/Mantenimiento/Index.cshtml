@@ -59,8 +59,11 @@
                                     <small><em>{{orden.maquNombre}}</em></small>
                                 </td>
                                 <td>
-                                    <small v-if="(maquina.maquEstado == 1)">ACTIVO</small>
-                                    <small v-if="(maquina.maquEstado == 2)">INACTIVO</small>
+                                    <small>{{orden.usuaResponsableNombre}}</small>
+                                </td>
+                                <td>
+                                    @* <small v-if="(maquina.maquEstado == 1)">ACTIVO</small>
+                                    <small v-if="(maquina.maquEstado == 2)">INACTIVO</small> *@
                                 </td>
                                 <td style="text-align: center;">
                                     <a class="text-info mr-2" href="javascript:void(0);" v-on:click="showInfoOrdenesTrabajo(orden)">
@@ -125,7 +128,7 @@
                 };
             },
             created: function () {
-
+                this.getOrdenesTrabajo();
             },
             methods: {
                 blockUI: function (msg) {
@@ -174,7 +177,32 @@
 
                 },
                 getOrdenesTrabajo: function () {
+                    let url = '/Mantenimiento/GetListODTSOpen/';
 
+                    this.blockUI('Cargando órdenes de trabajo...');
+                    this.ordenes = [];
+                    this.totalOrdenes = 0;
+
+                    axios.get(url).
+                        then((response) => {
+                            let rm = response.data;
+
+                            if (rm.response) {
+                                this.ordenes = rm.result;
+                                this.totalOrdenes = this.ordenes.length;
+                            } else {
+                                this.ordenes = [];
+                                this.totalOrdenes = 0;
+                            }
+
+                            this.unblockUI();
+                        }).
+                        catch((error) => {
+                            console.log('Error en getConfiguracionesODT: ' + error);
+                            this.unblockUI();
+                            this.ordenes = [];
+                            this.totalOrdenes = 0;
+                        });
                 },
                 reloadingOrdenes: function () {
                     this.getOrdenesTrabajo();
