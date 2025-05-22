@@ -379,7 +379,7 @@
 
                     if (rm.response) {
                         rm.result = null;
-                        rm.result = tipo;
+                        rm.result = 1;
                         indexODT.$emit('responseModel', rm);
                         this.showAlert(rm.title, rm.message, 'success');
                     } else {

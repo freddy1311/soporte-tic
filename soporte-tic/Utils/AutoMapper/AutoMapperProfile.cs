@@ -80,10 +80,10 @@ namespace soporte_tic.Utils.AutoMapper
             CreateMap<OrdenTrabajo, VMOrdenTrabajo>().
                 ForMember(dest =>
                     dest.MaquCodigoF,
-                    opt => opt.MapFrom(ori => ori.MaquCodigoNavigation.MaquCodigoFk)
+                    opt => opt.MapFrom(ori => ori.MaquCodigoNavigation.MaquCodigoFkNavigation!.MaquCodigo)
                 ).
                 ForMember(dest =>
-                    dest.MaquNombre,
+                    dest.MaquNombreF,
                     opt => opt.MapFrom(ori => ori.MaquCodigoNavigation.MaquCodigoFkNavigation!.MaquNombre)
                 ).
                 ForMember(dest =>
@@ -96,19 +96,19 @@ namespace soporte_tic.Utils.AutoMapper
                 ).
                 ForMember(dest =>
                    dest.UsuaResponsable,
-                   opt => opt.MapFrom(ori => ori.UsuaResponsableNavigation.UsuaCodigo)
+                   opt => opt.MapFrom(ori => ori.UsuaResponsableNavigation!.UsuaCodigo)
                 ).
                 ForMember(dest =>
                     dest.UsuaResponsableNombre,
-                    opt => opt.MapFrom(ori => ori.UsuaResponsableNavigation.UsuaNombre)
+                    opt => opt.MapFrom(ori => ori.UsuaResponsableNavigation!.UsuaNombre)
                 ).
                 ForMember(dest =>
                    dest.UsuaRevisa,
-                   opt => opt.MapFrom(ori => ori.UsuaRevisaNavigation.UsuaCodigo)
+                   opt => opt.MapFrom(ori => ori.UsuaRevisaNavigation!.UsuaCodigo)
                 ).
                 ForMember(dest =>
                     dest.UsuaRevisaNombre,
-                    opt => opt.MapFrom(ori => ori.UsuaRevisaNavigation.UsuaNombre)
+                    opt => opt.MapFrom(ori => ori.UsuaRevisaNavigation!.UsuaNombre)
                 ).
                 ForMember(dest =>
                    dest.CodtCodigo,

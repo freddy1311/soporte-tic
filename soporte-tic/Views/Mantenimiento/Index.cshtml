@@ -28,10 +28,11 @@
                     <table id="dtOrdenes" class="table dt-responsive nowrap w-100">
                         <thead class="table-light">
                             <tr>
+                                <th scope="col">No. ODT</th>
                                 <th scope="col">Semana</th>
                                 <th scope="col">F. Prevista</th>
                                 <th scope="col">F. Ejecución</th>
-                                <th scope="col">Código</th>
+                                <th scope="col">Tipo</th>
                                 <th scope="col">Maquinaria</th>
                                 <th scope="col">Responsable</th>
                                 <th scope="col">Estado</th>
@@ -41,18 +42,25 @@
                         <tbody>
                             <tr v-for="orden in ordenes">
                                 <td>
-                                    <small class="badge badge-soft-primary">{{orden.ortrSemana}}</small>
+                                    <small># {{orden.ortrNúmero}}</small>
                                 </td>
                                 <td>
-                                    <small>{{orden.ortrFechaPrevistaInicio}}</small><br />
-                                    <small>{{orden.ortrFechaPrevistaFin}}</small>
+                                    <small class="badge badge-soft-primary">SEMANA: {{orden.ortrSemana}}</small>
                                 </td>
                                 <td>
-                                    <small>{{orden.ortrFechaEjecucionInicio}}</small><br />
-                                    <small>{{orden.ortrFechaEjecucionFin}}</small>
+                                    <small>{{formatFecha(orden.ortrFechaPrevistaInicio)}}</small><br />
+                                    <small>{{formatFecha(orden.ortrFechaPrevistaFin)}}</small>
                                 </td>
                                 <td>
-                                    <small>{{orden.ortrNumero}}</small>
+                                    <small v-if="(orden.ortrFechaEjecucionInicio)">{{orden.ortrFechaEjecucionInicio}}</small>
+                                    <small v-if="(!orden.ortrFechaEjecucionInicio)">-----</small>
+                                    <br />
+                                    <small v-if="(orden.ortrFechaEjecucionFin)">{{orden.ortrFechaEjecucionFin}}</small>
+                                    <small v-if="(!orden.ortrFechaEjecucionFin)">-----</small>
+                                </td>
+                                <td>
+                                    <small class="badge badge-soft-info" v-if="(orden.ortrTipo == 1)">MECÁNICO</small>
+                                    <small class="badge badge-soft-success" v-if="(orden.ortrTipo == 2)">ELÉCTRICO</small>
                                 </td>
                                 <td>
                                     <small>{{orden.maquNombreF}}</small><br />
@@ -62,8 +70,8 @@
                                     <small>{{orden.usuaResponsableNombre}}</small>
                                 </td>
                                 <td>
-                                    @* <small v-if="(maquina.maquEstado == 1)">ACTIVO</small>
-                                    <small v-if="(maquina.maquEstado == 2)">INACTIVO</small> *@
+                                    <small class="badge badge-soft-warning" v-if="(orden.ortrFechaEjecucionInicio)">EN PROCESO</small>
+                                    <small class="badge badge-soft-success" v-if="(!orden.ortrFechaEjecucionInicio)">ASIGNADO</small>
                                 </td>
                                 <td style="text-align: center;">
                                     <a class="text-info mr-2" href="javascript:void(0);" v-on:click="showInfoOrdenesTrabajo(orden)">
@@ -174,7 +182,44 @@
                     );
                 },
                 initTableOrdenes: function () {
-
+                    setTimeout(() => {
+                        $("#dtOrdenes").DataTable({
+                            "language": {
+                                "zeroRecords": "No se encontraron órdenes disponibles!",
+                                "info": "Mostrando pag. _PAGE_ de _PAGES_",
+                                "infoEmpty": "No se encontró coincidencias!",
+                                "infoFiltered": "(filtrado de _MAX_ registros en total)",
+                                "search": "Buscar:",
+                                "paginate": {
+                                    "previous": "<i class='mdi mdi-chevron-left'>",
+                                    "next": "<i class='mdi mdi-chevron-right'>"
+                                },
+                                "lengthMenu": "Mostrar <select class=\"custom-select custom-select-sm ml-1 mr-1\"><option value='10'>10</option><option value='20'>20</option><option value='-1'>Todas</option></select> órdenes"
+                            },
+                            pageLength: 10,
+                            columns: [
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 }, 
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 },
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 }
+                            ],
+                            responsive: false,
+                            destroy: true,
+                            retrieve: true,
+                            autoFill: true,
+                            order: [],
+                            drawCallback: function () {
+                                $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+                                $(".dataTables_paginate ").addClass('float-end');
+                            }
+                        });
+                    }, 500);
+                },
+                formatFecha: function (fecha) {
+                    const d = new Date(fecha);
+                    const year = d.getFullYear();
+                    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+                    const day = ('0' + d.getDate()).slice(-2);
+                    return `${year}-${month}-${day}`;
                 },
                 getOrdenesTrabajo: function () {
                     let url = '/Mantenimiento/GetListODTSOpen/';
@@ -194,6 +239,8 @@
                                 this.ordenes = [];
                                 this.totalOrdenes = 0;
                             }
+
+                            this.initTableOrdenes();
 
                             this.unblockUI();
                         }).

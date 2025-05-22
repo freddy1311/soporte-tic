@@ -9,7 +9,7 @@
         public DateTime? OrtrFechaEjecucionInicio { get; set; }
         public DateTime? OrtrFechaEjecucionFin { get; set; }
         public int? OrtrSemana { get; set; }
-        public int? OrtrNumero { get; set; }
+        public int? OrtrNúmero { get; set; }
         public int? OrtrTipo { get; set; }
         public long MaquCodigoF { get; set; }
         public string? MaquNombreF { get; set; }

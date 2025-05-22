@@ -119,6 +119,7 @@ namespace Domain.Business.Implementation
                     var odts = query.
                         Include(m => m.CodtCodigoNavigation).
                         Include(m => m.MaquCodigoNavigation).
+                            ThenInclude(f => f.MaquCodigoFkNavigation).
                         Include(m => m.UsuaResponsableNavigation).
                         Include(m => m.UsuaRevisaNavigation).
                         OrderBy(m => m.OrtrNúmero).
@@ -156,6 +157,7 @@ namespace Domain.Business.Implementation
                     var odts = query.
                         Include(m => m.CodtCodigoNavigation).
                         Include(m => m.MaquCodigoNavigation).
+                            ThenInclude(f => f.MaquCodigoFkNavigation).
                         Include(m => m.UsuaResponsableNavigation).
                         Include(m => m.UsuaRevisaNavigation).
                         OrderBy(m => m.OrtrNúmero).
@@ -191,8 +193,8 @@ namespace Domain.Business.Implementation
                 {
                     var odts = query.
                         Include(m => m.CodtCodigoNavigation).
-                        Include(m => m.MaquCodigoNavigation.MaquCodigoFkNavigation).
                         Include(m => m.MaquCodigoNavigation).
+                            ThenInclude(f => f.MaquCodigoFkNavigation).
                         Include(m => m.UsuaResponsableNavigation).
                         Include(m => m.UsuaRevisaNavigation).
                         OrderBy(m => m.OrtrNúmero).
@@ -305,11 +307,11 @@ namespace Domain.Business.Implementation
             try
             {
                 var rmQuery = await _ctx.GetLast(u => u.OrtrNúmero!);
-                IQueryable<OrdenTrabajo> queryUser = rmQuery.Result;
+                OrdenTrabajo queryUser = rmQuery.Result;
 
                 if (queryUser != null)
                 {
-                    OrdenTrabajo ordentrabajo = queryUser.First();
+                    OrdenTrabajo ordentrabajo = queryUser;
                     lastNum = (int)ordentrabajo.OrtrNúmero! + 1;
                 }
             }
