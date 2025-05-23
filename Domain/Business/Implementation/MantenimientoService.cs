@@ -231,6 +231,7 @@ namespace Domain.Business.Implementation
                     var odts = query.
                         Include(m => m.CodtCodigoNavigation).
                         Include(m => m.MaquCodigoNavigation).
+                            ThenInclude(f => f.MaquCodigoFkNavigation).
                         Include(m => m.UsuaResponsableNavigation).
                         Include(m => m.UsuaRevisaNavigation).
                         FirstOrDefault();

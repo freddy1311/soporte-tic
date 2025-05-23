@@ -74,13 +74,13 @@
                                     <small class="badge badge-soft-success" v-if="(!orden.ortrFechaEjecucionInicio)">ASIGNADO</small>
                                 </td>
                                 <td style="text-align: center;">
-                                    <a class="text-info mr-2" href="javascript:void(0);" v-on:click="showInfoOrdenesTrabajo(orden)">
+                                    <a class="text-info mr-2" href="javascript:void(0);" v-on:click="showVerOrdenTrabajo(orden)">
                                         <i class="mdi mdi-eye-outline"></i>
                                     </a>
-                                    <a class="text-warning mr-2" href="javascript:void(0);" v-on:click="showUpdateOrdenesTrabajo(orden.ortrCodigo)">
+                                    <a class="text-warning mr-2" href="javascript:void(0);" v-on:click="showUpdateOrdenTrabajo(orden.ortrCodigo)">
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </a>
-                                    <a class="text-danger" href="javascript:void(0);" v-on:click="deleteOrdenesTrabao(orden.ortrCodigo)">
+                                    <a class="text-danger" href="javascript:void(0);" v-on:click="deleteOrdenTrabajo(orden.ortrCodigo)">
                                         <i class="mdi mdi-delete-outline"></i>
                                     </a>
                                 </td>
@@ -267,7 +267,16 @@
                         });
                 },
                 showUpdateOrdenTrabajo: function (codOrden) {
+                    let url = '/Mantenimiento/UpdateOrdenTrabajo/';
 
+                    axios.get(url, {params: {codOrden: codOrden}}).
+                        then((response) => {
+                            $('.modal').html(response.data);
+                            $('#standardModal').modal('show');
+                        }).
+                        catch((error) => {
+                            console.log('Error en showUpdateOrdenTrabajo: ' + error);
+                        });
                 },
                 deleteOrdenTrabajo: function (codOrden) {
 

@@ -168,6 +168,28 @@ namespace soporte_tic.Controllers
             return Json(rm);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UpdateOrdenTrabajo(long codOrden)
+        {
+            var rmOrden = await _mantenimientoService.GetODT(codOrden);
+            VMOrdenTrabajo orden = new VMOrdenTrabajo();
+
+            if (rmOrden.Response)
+            {
+                orden = _mapper.Map<VMOrdenTrabajo>(rmOrden.Result);
+            }
+
+            return PartialView(orden);
+        }
+
+        [HttpPut]
+        public async Task<JsonResult> UpdateOrdenTrabajo([FromBody] VMOrdenTrabajo model)
+        {
+            OrdenTrabajo ordenUpdate = _mapper.Map<OrdenTrabajo>(model);
+            var rm = await _mantenimientoService.Update(ordenUpdate);
+        
+            return Json(rm);
+        }
 
         #endregion
     }
