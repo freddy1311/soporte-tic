@@ -1,13 +1,115 @@
 ﻿@{
-    ViewBag.Title = "Inicio";
+    ViewBag.Title = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Bienvenidos</h1>
-    <p>Sistema de Gestión y Control de Soporte.</p>
+<div id="index-home">
+    <div class="row">
+        <div class="col-md-6 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="float-end">
+                        <div class="avatar-sm mx-auto mb-4">
+                            <span class="avatar-title rounded-circle bg-light font-size-24">
+                                <i class="mdi mdi-book-open-outline text-primary"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-muted text-uppercase fw-semibold font-size-13">Órdenes de Trabajo</p>
+                        <h4 class="mb-1 mt-1"><span class="counter-value" data-target="23">23</span></h4>
+                    </div>
+                    <p class="text-muted mt-3 mb-0">
+                        <span class="badge bg-success-subtle text-success me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>2.65%</span> since last week
+                    </p>
+                </div>
+            </div>
+        </div> 
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="float-end">
+                        <div class="avatar-sm mx-auto mb-4">
+                            <span class="avatar-title rounded-circle bg-light font-size-24">
+                                <i class="mdi mdi-cog text-success"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-muted text-uppercase fw-semibold font-size-13">Líneas</p>
+                        <h4 class="mb-1 mt-1"><span class="counter-value" data-target="12">0</span></h4>
+                    </div>
+                    <p class="text-muted mt-3 mb-0">
+                        <span class="badge bg-danger-subtle text-danger me-1"><i class="mdi mdi-arrow-down-bold me-1"></i>4.58%</span> since last week
+                    </p>
+                </div>
+            </div>
+        </div> 
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="float-end">
+                        <div class="avatar-sm mx-auto mb-4">
+                            <span class="avatar-title rounded-circle bg-light font-size-24">
+                                <i class="mdi mdi-cogs text-primary"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-muted text-uppercase fw-semibold font-size-13">Maquinarias</p>
+                        <h4 class="mb-1 mt-1"><span class="counter-value" data-target="8">0</span></h4>
+                    </div>
+                    <p class="text-muted mt-3 mb-0">
+                        <span class="badge bg-success-subtle text-success me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>14.33%</span> since last week
+                    </p>
+                </div>
+            </div>
+        </div> 
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="float-end">
+                        <div class="avatar-sm mx-auto mb-4">
+                            <span class="avatar-title rounded-circle bg-light font-size-24">
+                                <i class="mdi mdi-account-group text-success"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-muted text-uppercase fw-semibold font-size-13">Total Usuarios</p>
+                        <h4 class="mb-1 mt-1"><span class="counter-value" data-target="6">0</span></h4>
+                    </div>
+                    <p class="text-muted mt-3 mb-0">
+                        <span class="badge bg-warning-subtle text-warning me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>0.55%</span> since last week
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts {
-    <!-- App js -->
+    <script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
+    @* <script src="~/assets/js/pages/dashboard.init.js"></script> *@
     <script src="~/assets/js/app.js"></script>
+
+    <script>
+        var indexHome = new Vue({
+            el: '#index-home',
+            data: {
+
+            },
+            mounted: function () {
+
+            },
+            created: function () {
+
+            },
+            methods: {
+
+            }
+        });
+    </script>
 }

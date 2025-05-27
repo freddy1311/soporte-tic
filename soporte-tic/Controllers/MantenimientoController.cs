@@ -16,18 +16,24 @@ namespace soporte_tic.Controllers
         private readonly IMapper _mapper;
         private readonly IMantenimientoService _mantenimientoService;
         private readonly IConfiguracionODTService _configuracionODTService;
+        private readonly IMantenimientoDetalleService _mantenimientoDetalleService;
+        private readonly IMaquinariaTareaService _maquinariaTareaService;
         #endregion
 
         #region constructor
         public MantenimientoController(
             IMapper mapper,
             IMantenimientoService mantenimientoService,
-            IConfiguracionODTService configuracionODTService
+            IConfiguracionODTService configuracionODTService,
+            IMantenimientoDetalleService mantenimientoDetalleService,
+            IMaquinariaTareaService maquinariaTareaService
         )
         {
             _mapper = mapper;
             _mantenimientoService = mantenimientoService;
             _configuracionODTService = configuracionODTService;
+            _mantenimientoDetalleService = mantenimientoDetalleService;
+            _maquinariaTareaService = maquinariaTareaService;
         }
         #endregion
 
@@ -91,7 +97,7 @@ namespace soporte_tic.Controllers
         }
 
         [HttpPut]
-        public async Task<JsonResult> UpdateConfiguracionODT(VMConfiguracionODT model)
+        public async Task<JsonResult> UpdateConfiguracionODT([FromBody] VMConfiguracionODT model)
         {
             ConfiguracionOdt configuracionUpdate = _mapper.Map<ConfiguracionOdt>(model);
             configuracionUpdate.CodtId = (configuracionUpdate.CodtId != "") ? configuracionUpdate.CodtId!.ToUpper() : "";
@@ -191,6 +197,41 @@ namespace soporte_tic.Controllers
             return Json(rm);
         }
 
+        [HttpDelete]
+        public async Task<JsonResult> DeleteOrdenTrabajo(long codOrden)
+        {
+            var rm = await _mantenimientoService.Delete(codOrden);
+            if (rm.Response)
+            {
+                var rmTareasOrdenDelete = await _mantenimientoDetalleService.DeleteAll(codOrden);
+                rm.Message += "\nLas tareas asociadas fueron eliminas exitosamente!.";
+            }
+
+            return Json(rm);
+        }
+
+        [HttpGet]
+        public IActionResult AddTareasOrdenTrabajo(long codOrden, int numOrden, int numSemana)
+        {
+            ViewData["CodigoOrden"] = codOrden;
+            ViewData["NumeroOrden"] = numOrden;
+            ViewData["NumeroSemana"] = numSemana;
+            return PartialView();
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> AddTareasOrdenTrabajo([FromBody]List<VMDetalleODT> listaTareas)
+        {
+            var rm = new ResponseModel();
+            List<DetalleOdt> tareasMaquinaria = _mapper.Map<List<DetalleOdt>>(listaTareas);
+
+            foreach (var tarea in tareasMaquinaria)
+            {
+                var rm1 = await _mantenimientoDetalleService.Create(tarea);
+            }
+
+            return Json(rm);
+        }
         #endregion
     }
 }

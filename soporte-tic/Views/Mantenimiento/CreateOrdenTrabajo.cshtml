@@ -16,7 +16,7 @@
                 <div class="col-lg-12">
                     <label for="cboSemana">Semana:</label>
                     <select id="cboSemana" class="form-select" v-on:change="selectWeek($event)" v-model="vmOrdenTrabajo.ortrSemana">
-                        <option selected class="text-muted" value="-1">Seleccione un tipo...</option>
+                        <option selected class="text-muted" value="-1">Seleccione una semana...</option>
                         <option value="1">Semana 1</option>
                         <option value="2">Semana 2</option>
                         <option value="3">Semana 3</option>
@@ -147,7 +147,12 @@
         },
         created: function () {
             this.vmOrdenTrabajo = @Html.Raw(Json.Serialize(Model));
-            console.log('vmOrdenTrabajo: ', this.vmOrdenTrabajo);
+            this.vmOrdenTrabajo.ortrTipo = -1;
+            this.vmOrdenTrabajo.maquCodigo = -1;
+            this.vmOrdenTrabajo.ortrSemana = -1;
+            this.vmOrdenTrabajo.usuaResponsable = -1;
+
+            //console.log('vmOrdenTrabajo: ', this.vmOrdenTrabajo);
             this.getLineas();
             this.getUsuarios();
         },

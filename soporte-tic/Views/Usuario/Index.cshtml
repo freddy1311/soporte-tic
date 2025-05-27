@@ -310,7 +310,8 @@
                     if (user != null) {
                         let estado = (user.usuaEstado == 0) ? 'INACTIVO' : 'ACTIVO';
                         let logo = (user.usuaFoto != null && user.usuaFoto != '') ?
-                            user.usuaFoto : '/assets/images/users/no_user.jpg';
+                            `/uploads/${user.usuaFoto}` : '/assets/images/users/no_user.jpg';
+                        let perfil = this.getPerfilName(user.usuaPerfil);
 
                         Swal.fire({
                             title: "<strong>Información de Usuario</strong>",
@@ -337,11 +338,7 @@
                                             </tr>
                                             <tr>
                                                 <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Perfil:</td>
-                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.perfNombre}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">User:</td>
-                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaUser}</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${perfil}</td>
                                             </tr>
                                             <tr>
                                                 <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Estado:</td>
@@ -358,6 +355,20 @@
                             'No se detectó un Usuario para mostar!.',
                             'warning'
                         );
+                    }
+                },
+                getPerfilName: function (codPerfil){
+                    switch (codPerfil) {
+                        case 1:
+                            return 'Administrador';
+                        case 2:
+                            return 'Supervisor';
+                        case 3:
+                            return 'Técnico';
+                        case 4:
+                            return 'Monitor';
+                        default: 
+                            return 'SN';
                     }
                 }
             }

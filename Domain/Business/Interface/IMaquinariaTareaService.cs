@@ -21,6 +21,8 @@ namespace Domain.Business.Interface
         Task<Utils.ResponseModel> Update(TareasMaquinaria entity);
 
         Task<Utils.ResponseModel> Delete(long tareCodigo);
+
+        Task<Utils.ResponseModel> DeleteTareasMaquinaria(long maquCodigo);
         #endregion
     }
 }

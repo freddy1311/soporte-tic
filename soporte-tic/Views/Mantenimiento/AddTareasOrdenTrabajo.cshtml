@@ -1,0 +1,154 @@
+﻿<div class="modal-dialog modal-dialog-centered" role="document" id="frmCreateTareasOrdenTrabajo">
+    <div class="modal-content" id="frmContent">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Crear Orden Trabajo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="cboMaquinariaPadre">Línea:</label>
+                    <select id="cboMaquinariaPadre" class="form-select" v-on:change="selectLinea()">
+                        <option selected class="text-muted" value="-1">Seleccione un línea...</option>
+                        <option v-for="linea of lineas" :value="linea.maquCodigo">{{linea.maquNombre}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="cboMaquinaria">Maquinaria:</label>
+                    <select id="cboMaquinaria" class="form-select" v-on:change="selectMaquinaria()">
+                        <option selected class="text-muted" value="-1">Seleccione un maquinaria...</option>
+                        <option v-for="maqui of maquinarias" :value="maqui.maquCodigo">{{maqui.maquNombre}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <label for="cboTareas">Tareas:</label>
+                    <select id="cboTareas" class="form-select" v-on:change="selectTarea()">
+                        <option selected class="text-muted" value="-1">Seleccione una tarea...</option>
+                        <option v-for="resp of responsables" :value="resp.usuaCodigo">{{resp.usuaNombre}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" v-on:click="createTareasOrdenTrabajo()">Crear</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var frmCreateTareasOrdenTrabajo = new Vue({
+        el: '#frmCreateTareasOrdenTrabajo',
+        data: {
+            lineas: [],
+            maquinarias: [],
+            listaTareas: [],
+            maquinariaSelected: 0
+        },
+        mounted: function () {
+
+        },
+        created: function () {
+
+        },
+        methods: {
+            blockUI: function (msg) {
+                $(function () {
+                    //#region block UI
+                    $('#frmContent').block({
+                        message: msg,
+                        css: {
+                            backgroundColor: '#36404a',
+                            color: '#fff',
+                            height: 40,
+                            paddingTop: 10,
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            borderRadius: 7,
+                            border: '0',
+                            opacity: 0.5,
+                            zIndex: 9999999,
+                            cursor: 'wait'
+                        },
+                    });
+                    //#endregion
+                });
+            },
+            unblockUI: function () {
+                $(function () {
+                    $('#frmContent').unblock();
+                });
+            },
+            showAlert: function (title, msg, icon) {
+
+                const typeIcon = icon;
+
+                Swal.fire(
+                    {
+                        title: title,
+                        text: msg,
+                        icon: typeIcon,
+                        confirmButtonColor: '#0576b9'
+                    }
+                );
+            },
+            getLineas: function () {
+                const url = '/Maquinaria/GetListMaquinarias/';
+                this.lineas = [];
+
+                axios.get(url).then(response => {
+                    let rm = response.data;
+
+                    if (rm.response) {
+                        this.lineas = rm.result;
+                    } else {
+                        this.lineas = [];
+                    }
+
+                }).catch(error => {
+                    console.error('Error getLineas => ' + error);
+                });
+            },
+            selectLinea: function () {
+                let lineaSelected = $('#cboMaquinariaPadre').val();
+                this.maquinarias = [];
+                this.getMaquinarias(lineaSelected);
+            },
+            getMaquinarias: function (codLinea) {
+                if (codLinea) {
+                    const url = '/Maquinaria/GetListMaquinariasComponente/';
+                    this.maquinarias = [];
+
+                    axios.get(url, {params: { codMaquinaria: codLinea }}).then(response => {
+                        let rm = response.data;
+
+                        if (rm.response) {
+                            this.maquinarias = rm.result;
+                        } else {
+                            this.maquinarias = [];
+                        }
+
+                    }).catch(error => {
+                        console.error('Error getMaquinarias => ' + error);
+                    });
+                } else {
+                    this.showAlert('Validación', 'No se detectó código de Línea!.', 'warning');
+                }
+            },
+            selectMaquinaria: function () {
+                this.maquinariaSelected = $('#cboMaquinaria').val();  
+            },
+            getTareas: function () {
+                if (this.maquinariaSelected > 0) {
+
+                } else {
+
+                }
+            }
+        }
+    })
+</script>

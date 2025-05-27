@@ -7,7 +7,8 @@
 <div class="modal-dialog modal-dialog-centered" role="document" id="frmCreateMaquinaria">
     <div class="modal-content" id="frmContent">
         <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Crear Maquinaria</h5>
+            <h5 class="modal-title" id="staticBackdropLabel" v-if="(tipoMaquinaria == 1)">Crear Línea</h5>
+            <h5 class="modal-title" id="staticBackdropLabel" v-if="(tipoMaquinaria == 2)">Crear Maquinaria</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -38,7 +39,8 @@
         data: {
             vmMaquinaria: {
 
-            }
+            },
+            tipoMaquinaria: 0
         },
         mounted: function () {
             
@@ -46,6 +48,7 @@
         created: function () {
             this.vmMaquinaria = @Html.Raw(Json.Serialize(Model));
             console.log('vmMaquinaria: ', this.vmMaquinaria);
+            this.tipoMaquinaria = this.vmMaquinaria.maquTipo;
         },
         methods: {
             blockUI: function (msg) {

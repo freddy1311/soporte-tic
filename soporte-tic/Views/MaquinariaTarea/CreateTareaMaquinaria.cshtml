@@ -13,7 +13,7 @@
         <div class="modal-body">
             <div class="row mb-1">
                 <div class="col-lg-12">
-                    <label for="cboMaquinaria">Maquinaria</label>
+                    <label for="cboMaquinaria">Línea</label>
                     <select id="cboMaquinaria" class="form-select" name="maquNombre" v-model="codMaquinaria" v-on:change="selectMaquinaria()">
                         <option selected class="text-muted" value="-1">Seleccione una maquinaria...</option>
                         <option v-for="maqui in maquinarias" :value="maqui.maquCodigo">{{maqui.maquNombre}}</option>
@@ -23,7 +23,7 @@
 
             <div class="row mb-1">
                 <div class="col-lg-12">
-                    <label for="cboComponente">Componente</label>
+                    <label for="cboComponente">Maquinaria</label>
                     <select id="cboComponente" class="form-select" name="maquNombre" v-model="codComponente" v-on:change="selectComponente()">
                         <option selected class="text-muted" value="-1">Seleccione un componente...</option>
                         <option v-for="maqui in componentes" :value="maqui.maquCodigo">{{maqui.maquNombre}}</option>

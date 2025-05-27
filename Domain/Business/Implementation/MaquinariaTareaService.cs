@@ -107,6 +107,37 @@ namespace Domain.Business.Implementation
             return rm;
         }
 
+        public async Task<Utils.ResponseModel> DeleteTareasMaquinaria(long maquCodigo)
+        {
+            var rm = new Utils.ResponseModel();
+
+            try
+            {
+                var rmTareasMaquinaria = await _ctx.Get(u => u.MaquCodigo == maquCodigo);
+                if (rmTareasMaquinaria.Response)
+                {
+                    List<TareasMaquinaria> tareasToDelete = (List<TareasMaquinaria>)rmTareasMaquinaria.Result;
+
+                    foreach (var item in tareasToDelete)
+                    {
+                        var rmTareaDelete = await _ctx.Update(item);
+                    }
+
+                    rm.SetResponse(true, "Tareas de maquinaria eliminadas exitosamente!.", "Eliminar Tareas");   
+                }
+                else
+                {
+                    rm.SetResponse(false, "No se encontraron tareas de la maquinaria!.", "Eliminar Tareas");
+                }
+            }
+            catch (Exception ex)
+            {
+                rm.SetResponse(false, $"No se pudo eliminar las tareas de la maquinaria: {ex.Message}.", "Eliminar Tareas");
+            }
+
+            return rm;
+        }
+
         public async Task<Utils.ResponseModel> GetAllTareasMaquinaria()
         {
             Utils.ResponseModel rm = new Utils.ResponseModel();

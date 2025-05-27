@@ -58,7 +58,7 @@ namespace soporte_tic.Controllers
             Stream streamLogo;
 
             #region logo emp
-            if (empresa.File == null || empresa.File.Length == 0)
+            if (empresa.File == null)
             {
                 streamLogo = null;
             }
@@ -78,13 +78,16 @@ namespace soporte_tic.Controllers
             var rm = await _empresaRepository.UpdateEmpresa(objEmpresa, streamLogo!);
             if (rm.Response == true)
             {
-                string nameImg = $"{empresa.EmprRuc}.jpg";
-                var rmLogo = await _localFileService.SaveImageAsync(empresa.File, nameImg);
-                
-                if (rmLogo.Response)
+                if (empresa.File != null)
                 {
-                    objEmpresa.EmprLogo = (string)rmLogo.Result;
-                    var rmUpdateLogo = await _empresaRepository.UpdateEmpresa(objEmpresa, streamLogo!);
+                    string nameImg = $"{empresa.EmprRuc}.jpg";
+                    var rmLogo = await _localFileService.SaveImageAsync(empresa.File, nameImg);
+                    if (rmLogo.Response)
+                    {
+                        objEmpresa.EmprLogo = (string)rmLogo.Result;
+                        var rmUpdateLogo = await _empresaRepository.UpdateEmpresa(objEmpresa, streamLogo!);
+                    }
+
                 }
             }
 

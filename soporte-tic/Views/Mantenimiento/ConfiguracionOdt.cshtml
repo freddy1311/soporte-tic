@@ -47,8 +47,8 @@
                                     <small>{{conf.codtObservacion}}</small>
                                 </td>
                                 <td>
-                                    <small v-if="(conf.codtEstado == 1)">ACTIVO</small>
-                                    <small v-if="(conf.codtEstado == 2)">INACTIVO</small>
+                                    <small v-if="(conf.codtEstado == 1)" class="badge badge-soft-success">ACTIVO</small>
+                                    <small v-if="(conf.codtEstado == 2)" class="badge badge-soft-danger">INACTIVO</small>
                                 </td>
                                 <td style="text-align: center;">
                                     <a class="text-info mr-2" href="javascript:void(0);" v-on:click="showInfoConfiguracionODT(conf)">
@@ -99,7 +99,7 @@
 
                         switch (resp.result) {
                             case 1:
-                                //odts
+                                //config odts
                                 vm.getConfiguracionesODT();
                                 break;
                             case 2:

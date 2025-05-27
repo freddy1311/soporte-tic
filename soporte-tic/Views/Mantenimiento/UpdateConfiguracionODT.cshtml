@@ -38,7 +38,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-primary" v-on:click="updateConfiguracion()">Crear</button>
+            <button type="button" class="btn btn-primary" v-on:click="updateConfiguracion()">Actualizar</button>
         </div>
     </div>
 </div>
@@ -165,8 +165,8 @@
 
                     if (rm.response) {
                         rm.result = null;
-                        rm.result = 2;
-                        indexODT.$emit('responseModel', rm);
+                        rm.result = 1;
+                        configODT.$emit('responseModel', rm);
                         this.showAlert(rm.title, rm.message, 'success');
                     } else {
                         this.showAlert(rm.title, rm.message, 'warning');

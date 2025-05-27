@@ -9,17 +9,17 @@
             <div class="card-body">
                 <div class="d-flex mb-3">
                     <div class="flex-grow-1">
-                        <h4 class="card-title">Maquinarias</h4>
+                        <h4 class="card-title">Líneas</h4>
                         <p class="card-title-desc mb-0">
-                            Listado de maquinarias disponibles en el sistema.
+                            Listado de líneas disponibles en el sistema.
                         </p>
-                        <p class="text-muted mt-1"><em>Total de maquinarias: {{totalMaquinarias}}</em></p>
+                        <p class="text-muted mt-1"><em>Total de líneas: {{totalMaquinarias}}</em></p>
                     </div>
                     <div class="flex-shrink-0">
-                        <button class="btn btn-warning" title="Recargar maquinarias" v-on:click="reloadingMaquinarias()">
+                        <button class="btn btn-warning" title="Recargar líneas" v-on:click="reloadingMaquinarias()">
                             <i class="mdi mdi-refresh"></i>
                         </button>
-                        <button class="btn btn-primary" title="Crear nueva maquinaria" v-on:click="showCreateMaquinaria()">
+                        <button class="btn btn-primary" title="Crear nueva línea" v-on:click="showCreateMaquinaria()">
                             <i class="mdi mdi-plus"></i> Nuevo
                         </button>
                     </div>
@@ -38,8 +38,8 @@
                         <tbody>
                             <tr v-for="maquina in maquinarias">
                                 <td>
-                                    <small class="badge badge-soft-success" v-if="(maquina.maquTipo==1)">Maquinaria</small>
-                                    <small class="badge badge-soft-warning" v-if="(maquina.maquTipo==2)">Componente</small>
+                                    <small class="badge badge-soft-success" v-if="(maquina.maquTipo==1)">Línea</small>
+                                    <small class="badge badge-soft-warning" v-if="(maquina.maquTipo==2)">Maquinaria</small>
                                 </td>
                                 <td>
                                     <small><a href="javascript:void(0);" v-on:click="getMaquinariasComponente(maquina.maquCodigo, maquina.maquNombre)">{{maquina.maquNombre}}</a></small>
@@ -74,17 +74,17 @@
             <div class="card-body">
                 <div class="d-flex mb-3">
                     <div class="flex-grow-1">
-                        <h4 class="card-title">Componentes</h4>
+                        <h4 class="card-title">Maquinaria</h4>
                         <p class="card-title-desc mb-0">
-                            Listado de componentes de maquinaria: {{nombreMaquinariaSelected}}.
+                            Listado de maquinarias de línea: {{nombreMaquinariaSelected}}.
                         </p>
-                        <p class="text-muted mt-1"><em>Total de componentes: {{totalComponentes}}</em></p>
+                        <p class="text-muted mt-1"><em>Total de maquinarias: {{totalComponentes}}</em></p>
                     </div>
                     <div class="flex-shrink-0">
-                        <button class="btn btn-warning" title="Recargar de componentes maquinarias" v-on:click="reloadingComponenteMaquinarias()">
+                        <button class="btn btn-warning" title="Recargar de maquinarias" v-on:click="reloadingComponenteMaquinarias()">
                             <i class="mdi mdi-refresh"></i>
                         </button>
-                        <button class="btn btn-primary" title="Crear nuevo componente" v-on:click="showCreateComponenteMaquinaria()">
+                        <button class="btn btn-primary" title="Crear nuevo líneas" v-on:click="showCreateComponenteMaquinaria()">
                             <i class="mdi mdi-plus"></i> Nuevo
                         </button>
                     </div>
@@ -103,8 +103,8 @@
                         <tbody>
                             <tr v-for="componente in maquinariasComponente">
                                 <td>
-                                    <small class="badge badge-soft-success" v-if="(componente.maquTipo==1)">Maquinaria</small>
-                                    <small class="badge badge-soft-warning" v-if="(componente.maquTipo==2)">Componente</small>
+                                    <small class="badge badge-soft-success" v-if="(componente.maquTipo==1)">Línea</small>
+                                    <small class="badge badge-soft-warning" v-if="(componente.maquTipo==2)">Maquinaria</small>
                                 </td>
                                 <td>
                                     <small>{{componente.maquNombre}}</small>
@@ -235,7 +235,7 @@
                     setTimeout(() => {
                         $("#dtMaquinarias").DataTable({
                             "language": {
-                                "zeroRecords": "No se encontraron maquinarias disponibles!",
+                                "zeroRecords": "No se encontraron líneas disponibles!",
                                 "info": "Mostrando pag. _PAGE_ de _PAGES_",
                                 "infoEmpty": "No se encontró coincidencias!",
                                 "infoFiltered": "(filtrado de _MAX_ registros en total)",
@@ -244,7 +244,7 @@
                                     "previous": "<i class='mdi mdi-chevron-left'>",
                                     "next": "<i class='mdi mdi-chevron-right'>"
                                 },
-                                "lengthMenu": "Mostrar <select class=\"custom-select custom-select-sm ml-1 mr-1\"><option value='10'>10</option><option value='20'>20</option><option value='-1'>Todas</option></select> maquinarias"
+                                "lengthMenu": "Mostrar <select class=\"custom-select custom-select-sm ml-1 mr-1\"><option value='10'>10</option><option value='20'>20</option><option value='-1'>Todas</option></select> líneas"
                             },
                             pageLength: 10,
                             columns: [

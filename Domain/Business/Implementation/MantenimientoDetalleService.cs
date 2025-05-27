@@ -113,17 +113,10 @@ namespace Domain.Business.Implementation
                     foreach (var item in detallesToDelete)
                     {
                         var rmDetalleDelete = await _ctx.Delete(item);
-
-                        if (rmDetalleDelete.Response)
-                        {
-                            rm.SetResponse(true, "Detalle de ODT eliminado exitosamente!.", "Detalle ODT");
-                        }
-                        else
-                        {
-                            rm.SetResponse(false, "No se pudo eliminar el detalle de la ODT!.", "Detalle ODT");
-                        }
                     }
-                    
+
+                    rm.SetResponse(true, "Tarea de ODT eliminado exitosamente!.", "Detalle ODT");
+
                 }
                 else
                 {
