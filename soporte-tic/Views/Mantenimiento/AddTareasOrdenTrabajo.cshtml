@@ -1,4 +1,10 @@
-﻿<div class="modal-dialog modal-dialog-centered" role="document" id="frmCreateTareasOrdenTrabajo">
+﻿@{
+    var codOrden = Convert.ToInt64(ViewData["CodigoOrden"]);
+    var numOrden = Convert.ToInt32(ViewData["NumeroOrden"]);
+    var numSemana = Convert.ToInt32(ViewData["NumeroOrden"]);
+}
+
+<div class="modal-dialog modal-dialog-centered" role="document" id="frmCreateTareasOrdenTrabajo">
     <div class="modal-content" id="frmContent">
         <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">Crear Orden Trabajo</h5>
@@ -47,7 +53,10 @@
             lineas: [],
             maquinarias: [],
             listaTareas: [],
-            maquinariaSelected: 0
+            maquinariaSelected: 0,
+            codigoOrden: `@codOrden`,
+            numeroOrden: `@numOrden`,
+            numeroSemana: `@numSemana`
         },
         mounted: function () {
 
@@ -144,7 +153,14 @@
             },
             getTareas: function () {
                 if (this.maquinariaSelected > 0) {
+                    const url = '/MaquinariaTarea/GetListTareasMaquinaria/';
 
+                    axios.get(url, {params: {codMaquinaria: this.maquinariaSelected}}).
+                    then((resp) => {
+
+                    }).catch((error) => {
+
+                    });
                 } else {
 
                 }

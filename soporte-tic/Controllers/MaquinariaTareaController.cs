@@ -113,6 +113,20 @@ namespace soporte_tic.Controllers
 
             return Json(rm);
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetListTareasMaquinaria(long codMaquinaria)
+        {
+            var rm = await _maquinariaTareaService.GetTareasMaquinaria(codMaquinaria);
+
+            if (rm.Response)
+            {
+                List<VMMaquinariaTarea> tareasMaquinaria = _mapper.Map<List<VMMaquinariaTarea>>(rm.Result);
+                rm.Result = tareasMaquinaria;
+            }
+
+            return Json(rm);
+        }
         #endregion
     }
 }
