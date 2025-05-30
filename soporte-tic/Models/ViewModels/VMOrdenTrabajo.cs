@@ -21,6 +21,8 @@
         public long? UsuaRevisa { get; set; }
         public string? UsuaRevisaNombre { get; set; }
         public long CodtCodigo { get; set; }
+        public int? CountTareas { get; set; }
+        public List<VMDetalleODT>? Tareas {  get; set; }
         #endregion
     }
 }

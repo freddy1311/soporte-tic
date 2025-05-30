@@ -28,13 +28,14 @@
                     <table id="dtOrdenes" class="table dt-responsive nowrap w-100">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col">No. ODT</th>
+                                <th >No. ODT</th>
                                 <th scope="col">Semana</th>
                                 <th scope="col">F. Prevista</th>
                                 <th scope="col">F. Ejecución</th>
                                 <th scope="col">Tipo</th>
                                 <th scope="col">Maquinaria</th>
                                 <th scope="col">Responsable</th>
+                                <th scope="col">Tareas</th>
                                 <th scope="col">Estado</th>
                                 <th scope="col" style="width: 120px; text-align: center;">Opciones</th>
                             </tr>
@@ -70,14 +71,17 @@
                                     <small>{{orden.usuaResponsableNombre}}</small>
                                 </td>
                                 <td>
+                                    {{orden.countTareas}}
+                                </td>
+                                <td>
                                     <small class="badge badge-soft-warning" v-if="(orden.ortrFechaEjecucionInicio)">EN PROCESO</small>
                                     <small class="badge badge-soft-info" v-if="(!orden.ortrFechaEjecucionInicio)">ASIGNADO</small>
                                 </td>
                                 <td style="text-align: center;">
-                                    <a class="text-success mr-2" href="javascript:void(0);" title="Agregar tareas" v-on:click="showVerOrdenTrabajo(orden)">
+                                    <a class="text-success mr-2" href="javascript:void(0);" title="Agregar tareas" v-on:click="addTareasOrdenTrabajo(orden)">
                                         <i class="mdi mdi-plus-box-multiple-outline"></i>
                                     </a>
-                                    <a class="text-info mr-2" href="javascript:void(0);" title="Ver orden" v-on:click="showVerOrdenTrabajo(orden)">
+                                    <a class="text-info mr-2" href="javascript:void(0);" title="Ver orden" v-on:click="showInfoOrdenTrabajo(orden)">
                                         <i class="mdi mdi-eye-outline"></i>
                                     </a>
                                     <a class="text-warning mr-2" href="javascript:void(0);" title="Actualizar orden" v-on:click="showUpdateOrdenTrabajo(orden.ortrCodigo)">
@@ -203,7 +207,8 @@
                             columns: [
                                 { orderable: !0 }, { orderable: !0 }, { orderable: !0 }, 
                                 { orderable: !0 }, { orderable: !0 }, { orderable: !0 },
-                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 }
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 },
+                                { orderable: !0 }
                             ],
                             responsive: false,
                             destroy: true,
@@ -319,7 +324,24 @@
                     }
                 },
                 showInfoOrdenTrabajo: function (orden) {
+                    if (orden != null) {
+                        const codigoOrden = orden.ortrCodigo;
+                        window.location.href = `/Mantenimiento/ShowOrdenTrabajo?codOrden=${codigoOrden}`;
+                    } else {
+                        this.showAlert('Validación', 'No se detectó una orden de trabajo válida para mostrar!.', 'warning');
+                    }
+                },
+                addTareasOrdenTrabajo: function (orden) {
+                    let url = '/Mantenimiento/AddTareasOrdenTrabajo/';
 
+                    axios.get(url, {params: {codOrden: orden.ortrCodigo}}).
+                        then((response) => {
+                            $('.modal').html(response.data);
+                            $('#standardModal').modal('show');
+                        }).
+                        catch((error) => {
+                            console.log('Error en showUpdateOrdenTrabajo: ' + error);
+                        });
                 }
 
             }

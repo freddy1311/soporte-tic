@@ -1,41 +1,76 @@
-﻿@{
-    var codOrden = Convert.ToInt64(ViewData["CodigoOrden"]);
-    var numOrden = Convert.ToInt32(ViewData["NumeroOrden"]);
-    var numSemana = Convert.ToInt32(ViewData["NumeroOrden"]);
+﻿@model soporte_tic.Models.ViewModels.VMOrdenTrabajo
+
+@{
+    var model = Model;
 }
 
 <div class="modal-dialog modal-dialog-centered" role="document" id="frmCreateTareasOrdenTrabajo">
     <div class="modal-content" id="frmContent">
         <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Crear Orden Trabajo</h5>
+            <h5 class="modal-title" id="staticBackdropLabel">Agregar Tareas a Orden Trabajo</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <div class="row mb-1">
-                <div class="col-lg-12">
-                    <label for="cboMaquinariaPadre">Línea:</label>
-                    <select id="cboMaquinariaPadre" class="form-select" v-on:change="selectLinea()">
-                        <option selected class="text-muted" value="-1">Seleccione un línea...</option>
-                        <option v-for="linea of lineas" :value="linea.maquCodigo">{{linea.maquNombre}}</option>
-                    </select>
+                <div class="text-muted">
+                    <div class="d-flex mb-1">
+                        <div class="me-2 fw-bold" style="width: 100px;">Orden #:</div>
+                        <div>{{ ordenTrabajo.ortrNúmero }}</div>
+                    </div>
+                    <div class="d-flex mb-1">
+                        <div class="me-2 fw-bold" style="width: 100px;">Semana:</div>
+                        <div>{{ ordenTrabajo.ortrSemana }}</div>
+                    </div>
+                    <div class="d-flex mb-1">
+                        <div class="me-2 fw-bold" style="width: 100px;">Línea:</div>
+                        <div>{{ ordenTrabajo.maquNombreF }}</div>
+                    </div>
+                    <div class="d-flex mb-1">
+                        <div class="me-2 fw-bold" style="width: 100px;">Maquinaria:</div>
+                        <div>{{ ordenTrabajo.maquNombre }}</div>
+                    </div>
                 </div>
             </div>
+            <hr />
             <div class="row mb-1">
-                <div class="col-lg-12">
-                    <label for="cboMaquinaria">Maquinaria:</label>
-                    <select id="cboMaquinaria" class="form-select" v-on:change="selectMaquinaria()">
-                        <option selected class="text-muted" value="-1">Seleccione un maquinaria...</option>
-                        <option v-for="maqui of maquinarias" :value="maqui.maquCodigo">{{maqui.maquNombre}}</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row mb-1">
-                <div class="col-lg-12">
+                <div class="col-lg-10">
                     <label for="cboTareas">Tareas:</label>
-                    <select id="cboTareas" class="form-select" v-on:change="selectTarea()">
+                    <select id="cboTareas" class="form-select">
                         <option selected class="text-muted" value="-1">Seleccione una tarea...</option>
-                        <option v-for="resp of responsables" :value="resp.usuaCodigo">{{resp.usuaNombre}}</option>
+                        <option v-for="tarea of listaTareas" :value="tarea.tamaCodigo">{{tarea.tamaNombre}}</option>
                     </select>
+                </div>
+                <div class="col-lg-2">
+                    <label>Agregar:</label>
+                    <button class="btn btn-success" v-on:click="addTarea()">
+                        <i class="mdi mdi-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <hr />
+            <div class="row mb-1">
+                <div class="col-lg-12">
+                    <p class="text-muted">
+                        Tareas a agregar:
+                    </p>
+                    <table class="table table-sm table-bordered dt-responsive w-100">
+                        <thead>
+                            <tr>
+                                <th scope="col">Tarea</th>
+                                <th scope="col" width="20">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="tarea of listaTareasIn">
+                                <td>{{tarea.tamaNombre}}</td>
+                                <td style="text-align: center;">
+                                    <a class="text-danger" href="javascript:void(0);" title="Eliminar tarea" v-on:click="deleteTarea(tarea.tamaCodigo)">
+                                        <i class="mdi mdi-delete-outline"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -53,16 +88,21 @@
             lineas: [],
             maquinarias: [],
             listaTareas: [],
+            listaTareasIn: [],
+            ordenTrabajo: {},
             maquinariaSelected: 0,
-            codigoOrden: `@codOrden`,
-            numeroOrden: `@numOrden`,
-            numeroSemana: `@numSemana`
+            codigoOrden: 0,
+            numeroOrden: 0,
+            numeroSemana: 0
         },
         mounted: function () {
 
         },
         created: function () {
-
+            this.ordenTrabajo = @Html.Raw(Json.Serialize(Model));
+            this.maquinariaSelected = this.ordenTrabajo.maquCodigo;
+            //console.log(JSON.stringify(this.ordenTrabajo));
+            this.getTareas();
         },
         methods: {
             blockUI: function (msg) {
@@ -153,16 +193,74 @@
             },
             getTareas: function () {
                 if (this.maquinariaSelected > 0) {
-                    const url = '/MaquinariaTarea/GetListTareasMaquinaria/';
+                    const url = '/MaquinariaTarea/GetListTareasMaquinariaNoAll/';
 
                     axios.get(url, {params: {codMaquinaria: this.maquinariaSelected}}).
                     then((resp) => {
+                        let rm = resp.data;
 
+                        if (rm.response) {
+                            this.listaTareas = rm.result;
+                        } else {
+                            this.listaTareas = [];
+                        }
                     }).catch((error) => {
-
+                        console.log('Ocurrió un error en getTareas:', error);
                     });
                 } else {
 
+                }
+            },
+            addTarea: function () {
+                let codTarea = $('#cboTareas').val();
+                //console.log('código tarea:', codTarea);
+                if (codTarea > 0) {
+                    //console.log('tareas:', JSON.stringify(this.listaTareas));
+                    let existe = this.listaTareasIn.some(t => t.tamaCodigo === Number(codTarea));
+                    if (existe) {
+                        this.showAlert('Validación', 'La tarea seleccionada ya se encuentra en la lista previa!.', 'warning');
+                        return;
+                    }
+                    let tareaAgregar = this.listaTareas.find(t => t.tamaCodigo === Number(codTarea));
+                    tareaAgregar.ortrCodigo = this.ordenTrabajo.ortrCodigo;
+                    //console.log('tarea add:', JSON.stringify(tareaAgregar));
+                    this.listaTareasIn.push(tareaAgregar);
+                } else {
+                    this.showAlert('Validación', 'No se detectó una tarea válida!.', 'warning');
+                    return;
+                }
+                
+            },
+            deleteTarea: function (codTarea) {
+                let existe = this.listaTareasIn.some(t => t.tamaCodigo === Number(codTarea));
+                if (existe) {
+                    let tareaAgregar = this.listaTareas.find(t => t.tamaCodigo === Number(codTarea));
+                    //console.log('tarea add:', JSON.stringify(tareaAgregar));
+                    this.listaTareasIn = this.listaTareasIn.filter(t => t.tamaCodigo !== codTarea);
+                } else {
+                    this.showAlert('Validación', 'La tarea seleccionada ya se encuentra en la lista previa!.', 'warning');
+                    return;
+                }
+            },
+            createTareasOrdenTrabajo: function () {
+                let url = '/Mantenimiento/AddTareasOrdenTrabajo/';
+
+                if (this.listaTareasIn.length > 0) {
+                    axios.post(url, this.listaTareasIn).
+                        then((resp) => {
+                            let rm = resp.data;
+
+                            if (rm.response) {
+                                rm.result = 1;
+                                indexODT.$emit('responseModel', rm);
+                            } else {
+                                this.showAlert(rm.title, rm.message, 'warning');
+                            }
+                        }).catch((error) => {
+
+                        });
+                } else {
+                    this.showAlert('Validación', 'No se detectaron tareas para agregar a la orden de Trabajo!.', 'warning');
                 }
             }
         }

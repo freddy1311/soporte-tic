@@ -132,6 +132,15 @@ namespace soporte_tic.Controllers
             List<OrdenTrabajo> ordenesAbiertas = rmOrdenesAbiertas.Result;
 
             List<VMOrdenTrabajo> vmOrdenes = _mapper.Map<List<VMOrdenTrabajo>>(ordenesAbiertas);
+            if (vmOrdenes.Count > 0)
+            {
+                foreach (var item in vmOrdenes)
+                {
+                    var countTareas = await _mantenimientoDetalleService.CountTareasOdt(item.OrtrCodigo);
+                    item.CountTareas = countTareas;
+                }
+            }
+            
             rmOrdenesAbiertas.Result = vmOrdenes;
 
             return Json(rmOrdenesAbiertas);
@@ -211,12 +220,12 @@ namespace soporte_tic.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddTareasOrdenTrabajo(long codOrden, int numOrden, int numSemana)
+        public async Task<IActionResult> AddTareasOrdenTrabajo(long codOrden)
         {
-            ViewData["CodigoOrden"] = codOrden;
-            ViewData["NumeroOrden"] = numOrden;
-            ViewData["NumeroSemana"] = numSemana;
-            return PartialView();
+            var rmOrdentrabajo = await _mantenimientoService.GetODT(codOrden);
+            var ordenTrabajo = (rmOrdentrabajo.Response) ? rmOrdentrabajo.Result : new OrdenTrabajo();
+            VMOrdenTrabajo orden = _mapper.Map<VMOrdenTrabajo>(ordenTrabajo);
+            return PartialView(orden);
         }
 
         [HttpPost]
@@ -231,6 +240,25 @@ namespace soporte_tic.Controllers
             }
 
             return Json(rm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ShowOrdenTrabajo(long codOrden)
+        {
+            var rmOrdentrabajo = await _mantenimientoService.GetODT(codOrden);
+            var ordenTrabajo = (rmOrdentrabajo.Response) ? rmOrdentrabajo.Result : new OrdenTrabajo();
+            VMOrdenTrabajo orden = _mapper.Map<VMOrdenTrabajo>(ordenTrabajo);
+
+            if (orden.OrtrCodigo > 0)
+            {
+                #region get tareas odt
+                var rmTareas = await _mantenimientoDetalleService.GetListDetalleOdt(orden.OrtrCodigo);
+                var tareasOrden = (rmTareas.Response) ? rmTareas.Result : null;
+                List<VMDetalleODT> tareas = _mapper.Map<List<VMDetalleODT>>(tareasOrden);
+                orden.Tareas = tareas;
+                #endregion
+            }
+            return View(orden);
         }
         #endregion
     }

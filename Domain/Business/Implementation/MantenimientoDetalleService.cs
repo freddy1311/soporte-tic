@@ -162,6 +162,32 @@ namespace Domain.Business.Implementation
             return rm;
         }
 
+        public async Task<int> CountTareasOdt(long codOrden)
+        {
+            int count = 0;
+
+            try
+            {
+                var rmQuery = await _ctx.GetAll(u => u.OrtrCodigo == codOrden);
+                IQueryable<DetalleOdt> query = (IQueryable<DetalleOdt>)rmQuery.Result;
+
+                if (query.ToList().Count > 0)
+                {
+                    count = (int)query.ToList().Count;
+                }
+                else
+                {
+                    count = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                count = 0;
+            }
+
+            return count;
+        }
+
         public async Task<Utils.ResponseModel> Update(DetalleOdt entity)
         {
             Utils.ResponseModel rm = new Utils.ResponseModel();

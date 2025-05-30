@@ -19,6 +19,8 @@ namespace Domain.Business.Interface
         Task<Utils.ResponseModel> Delete(long codDetalle);
 
         Task<Utils.ResponseModel> DeleteAll(long codOrden);
+
+        Task<int> CountTareasOdt(long codOrden);
         #endregion
     }
 }

@@ -202,7 +202,7 @@
 
                     this.blockUI('Cargando tareas...');
 
-                    axios.get(url).then(response => {
+                    axios.get(url).then((response) => {
                         let rm = response.data;
                         console.log(JSON.stringify(rm));
 

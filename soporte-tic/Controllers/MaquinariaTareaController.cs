@@ -115,7 +115,7 @@ namespace soporte_tic.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetListTareasMaquinaria(long codMaquinaria)
+        public async Task<JsonResult> GetListTareasMaquinariaNoAll(long codMaquinaria)
         {
             var rm = await _maquinariaTareaService.GetTareasMaquinaria(codMaquinaria);
 
