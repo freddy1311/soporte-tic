@@ -283,6 +283,33 @@ namespace soporte_tic.Controllers
 
             return Json(rm);
         }
+
+        [HttpGet]
+        public IActionResult Pendientes()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetListODTPendientes()
+        {
+            var rmOrdenesConPendientes = await _mantenimientoService.GetListODTPendientes();
+            List<OrdenTrabajo> ordenesAbiertas = rmOrdenesConPendientes.Result;
+
+            List<VMOrdenTrabajo> vmOrdenes = _mapper.Map<List<VMOrdenTrabajo>>(ordenesAbiertas);
+            if (vmOrdenes.Count > 0)
+            {
+                foreach (var item in vmOrdenes)
+                {
+                    var countTareas = await _mantenimientoDetalleService.CountTareasOdt(item.OrtrCodigo);
+                    item.CountTareas = countTareas;
+                }
+            }
+
+            rmOrdenesConPendientes.Result = vmOrdenes;
+
+            return Json(rmOrdenesConPendientes);
+        }
         #endregion
     }
 }

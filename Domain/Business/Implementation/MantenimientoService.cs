@@ -215,6 +215,44 @@ namespace Domain.Business.Implementation
             return rm;
         }
 
+        public async Task<Utils.ResponseModel> GetListODTPendientes()
+        {
+            Utils.ResponseModel rm = new Utils.ResponseModel();
+
+            try
+            {
+                var rmQuery = await _ctx.GetAll(u =>
+                    u.OrtrFechaEjecucionFin == null &&
+                    u.DetalleOdts.Any(d => d.DodtResultado == 2 || d.DodtResultado == 3));
+                IQueryable<OrdenTrabajo> query = (IQueryable<OrdenTrabajo>)rmQuery.Result;
+
+
+                if (query.ToList().Count > 0)
+                {
+                    var odts = query.
+                        Include(m => m.CodtCodigoNavigation).
+                        Include(m => m.MaquCodigoNavigation).
+                            ThenInclude(f => f.MaquCodigoFkNavigation).
+                        Include(m => m.UsuaResponsableNavigation).
+                        Include(m => m.UsuaRevisaNavigation).
+                        OrderBy(m => m.OrtrNúmero).
+                        ToList();
+
+                    rm.SetResponse(true, "Consulta realizada exitosamente!.", "ODT", odts);
+                }
+                else
+                {
+                    rm.SetResponse(false, "No se obtuvo las órdenes de trabajo!.", "ODT");
+                }
+            }
+            catch (Exception ex)
+            {
+                rm.SetResponse(true, $"No se pudo obtener la lista de órdenes de trabajo: {ex.Message}.", "ODT");
+            }
+
+            return rm;
+        }
+
         public async Task<Utils.ResponseModel> GetODT(long codOrden)
         {
             Utils.ResponseModel rm = new Utils.ResponseModel();

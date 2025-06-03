@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "Órdenes de Trabajo";
+    ViewBag.pagetitle = "Pendientes";
+}
+
+<div class="row" id="odts-pendientes">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Shared/_modalStandard.cshtml")
+
+@section scripts {
+    <!-- Required datatable js -->
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+
+    <script>
+        var odtsPendientes = new Vue({
+            el: '#odts-pendientes',
+            data: {
+                ordenes: [],
+                totalOrdenes: 0,
+                totalTareas: 0,
+                tareas: []
+            },
+            mounted: function () {
+
+            },
+            created: function () {
+
+            },
+            methods: {
+                blockUI: function (msg) {
+                    $(function () {
+                        //#region block UI
+                        $('#odts-pendientes').block({
+                            message: msg,
+                            css: {
+                                backgroundColor: '#36404a',
+                                color: '#fff',
+                                height: 40,
+                                paddingTop: 10,
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                borderRadius: 7,
+                                border: '0',
+                                opacity: 0.5,
+                                zIndex: 9999999,
+                                cursor: 'wait'
+                            },
+                        });
+                        //#endregion
+                    });
+                },
+                unblockUI: function () {
+                    $(function () {
+                        setTimeout(() => {
+                            $('#odts-pendientes').unblock();
+                        }, 1000);
+                    });
+                },
+                showAlert: function (title, msg, icon) {
+
+                    const typeIcon = icon;
+
+                    Swal.fire(
+                        {
+                            title: title,
+                            text: msg,
+                            icon: typeIcon,
+                            confirmButtonColor: '#0576b9'
+                        }
+                    );
+                },
+            }
+        });
+    </script>
+}
