@@ -237,6 +237,7 @@ namespace soporte_tic.Controllers
             foreach (var tarea in tareasMaquinaria)
             {
                 var rm1 = await _mantenimientoDetalleService.Create(tarea);
+                rm = rm1;
             }
 
             return Json(rm);
@@ -259,6 +260,28 @@ namespace soporte_tic.Controllers
                 #endregion
             }
             return View(orden);
+        }
+
+        [HttpPut]
+        public async Task<JsonResult> FinalizeOrdenTrabajo([FromBody] VMOrdenTrabajo model)
+        {
+            List<DetalleOdt> tareasOrdenes = _mapper.Map<List<DetalleOdt>>(model.Tareas);
+            OrdenTrabajo ordenUpdate = _mapper.Map<OrdenTrabajo>(model);
+            ordenUpdate.UsuaRevisa = Convert.ToInt64(User.FindFirst("CodigoUsuario")?.Value);
+            
+            var rm = await _mantenimientoService.Update(ordenUpdate);
+
+            #region update tareas de odt
+            if (rm.Response && tareasOrdenes.Count > 0)
+            {
+                foreach (var tarea in tareasOrdenes)
+                {
+                    var rmTarea = await _mantenimientoDetalleService.Update(tarea);
+                }
+            }
+            #endregion
+
+            return Json(rm);
         }
         #endregion
     }

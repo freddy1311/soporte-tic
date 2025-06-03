@@ -268,6 +268,8 @@ namespace Domain.Business.Implementation
 
                     ordenUpdate.OrtrFechaPrevistaInicio = entity.OrtrFechaPrevistaInicio;
                     ordenUpdate.OrtrFechaPrevistaFin = entity.OrtrFechaPrevistaFin;
+                    ordenUpdate.OrtrFechaEjecucionInicio = entity.OrtrFechaEjecucionInicio;
+                    ordenUpdate.OrtrFechaEjecucionFin = entity.OrtrFechaEjecucionFin;
                     ordenUpdate.OrtrSemana = entity.OrtrSemana;
                     ordenUpdate.OrtrTipo = entity.OrtrTipo;
                     ordenUpdate.MaquCodigo = entity.MaquCodigo;

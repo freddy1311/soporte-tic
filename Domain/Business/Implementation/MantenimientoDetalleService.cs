@@ -37,6 +37,16 @@ namespace Domain.Business.Implementation
 
             try
             {
+                #region check tarea preview
+                var rmQuery = await _ctx.GetAll(u => u.DodtCodigo == entity.DodtCodigo);
+                IQueryable<DetalleOdt> query = (IQueryable<DetalleOdt>)rmQuery.Result;
+                if (query.ToList().Count > 0) 
+                {
+                    rm.SetResponse(false, "Tarea existente en la Orden de Trabajo!.");
+                    return rm;
+                }
+                #endregion
+
                 entity.DodtFecha = _utilsService.GetCurrentDate();
 
                 var rmCreate = await _ctx.Insert(entity);

@@ -23,21 +23,23 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-print-none row">
-                        <div class="col-3">
+                        <div class="col-2">
                             <div class="mb-3">
                                 <label for="dtInicioEjecucion" class="form-label">Inicio ejecución:</label>
-                                <input id="dtInicioEjecucion" class="form-control" type="date" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="dtFinEjecucion" class="form-label">Fin ejecución:</label>
-                                <input id="dtFinEjecucion" class="form-control" type="date" />
+                                <input id="dtInicioEjecucion" class="form-control" type="date" v-model="vmOrdenTrabajo.ortrFechaEjecucionInicio" />
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="float-end">
-                                <label>Opciones:</label>
+                        <div class="col-2">
+                            <div class="mb-3">
+                                <label for="dtFinEjecucion" class="form-label">Fin ejecución:</label>
+                                <input id="dtFinEjecucion" class="form-control" type="date" v-model="vmOrdenTrabajo.ortrFechaEjecucionFin" />
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="float-end mb-3">
+                                <label class="form-label">Opciones:</label><br />
+                                <a href="javascript:void(0);" v-on:click="updateOdt()" class="btn btn-primary w-md waves-effect waves-light">Finalizar</a>
                                 <a href="javascript:window.print()" class="btn btn-success waves-effect waves-light me-1"><i class="fa fa-print"></i></a>
-                                <a href="javascript:void(0);" v-on:click="updateOdt()" class="btn btn-primary w-md waves-effect waves-light">Actualizar</a>
                             </div>
                         </div>
                     </div>
@@ -116,9 +118,9 @@
                                             <strong class="text-muted">Observación:</strong><input class="input-noborder text-muted" type="text" maxlength="150" v-model="tarea.dodtObservacion" />
                                         </small>
                                     </td>
-                                    <td class="text-end form-radio-info"><input :name="'estado-' + index" type="radio" value="1" v-model="tarea.dodtResultado" /></td>
-                                    <td class="text-end"><input :name="'estado-' + index" type="radio" value="2" v-model="tarea.dodtResultado" /></td>
-                                    <td class="text-end"><input :name="'estado-' + index" type="radio" value="3" v-model="tarea.dodtResultado" /></td>
+                                    <td class="text-end"><input :name="'estado-' + index" type="radio" value="1" v-model.number="tarea.dodtResultado" /></td>
+                                    <td class="text-end"><input :name="'estado-' + index" type="radio" value="2" v-model.number="tarea.dodtResultado" /></td>
+                                    <td class="text-end"><input :name="'estado-' + index" type="radio" value="3" v-model.number="tarea.dodtResultado" /></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -127,10 +129,10 @@
                         <div class="col-12">
                             <label>Observación general:</label>
                             <textarea class="form-control"
-                                      rows="3"
-                                      placeholder="Ingrese observaciones generales..."
-                                      maxlength="350"
-                                      v-model="vmOrdenTrabajo.ortrObservacion">
+                                rows="3"
+                                placeholder="Ingrese observaciones generales..."
+                                maxlength="350"
+                                v-model="vmOrdenTrabajo.ortrObservacion">
                         </textarea>
                         </div>
                     </div>
@@ -174,6 +176,48 @@
                 this.getDataEmpresa();
             },
             methods: {
+                blockUI: function (msg) {
+                    $(function () {
+                        //#region block UI
+                        $('#odt').block({
+                            message: msg,
+                            css: {
+                                backgroundColor: '#36404a',
+                                color: '#fff',
+                                height: 40,
+                                paddingTop: 10,
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                borderRadius: 7,
+                                border: '0',
+                                opacity: 0.5,
+                                zIndex: 9999999,
+                                cursor: 'wait'
+                            },
+                        });
+                        //#endregion
+                    });
+                },
+                unblockUI: function () {
+                    $(function () {
+                        setTimeout(() => {
+                            $('#odt').unblock();
+                        }, 1000);
+                    });
+                },
+                showAlert: function (title, msg, icon) {
+
+                    const typeIcon = icon;
+
+                    Swal.fire(
+                        {
+                            title: title,
+                            text: msg,
+                            icon: typeIcon,
+                            confirmButtonColor: '#0576b9'
+                        }
+                    );
+                },
                 getDataEmpresa: function () {
                     const url = '/Empresa/GetEmpresa/';
 
@@ -232,6 +276,37 @@
                 },
                 updateOdt: function () {
                     console.log(JSON.stringify(this.vmOrdenTrabajo));
+                    const url = '/Mantenimiento/FinalizeOrdenTrabajo/';
+
+                    Swal.fire({
+                        title: 'Está seguro de querer finalizar la Orden de Trabajo?',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí',
+                        confirmButtonColor: '#d65530',
+                        icon: 'question'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.blockUI('Finalizando Orden de Trabajo...');
+
+                            axios.put(url, this.vmOrdenTrabajo).
+                                then((resp) => {
+                                    let rm = resp.data;
+
+                                    if (rm.response) {
+                                        this.showAlert(rm.title, rm.message, 'success');
+                                        window.location.href = `/Mantenimiento/ShowOrdenTrabajo?codOrden=${this.vmOrdenTrabajo.ortrCodigo}`;
+                                    } else {
+                                        this.showAlert(rm.title, rm.message, 'warning');
+                                    }
+
+                                    this.unblockUI();
+                                }).
+                                catch((err) => {
+                                    console.log(`Ocurrió un error en updateOdt: ${err}`);
+                                    this.unblockUI();
+                                });
+                        }
+                    });
                 }
             }
         });
