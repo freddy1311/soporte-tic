@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Órdenes de Trabajo";
+    ViewBag.Title = "Tareas de ODT";
     ViewBag.pagetitle = "Pendientes";
 }
 
@@ -7,7 +7,74 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-
+                <div class="d-flex mb-3">
+                    <div class="flex-grow-1">
+                        <h4 class="card-title">Tarea de Órdenes de Trabajo</h4>
+                        <p class="card-title-desc mb-0">
+                            Listado de órdenes de tareas pendientes de ODT's'.
+                        </p>
+                        <p class="text-muted mt-1"><em>Total de ODT's': {{totalOrdenes}}</em></p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button class="btn btn-warning" title="Recargar órdenes de trabajo" v-on:click="reloadingOrdenes()">
+                            <i class="mdi mdi-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="tbl-ordenes" v-if="(ordenes.length > 0)">
+                    <table id="dtOrdenes" class="table dt-responsive nowrap w-100">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ODT</th>
+                                <th scope="col">Semana</th>
+                                <th scope="col">F. Ejecución</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Maquinaria</th>
+                                <th scope="col">Responsable</th>
+                                <th scope="col">Pendiente</th>
+                                <th scope="col">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="orden in ordenes">
+                                <td>
+                                    <small># {{orden.ortrNumero}}</small>
+                                </td>
+                                <td>
+                                    <small class="badge badge-soft-success">SEMANA: {{orden.ortrSemana}}</small>
+                                </td>
+                                <td>
+                                    <small v-if="(orden.ortrFechaEjecucionInicio)">{{formatFecha(orden.ortrFechaEjecucionInicio)}}</small>
+                                    <small v-if="(!orden.ortrFechaEjecucionInicio)">-----</small>
+                                    <br />
+                                    <small v-if="(orden.ortrFechaEjecucionFin)">{{formatFecha(orden.ortrFechaEjecucionFin)}}</small>
+                                    <small v-if="(!orden.ortrFechaEjecucionFin)">-----</small>
+                                </td>
+                                <td>
+                                    <small class="badge badge-soft-success" v-if="(orden.ortrTipo == 1)">MECÁNICO</small>
+                                    <small class="badge badge-soft-info" v-if="(orden.ortrTipo == 2)">ELÉCTRICO</small>
+                                </td>
+                                <td>
+                                    <small>{{orden.maquNombreF}}</small><br />
+                                    <small><em>{{orden.maquNombre}}</em></small>
+                                </td>
+                                <td>
+                                    <small>{{orden.usuaResponsableNombre}}</small>
+                                </td>
+                                <td>
+                                    <small>{{orden.dodtObservacion}}</small>
+                                </td>
+                                <td>
+                                    <small class="badge badge-soft-danger">{{getResultado(orden.dodtResultado)}}</small>
+                                </td>
+                               @*  <td>
+                                    <small class="badge badge-soft-success" v-if="(orden.ortrFechaEjecucionInicio)">REALIZADO</small>
+                                    <small class="badge badge-soft-warning" v-if="(!orden.ortrFechaEjecucionInicio)">EN PROCESO</small>
+                                </td> *@
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -36,7 +103,7 @@
 
             },
             created: function () {
-
+                this.getOrdenesTrabajoPendientes();
             },
             methods: {
                 blockUI: function (msg) {
@@ -69,7 +136,6 @@
                     });
                 },
                 showAlert: function (title, msg, icon) {
-
                     const typeIcon = icon;
 
                     Swal.fire(
@@ -80,6 +146,112 @@
                             confirmButtonColor: '#0576b9'
                         }
                     );
+                },
+                initTableOrdenes: function () {
+                    setTimeout(() => {
+                        $("#dtOrdenes").DataTable({
+                            "language": {
+                                "zeroRecords": "No se encontraron órdenes disponibles!",
+                                "info": "Mostrando pag. _PAGE_ de _PAGES_",
+                                "infoEmpty": "No se encontró coincidencias!",
+                                "infoFiltered": "(filtrado de _MAX_ registros en total)",
+                                "search": "Buscar:",
+                                "paginate": {
+                                    "previous": "<i class='mdi mdi-chevron-left'>",
+                                    "next": "<i class='mdi mdi-chevron-right'>"
+                                },
+                                "lengthMenu": "Mostrar <select class=\"custom-select custom-select-sm ml-1 mr-1\"><option value='10'>10</option><option value='20'>20</option><option value='-1'>Todas</option></select> órdenes"
+                            },
+                            pageLength: 10,
+                            columns: [
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 },
+                                { orderable: !0 }, { orderable: !0 }, { orderable: !0 },
+                                { orderable: !0 }, { orderable: !0 }
+                            ],
+                            responsive: false,
+                            destroy: true,
+                            retrieve: true,
+                            autoFill: true,
+                            order: [],
+                            drawCallback: function () {
+                                $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+                                $(".dataTables_paginate ").addClass('float-end');
+                            }
+                        });
+                    }, 500);
+                },
+                formatFecha: function (fecha) {
+                    const d = new Date(fecha);
+                    const year = d.getFullYear();
+                    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+                    const day = ('0' + d.getDate()).slice(-2);
+                    return `${year}-${month}-${day}`;
+                },
+                getResultado: function (cal) {
+                    switch (cal) {
+                        case 1:
+                            return 'BUENO';
+                        case 2:
+                            return 'REPARAR';
+                        case 3:
+                            return 'URGENTE';
+                    }
+                },
+                getOrdenesTrabajoPendientes: function () {
+                    let url = '/Mantenimiento/GetListODTPendientes/';
+
+                    this.blockUI('Cargando tareas de órdenes de trabajo...');
+                    this.ordenes = [];
+                    this.totalOrdenes = 0;
+
+                    axios.get(url).
+                        then((response) => {
+                            let rm = response.data;
+
+                            if (rm.response) {
+                                //this.ordenes = rm.result;
+                                let ordenesAux = rm.result;
+                                this.ordenes = ordenesAux.flatMap(odt =>
+                                    odt.tareas.map(tarea => ({
+                                    // Campos de la tarea
+                                    dodtCodigo: tarea.dodtCodigo,
+                                    tamaCodigo: tarea.tamaCodigo,
+                                    tamaNombre: tarea.tamaNombre,
+                                    dodtResultado: tarea.dodtResultado,
+                                    dodtObservacion: tarea.dodtObservacion,
+
+                                    // Campos del objeto padre
+                                    ortrCodigo: odt.ortrCodigo,
+                                    maquNombreF: odt.maquNombreF,
+                                    maquNombre: odt.maquNombre,
+                                    ortrNumero: odt.ortrNúmero,
+                                    ortrSemana: odt.ortrSemana,
+                                    ortrTipo: odt.ortrTipo,
+                                    usuaResponsableNombre: odt.usuaResponsableNombre,
+                                    ortrFechaEjecucionInicio: odt.ortrFechaEjecucionInicio,
+                                    ortrFechaEjecucionFin: odt.ortrFechaEjecucionFin
+                                    }))
+                                );
+                                this.totalOrdenes = this.ordenes.length;
+                                console.log('getOrdenesTrabajoPendientes: ' + JSON.stringify(this.ordenes));
+                            } else {
+                                this.ordenes = [];
+                                this.totalOrdenes = 0;
+                            }
+
+                            this.initTableOrdenes();
+
+                            this.unblockUI();
+                        }).
+                        catch((error) => {
+                            console.log('Error en getOrdenesTrabajoPendientes: ' + error);
+                            this.unblockUI();
+                            this.ordenes = [];
+                            this.totalOrdenes = 0;
+                        });
+                },
+                reloadingOrdenes: function () {
+                    this.getOrdenesTrabajoPendientes();
                 },
             }
         });

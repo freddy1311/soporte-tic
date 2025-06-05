@@ -1,0 +1,318 @@
+﻿@model soporte_tic.Models.ViewModels.VMOrdenTrabajo
+
+@{
+    var modelOrdenTrabajo = Model;
+    ViewBag.Title = "Reporte General";
+    ViewBag.pagetitle = "ODT's";
+}
+
+<style>
+    table td input.input-noborder {
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        width: 100%;
+        box-sizing: border-box;
+        font-style: italic;
+    }
+</style>
+
+<div id="reporte-odts">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-print-none row">
+                        <div class="col-2">
+                            <div class="mb-3">
+                                <label for="dtInicioEjecucion" class="form-label">Fecha desde:</label>
+                                <input id="dtInicioEjecucion" class="form-control" type="date" v-model="fechaInicio" />
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="mb-3">
+                                <label for="dtFinEjecucion" class="form-label">Fecha hasta:</label>
+                                <input id="dtFinEjecucion" class="form-control" type="date" v-model="fechaFin" />
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="float-end mb-3">
+                                <label class="form-label">Opciones:</label><br />
+                                <a href="javascript:void(0);" v-on:click="getQueryReport()" class="btn btn-primary w-md waves-effect waves-light">Consultar</a>
+                                <a href="javascript:window.print()" class="btn btn-success waves-effect waves-light me-1"><i class="fa fa-print"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" @* v-if="(listaOrdenes.length > 0)" *@>
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="invoice-title">
+                        <h4 class="float-end font-size-16">Reporte General de Órdenes de Trabajo</h4>
+                        <div class="mb-4">
+                            <img :src="logoEmpresa" alt="logo" height="64" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <address>
+                                <strong class="mb-2 d-inline-block">Datos Empresa:</strong><br>
+                                {{vmEmpresa.emprNombre}}<br />
+                                RUC: {{vmEmpresa.emprRuc}}<br />
+                            </address>
+                        </div>
+                        <div class="col-6 text-sm-end">
+                            <address class="mt-2 mt-sm-0">
+                                <strong class="mb-2 d-inline-block">Sucursal:</strong><br>
+                                {{vmSucursal.sucuNombre}}<br>
+                                {{vmSucursal.sucuDireccion}}, {{vmSucursal.sucuCiudad}}<br />
+                                {{vmSucursal.sucuTelefono}}
+                            </address>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mt-3">
+                            <address>
+                                <strong class="mb-2 d-inline-block">Información ODT:</strong><br>
+                                Semana: {{vmOrdenTrabajo.ortrSemana}}<br>
+                                <span v-if="(vmOrdenTrabajo.ortrTipo == 1)">Tipo: Mecánico</span>
+                                <span v-if="(vmOrdenTrabajo.ortrTipo == 2)">Tipo: Eléctrico</span><br />
+                                Línea: {{vmOrdenTrabajo.maquNombreF}}<br />
+                                Maquinaria: {{vmOrdenTrabajo.maquNombre}}
+
+                            </address>
+                        </div>
+                        <div class="col-6 mt-3 text-sm-end">
+                            <address>
+                                <strong class="mb-2 d-inline-block">Fechas consulta:</strong><br>
+                                Desde: {{fechaInicio}}<br />
+                                Hasta: {{fechaFin}}
+                            </address>
+                        </div>
+                    </div>
+                    <div class="py-2 mt-3">
+                        <h3 class="font-size-15 fw-semibold">Tareas asignadas</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 40px;">No.</th>
+                                    <th>Tarea</th>
+                                    <th class="text-end" style="width: 50px;">Bueno</th>
+                                    <th class="text-end" style="width: 50px;">Reparar</th>
+                                    <th class="text-end" style="width: 50px;">Urgente</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(tarea, index) in vmOrdenTrabajo.tareas" :key="index">
+                                    <td>{{ index < 9 ? '0' + (index + 1) : (index + 1) }}</td>
+                                    <td>
+                                        {{tarea.tamaNombre}}<br />
+                                        <small>
+                                            <strong class="text-muted">Observación:</strong><input class="input-noborder text-muted" type="text" maxlength="150" v-model="tarea.dodtObservacion" />
+                                        </small>
+                                    </td>
+                                    <td class="text-end"><input :name="'estado-' + index" type="radio" value="1" v-model.number="tarea.dodtResultado" /></td>
+                                    <td class="text-end"><input :name="'estado-' + index" type="radio" value="2" v-model.number="tarea.dodtResultado" /></td>
+                                    <td class="text-end"><input :name="'estado-' + index" type="radio" value="3" v-model.number="tarea.dodtResultado" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="py-2 mt-2 row">
+                        <div class="col-12">
+                            <label>Observación general:</label>
+                            <textarea class="form-control"
+                                      rows="3"
+                                      placeholder="Ingrese observaciones generales..."
+                                      maxlength="350"
+                                      v-model="vmOrdenTrabajo.ortrObservacion">
+                        </textarea>
+                        </div>
+                    </div>
+                    <div class="py-2 mt-3 row">
+                        <div class="col-12">
+                            <label class="text-muted">
+                                <small class="fst-italic">
+                                    NOTA: Este documento tiene carácter únicamente informativo y no representa una recomendación, compromiso ni garantía por parte de la empresa.
+                                </small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/assets/js/app.js"></script>
+    <script>
+        var odtFile = new Vue({
+            el: '#reporte-odts',
+            data: {
+                listaOrdenes: [],
+                vmOrdenTrabajo: {},
+                vmEmpresa: {},
+                vmSucursal: {},
+                logoEmpresa: '',
+                fechaInicio: '',
+                fechaFin: ''
+            },
+            mounted: function () {
+
+            },
+            created: function () {
+                this.getDataEmpresa();
+            },
+            methods: {
+                blockUI: function (msg) {
+                    $(function () {
+                        //#region block UI
+                        $('#reporte-odts').block({
+                            message: msg,
+                            css: {
+                                backgroundColor: '#36404a',
+                                color: '#fff',
+                                height: 40,
+                                paddingTop: 10,
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                borderRadius: 7,
+                                border: '0',
+                                opacity: 0.5,
+                                zIndex: 9999999,
+                                cursor: 'wait'
+                            },
+                        });
+                        //#endregion
+                    });
+                },
+                unblockUI: function () {
+                    $(function () {
+                        setTimeout(() => {
+                            $('#reporte-odts').unblock();
+                        }, 1000);
+                    });
+                },
+                showAlert: function (title, msg, icon) {
+
+                    const typeIcon = icon;
+
+                    Swal.fire(
+                        {
+                            title: title,
+                            text: msg,
+                            icon: typeIcon,
+                            confirmButtonColor: '#0576b9'
+                        }
+                    );
+                },
+                getDataEmpresa: function () {
+                    const url = '/Empresa/GetEmpresa/';
+
+                    axios.get(url).
+                        then((resp) => {
+                            let rm = resp.data;
+
+                            if (rm.response) {
+                                this.vmEmpresa = rm.result;
+
+                                if (this.vmEmpresa.emprCodigo > 0) {
+                                    this.getLogoEmpresa();
+                                    this.getDataSucursal(this.vmEmpresa.emprCodigo);
+                                }
+                            } else {
+                                this.vmEmpresa = [];
+                            }
+                        }).
+                        catch((err) => {
+                            console.log('Ocurrió un error en getDataEmpresa:', err);
+                        });
+
+                },
+                getDataSucursal: function (codEmpresa) {
+                    const url = '/Empresa/GetSucursalesEmpresa/';
+
+                    axios.get(url, {params: { codEmpresa: codEmpresa }}).
+                        then((resp) => {
+                            let rm = resp.data;
+
+                            if (rm.response) {
+                                this.vmSucursal = rm.result[0];
+                            } else {
+                                this.vmSucursal = [];
+                            }
+                        }).
+                        catch((err) => {
+                            console.log('Ocurrió un error en getDataSucursal:', err);
+                        });
+                },
+                getLogoEmpresa: function () {
+                    let urlLogo = `/uploads/${this.vmEmpresa.emprLogo}`;
+                    console.log(urlLogo);
+                    this.logoEmpresa = urlLogo;
+                },
+                formatFecha: function (fecha) {
+                    if (fecha == null || fecha == undefined) {
+                        return '-----';
+                    }
+
+                    const d = new Date(fecha);
+                    const year = d.getFullYear();
+                    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+                    const day = ('0' + d.getDate()).slice(-2);
+                    return `${year}-${month}-${day}`;
+                },
+                updateOdt: function () {
+                    console.log(JSON.stringify(this.vmOrdenTrabajo));
+                    const url = '/Mantenimiento/FinalizeOrdenTrabajo/';
+
+                    Swal.fire({
+                        title: 'Está seguro de querer finalizar la Orden de Trabajo?',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí',
+                        confirmButtonColor: '#d65530',
+                        icon: 'question'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.blockUI('Finalizando Orden de Trabajo...');
+
+                            axios.put(url, this.vmOrdenTrabajo).
+                                then((resp) => {
+                                    let rm = resp.data;
+
+                                    if (rm.response) {
+                                        this.showAlert(rm.title, rm.message, 'success');
+                                        window.location.href = `/Mantenimiento/ShowOrdenTrabajo?codOrden=${this.vmOrdenTrabajo.ortrCodigo}`;
+                                    } else {
+                                        this.showAlert(rm.title, rm.message, 'warning');
+                                    }
+
+                                    this.unblockUI();
+                                }).
+                                catch((err) => {
+                                    console.log(`Ocurrió un error en updateOdt: ${err}`);
+                                    this.unblockUI();
+                                });
+                        }
+                    });
+                },
+                getQueryReport: function () {
+                    const url = '/Mantenimiento/QueryReporte01/';
+
+                    let fechaI = this.fechaInicio;
+                    let fechaF = this.fechaFin;
+
+
+                }
+            }
+        });
+    </script>
+}

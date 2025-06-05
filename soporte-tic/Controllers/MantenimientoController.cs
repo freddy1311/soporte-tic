@@ -5,6 +5,7 @@ using Domain.Utils;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 using soporte_tic.Models.ViewModels;
 
 namespace soporte_tic.Controllers
@@ -302,13 +303,44 @@ namespace soporte_tic.Controllers
                 foreach (var item in vmOrdenes)
                 {
                     var countTareas = await _mantenimientoDetalleService.CountTareasOdt(item.OrtrCodigo);
+                    var rmTareas = await _mantenimientoDetalleService.GetListDetalleOdt(item.OrtrCodigo);
                     item.CountTareas = countTareas;
+                    List<VMDetalleODT> tareasAux = _mapper.Map<List<VMDetalleODT>>(rmTareas.Result);
+                    item.Tareas = tareasAux;
                 }
             }
 
             rmOrdenesConPendientes.Result = vmOrdenes;
 
             return Json(rmOrdenesConPendientes);
+        }
+
+        [HttpGet]
+        public IActionResult Reporte01()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> QueryReporte01(DateTime fechaInicio, DateTime fechaFin)
+        {
+
+            var rmOrdenesReporte = await _mantenimientoService.GetListODT(fechaInicio, fechaFin);
+            List<OrdenTrabajo> ordenesReporte = rmOrdenesReporte.Result;
+            List<VMOrdenTrabajo> vmOrdenes = _mapper.Map<List<VMOrdenTrabajo>>(ordenesReporte);
+
+            if (vmOrdenes.Count > 0)
+            {
+                foreach (var item in vmOrdenes)
+                {
+                    var countTareas = await _mantenimientoDetalleService.CountTareasOdt(item.OrtrCodigo);
+                    
+                    item.CountTareas = countTareas;
+                }
+            }
+
+            rmOrdenesReporte.Result = vmOrdenes;
+            return Json(rmOrdenesReporte);
         }
         #endregion
     }

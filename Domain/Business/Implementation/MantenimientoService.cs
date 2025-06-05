@@ -222,7 +222,6 @@ namespace Domain.Business.Implementation
             try
             {
                 var rmQuery = await _ctx.GetAll(u =>
-                    u.OrtrFechaEjecucionFin == null &&
                     u.DetalleOdts.Any(d => d.DodtResultado == 2 || d.DodtResultado == 3));
                 IQueryable<OrdenTrabajo> query = (IQueryable<OrdenTrabajo>)rmQuery.Result;
 
