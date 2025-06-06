@@ -147,8 +147,8 @@ namespace Domain.Business.Implementation
             try
             {
                 var rmQuery = await _ctx.GetAll(u => 
-                    u.OrtrFechaPrevistaInicio!.Value.Date >= fechaInicio.Date && 
-                    u.OrtrFechaPrevistaInicio.Value.Date <= fechaFin.Date);
+                    u.OrtrFechaEjecucionInicio!.Value.Date >= fechaInicio.Date && 
+                    u.OrtrFechaEjecucionFin.Value.Date <= fechaFin.Date);
                 IQueryable<OrdenTrabajo> query = (IQueryable<OrdenTrabajo>)rmQuery.Result;
 
 
