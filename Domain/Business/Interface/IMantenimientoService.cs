@@ -16,6 +16,8 @@ namespace Domain.Business.Interface
 
         Task<Utils.ResponseModel> GetListODTOpen();
 
+        Task<Utils.ResponseModel> GetListODTOpenAnual();
+
         Task<Utils.ResponseModel> GetListODTPendientes();
 
         Task<Utils.ResponseModel> GetODT(long codOrden);

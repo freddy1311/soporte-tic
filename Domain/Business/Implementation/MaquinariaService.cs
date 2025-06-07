@@ -164,6 +164,37 @@ namespace Domain.Business.Implementation
             return rm;
         }
 
+        public async Task<Utils.ResponseModel> GetMaquinarias()
+        {
+            Utils.ResponseModel rm = new Utils.ResponseModel();
+
+            try
+            {
+                var rmQuery = await _ctx.GetAll(u => u.MaquEstado == 1 && u.MaquTipo == 1);
+                IQueryable<Maquinaria> query = (IQueryable<Maquinaria>)rmQuery.Result;
+
+
+                if (query.ToList().Count > 0)
+                {
+                    var users = query.
+                    OrderBy(m => m.MaquTipo).
+                    OrderBy(m => m.MaquNombre).
+                    ToList();
+                    rm.SetResponse(true, "Consulta realizada exitosamente!.", "Maquinarias", users);
+                }
+                else
+                {
+                    rm.SetResponse(false, "No se obtuvo la maquinaria!.", "Maquinarias");
+                }
+            }
+            catch (Exception ex)
+            {
+                rm.SetResponse(true, $"No se pudo obtener la lista de maquinarias: {ex.Message}.", "Maquinarias");
+            }
+
+            return rm;
+        }
+
         public async Task<Utils.ResponseModel> GetMaquinariasComponente(long codMaquinariaPadre)
         {
             Utils.ResponseModel rm = new Utils.ResponseModel();
@@ -171,6 +202,38 @@ namespace Domain.Business.Implementation
             try
             {
                 var rmQuery = await _ctx.GetAll(u => u.MaquEstado == 1 && u.MaquCodigoFk == codMaquinariaPadre && u.MaquTipo == 2);
+                IQueryable<Maquinaria> query = (IQueryable<Maquinaria>)rmQuery.Result;
+
+
+                if (query.ToList().Count > 0)
+                {
+                    var users = query.
+                        Include(m => m.MaquCodigoFkNavigation).
+                        OrderBy(m => m.MaquTipo).
+                        OrderBy(m => m.MaquNombre).
+                        ToList();
+                    rm.SetResponse(true, "Consulta realizada exitosamente!.", "Maquinarias", users);
+                }
+                else
+                {
+                    rm.SetResponse(false, "No se obtuvo lista de componente!.", "Maquinarias");
+                }
+            }
+            catch (Exception ex)
+            {
+                rm.SetResponse(true, $"No se pudo obtener la lista de maquinarias componente: {ex.Message}.", "Maquinarias");
+            }
+
+            return rm;
+        }
+
+        public async Task<Utils.ResponseModel> GetMaquinariasComponente()
+        {
+            Utils.ResponseModel rm = new Utils.ResponseModel();
+
+            try
+            {
+                var rmQuery = await _ctx.GetAll(u => u.MaquEstado == 1 && u.MaquTipo == 2);
                 IQueryable<Maquinaria> query = (IQueryable<Maquinaria>)rmQuery.Result;
 
 

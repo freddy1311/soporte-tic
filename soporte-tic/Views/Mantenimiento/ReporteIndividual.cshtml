@@ -2,7 +2,7 @@
 
 @{
     var modelOrdenTrabajo = Model;
-    ViewBag.Title = "Reporte General";
+    ViewBag.Title = "ODT Individual";
     ViewBag.pagetitle = "ODT's";
 }
 
@@ -17,42 +17,13 @@
     }
 </style>
 
-<div id="reporte-odts">
+<div id="odt">
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="d-print-none row">
-                        <div class="col-2">
-                            <div class="mb-3">
-                                <label for="dtFechaDesde" class="form-label">Fecha desde:</label>
-                                <input id="dtFechaDesde" class="form-control" type="date" v-model="fechaInicio" />
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="mb-3">
-                                <label for="dtFechaHasta" class="form-label">Fecha hasta:</label>
-                                <input id="dtFechaHasta" class="form-control" type="date" v-model="fechaFin" />
-                            </div>
-                        </div>
-                        <div class="col-8">
-                            <div class="float-end mb-3">
-                                <label class="form-label">Opciones:</label><br />
-                                <a href="javascript:void(0);" v-on:click="getQueryReport()" class="btn btn-primary w-md waves-effect waves-light">Consultar</a>
-                                <a href="javascript:window.print()" class="btn btn-success waves-effect waves-light me-1"><i class="fa fa-print"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row" v-if="(listaOrdenes.length > 0)">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-body">
                     <div class="invoice-title">
-                        <h4 class="float-end font-size-16">Reporte General de Órdenes de Trabajo</h4>
+                        <h4 class="float-end font-size-16">Orden de Trabajo # {{vmOrdenTrabajo.ortrNúmero}}</h4>
                         <div class="mb-4">
                             <img :src="logoEmpresa" alt="logo" height="64" />
                         </div>
@@ -77,85 +48,80 @@
                     </div>
                     <div class="row">
                         <div class="col-6 mt-3">
-                            
+                            <address>
+                                <strong class="mb-2 d-inline-block">Información ODT:</strong><br>
+                                Semana: {{vmOrdenTrabajo.ortrSemana}}<br>
+                                <span v-if="(vmOrdenTrabajo.ortrTipo == 1)">Tipo: Mecánico</span>
+                                <span v-if="(vmOrdenTrabajo.ortrTipo == 2)">Tipo: Eléctrico</span><br />
+                                Línea: {{vmOrdenTrabajo.maquNombreF}}<br />
+                                Maquinaria: {{vmOrdenTrabajo.maquNombre}}
+
+                            </address>
                         </div>
                         <div class="col-6 mt-3 text-sm-end">
                             <address>
-                                <strong class="mb-2 d-inline-block">Fechas consulta:</strong><br>
-                                Desde: {{fechaInicio}}<br />
-                                Hasta: {{fechaFin}}
+                                <strong class="mb-2 d-inline-block">Fechas:</strong><br>
+                                Prevista: {{formatFecha(vmOrdenTrabajo.ortrFechaPrevistaInicio)}}, {{formatFecha(vmOrdenTrabajo.ortrFechaPrevistaFin)}}<br>
+                                Ejecución: {{formatFecha(vmOrdenTrabajo.ortrFechaEjecucionInicio)}}, {{formatFecha(vmOrdenTrabajo.ortrFechaEjecucionFin)}}<br>
                             </address>
                         </div>
                     </div>
                     <div class="py-2 mt-3">
-                        <h3 class="font-size-15 fw-semibold">Listado de órdenes de trabajo</h3>
+                        <h3 class="font-size-15 fw-semibold">Tareas asignadas</h3>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-sm">
                             <thead class="table-light">
                                 <tr>
-                                    <th>ODT</th>
-                                    <th scope="col">Semana</th>
-                                    <th scope="col">F. Prevista</th>
-                                    <th scope="col">F. Ejecución</th>
-                                    <th scope="col">Tipo</th>
-                                    <th scope="col">Maquinaria</th>
-                                    <th scope="col">Responsable</th>
-                                    <th scope="col">Estado</th>
-                                    <th scope="col" class="d-print-none" style="width: 120px; text-align: center;">Opciones</th>
+                                    <th style="width: 40px;">No.</th>
+                                    <th>Tarea</th>
+                                    <th class="text-end" style="width: 50px;">Bueno</th>
+                                    <th class="text-end" style="width: 50px;">Reparar</th>
+                                    <th class="text-end" style="width: 50px;">Urgente</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="orden in listaOrdenes">
+                                <tr v-for="(tarea, index) in vmOrdenTrabajo.tareas" :key="index">
+                                    <td>{{ index < 9 ? '0' + (index + 1) : (index + 1) }}</td>
                                     <td>
-                                        <small># {{orden.ortrNúmero}}</small>
+                                        {{tarea.tamaNombre}}<br />
+                                        <small>
+                                            <strong class="text-muted">Observación:</strong><input class="input-noborder text-muted" disabled type="text" maxlength="150" v-model="tarea.dodtObservacion" />
+                                        </small>
                                     </td>
-                                    <td>
-                                        <small class="badge badge-soft-info">SEMANA: {{orden.ortrSemana}}</small>
-                                    </td>
-                                    <td>
-                                        <small>{{formatFecha(orden.ortrFechaPrevistaInicio)}}</small><br />
-                                        <small>{{formatFecha(orden.ortrFechaPrevistaFin)}}</small>
-                                    </td>
-                                    <td>
-                                        <small v-if="(orden.ortrFechaEjecucionInicio)">{{formatFecha(orden.ortrFechaEjecucionInicio)}}</small>
-                                        <small v-if="(!orden.ortrFechaEjecucionInicio)">-----</small>
-                                        <br />
-                                        <small v-if="(orden.ortrFechaEjecucionFin)">{{formatFecha(orden.ortrFechaEjecucionFin)}}</small>
-                                        <small v-if="(!orden.ortrFechaEjecucionFin)">-----</small>
-                                    </td>
-                                    <td>
-                                        <small class="badge badge-soft-info" v-if="(orden.ortrTipo == 1)">MECÁNICO</small>
-                                        <small class="badge badge-soft-success" v-if="(orden.ortrTipo == 2)">ELÉCTRICO</small>
-                                    </td>
-                                    <td>
-                                        <small>{{orden.maquNombreF}}</small><br />
-                                        <small><em>{{orden.maquNombre}}</em></small>
-                                    </td>
-                                    <td>
-                                        <small>{{orden.usuaResponsableNombre}}</small>
-                                    </td>
-                                    <td>
-                                        <small class="badge badge-soft-success" v-if="(orden.ortrFechaEjecucionInicio)">REALIZADO</small>
-                                        <small class="badge badge-soft-info" v-if="(!orden.ortrFechaEjecucionInicio)">ASIGNADO</small>
-                                    </td>
-                                    <td style="text-align: center;" class="d-print-none">
-                                        <a class="text-info mr-2" href="javascript:void(0);" title="Reporte individual" v-on:click="verReporteIndividual(orden)">
-                                            <i class="mdi mdi-eye-outline"></i>
-                                        </a>
-                                    </td>
+                                    <td class="text-end"><input disabled :name="'estado-' + index" type="radio" value="1" v-model.number="tarea.dodtResultado" /></td>
+                                    <td class="text-end"><input disabled :name="'estado-' + index" type="radio" value="2" v-model.number="tarea.dodtResultado" /></td>
+                                    <td class="text-end"><input disabled :name="'estado-' + index" type="radio" value="3" v-model.number="tarea.dodtResultado" /></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="py-2 mt-5 row">
+                    <div class="py-2 mt-2 row">
                         <div class="col-12">
-                            <label class="text-muted">
-                                <small class="fst-italic">
-                                    NOTA: Este documento tiene carácter únicamente informativo y no representa una recomendación, compromiso ni garantía por parte de la empresa.
-                                </small>
-                            </label>
+                            <label>Observación general:</label>
+                            <textarea class="form-control"
+                                      rows="3"
+                                      placeholder="Ingrese observaciones generales..."
+                                      maxlength="350"
+                                      disabled
+                                      v-model="vmOrdenTrabajo.ortrObservacion">
+                        </textarea>
                         </div>
+                    </div>
+                    <div class="py-2 mt-3 row">
+                        <div class="col-3" colspan="3"></div>
+                        <div class="col-3">
+                            <h3 class="font-size-15 fw-semibold mb-5">Responsable:</h3>
+                            <p>{{vmOrdenTrabajo.usuaResponsableNombre}}</p>
+                            <hr />
+                        </div>
+                        <div class="col-3">
+                            <h3 class="font-size-15 fw-semibold mb-5">Revisa:</h3>
+                            <p v-if="(vmOrdenTrabajo.usuaRevisaNombre)">{{vmOrdenTrabajo.usuaRevisaNombre}}</p>
+                            <p v-if="(!vmOrdenTrabajo.usuaRevisaNombre)">-----</p>
+                            <hr />
+                        </div>
+                        <div class="col-3" colspan="3"></div>
                     </div>
                 </div>
             </div>
@@ -167,27 +133,25 @@
     <script src="~/assets/js/app.js"></script>
     <script>
         var odtFile = new Vue({
-            el: '#reporte-odts',
+            el: '#odt',
             data: {
-                listaOrdenes: [],
                 vmOrdenTrabajo: {},
                 vmEmpresa: {},
                 vmSucursal: {},
-                logoEmpresa: '',
-                fechaInicio: '',
-                fechaFin: ''
+                logoEmpresa: ''
             },
             mounted: function () {
 
             },
             created: function () {
+                this.vmOrdenTrabajo = @Html.Raw(Json.Serialize(Model));
                 this.getDataEmpresa();
             },
             methods: {
                 blockUI: function (msg) {
                     $(function () {
                         //#region block UI
-                        $('#reporte-odts').block({
+                        $('#odt').block({
                             message: msg,
                             css: {
                                 backgroundColor: '#36404a',
@@ -209,7 +173,7 @@
                 unblockUI: function () {
                     $(function () {
                         setTimeout(() => {
-                            $('#reporte-odts').unblock();
+                            $('#odt').unblock();
                         }, 1000);
                     });
                 },
@@ -315,46 +279,6 @@
                                 });
                         }
                     });
-                },
-                getQueryReport: function () {
-                    const url = '/Mantenimiento/QueryReporte01/';
-
-                    let fechaI = this.fechaInicio;
-                    let fechaF = this.fechaFin;
-
-                    this.listaOrdenes = [];
-
-                    if (fechaI > fechaF) {
-                        this.showAlert('Validación', 'La Fecha Desde no puede ser superior a Fecha Hasta!.', 'warning');
-                        return;
-                    }
-
-                    this.blockUI('Cargando datos de reporte...');
-
-                    axios.get(url, {params: {fechaInicio: fechaI, fechaFin: fechaF}}).
-                    then((resp) => {
-                        let rm = resp.data;
-                        this.unblockUI();
-
-                        if (rm.response) {
-                            this.listaOrdenes = rm.result;
-                            console.log('getQueryReport:', this.listaOrdenes.length);
-                        } else {
-                            this.listaOrdenes = [];
-                            this.showAlert('Reporte', 'No se obtuvieron datos disponibles!.', 'warning');
-                        }
-                    }).catch((error) => {
-                        this.listaOrdenes = [];
-                        console.log('Ocurrió un error en getQueryReport:', error);
-                    });
-                },
-                verReporteIndividual: function (orden) {
-                    if (orden != null) {
-                        const codigoOrden = orden.ortrCodigo;
-                        window.location.href = `/Mantenimiento/ReporteIndividual?codOrden=${codigoOrden}`;
-                    } else {
-                        this.showAlert('Validación', 'No se detectó una orden de trabajo válida para mostrar!.', 'warning');
-                    }
                 }
             }
         });

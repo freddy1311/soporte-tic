@@ -13,7 +13,11 @@ namespace Domain.Business.Interface
         #region métodos
         Task<Utils.ResponseModel> GetMaquinarias(long sucuCodigo);
 
+        Task<Utils.ResponseModel> GetMaquinarias();
+
         Task<Utils.ResponseModel> GetMaquinariasComponente(long codMaquinariaPadre);
+
+        Task<Utils.ResponseModel> GetMaquinariasComponente();
 
         Task<Utils.ResponseModel> GetMaquinaria(long codMaquinaria);
 

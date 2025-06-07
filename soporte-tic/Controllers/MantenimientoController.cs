@@ -342,6 +342,26 @@ namespace soporte_tic.Controllers
             rmOrdenesReporte.Result = vmOrdenes;
             return Json(rmOrdenesReporte);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ReporteIndividual(long codOrden)
+        {
+            var rmOrdentrabajo = await _mantenimientoService.GetODT(codOrden);
+            var ordenTrabajo = (rmOrdentrabajo.Response) ? rmOrdentrabajo.Result : new OrdenTrabajo();
+            VMOrdenTrabajo orden = _mapper.Map<VMOrdenTrabajo>(ordenTrabajo);
+
+            if (orden.OrtrCodigo > 0)
+            {
+                #region get tareas odt
+                var rmTareas = await _mantenimientoDetalleService.GetListDetalleOdt(orden.OrtrCodigo);
+                var tareasOrden = (rmTareas.Response) ? rmTareas.Result : null;
+                List<VMDetalleODT> tareas = _mapper.Map<List<VMDetalleODT>>(tareasOrden);
+                orden.Tareas = tareas;
+                #endregion
+            }
+            return View(orden);
+        }
+
         #endregion
     }
 }

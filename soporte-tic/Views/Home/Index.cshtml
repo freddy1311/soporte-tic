@@ -16,10 +16,10 @@
                     </div>
                     <div>
                         <p class="text-muted text-uppercase fw-semibold font-size-13">Órdenes de Trabajo</p>
-                        <h4 class="mb-1 mt-1"><span class="counter-value" data-target="23">23</span></h4>
+                        <h4 class="mb-1 mt-1">{{countOrdenes}}</h4>
                     </div>
                     <p class="text-muted mt-3 mb-0">
-                        <span class="badge bg-success-subtle text-success me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>2.65%</span> since last week
+                        Total de ODT's
                     </p>
                 </div>
             </div>
@@ -37,10 +37,10 @@
                     </div>
                     <div>
                         <p class="text-muted text-uppercase fw-semibold font-size-13">Líneas</p>
-                        <h4 class="mb-1 mt-1"><span class="counter-value" data-target="12">0</span></h4>
+                        <h4 class="mb-1 mt-1">{{countLineas}}</h4>
                     </div>
                     <p class="text-muted mt-3 mb-0">
-                        <span class="badge bg-danger-subtle text-danger me-1"><i class="mdi mdi-arrow-down-bold me-1"></i>4.58%</span> since last week
+                        Total de líneas
                     </p>
                 </div>
             </div>
@@ -58,10 +58,10 @@
                     </div>
                     <div>
                         <p class="text-muted text-uppercase fw-semibold font-size-13">Maquinarias</p>
-                        <h4 class="mb-1 mt-1"><span class="counter-value" data-target="8">0</span></h4>
+                        <h4 class="mb-1 mt-1">{{countMaquinarias}}</h4>
                     </div>
                     <p class="text-muted mt-3 mb-0">
-                        <span class="badge bg-success-subtle text-success me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>14.33%</span> since last week
+                        Total de maquinarias
                     </p>
                 </div>
             </div>
@@ -73,17 +73,65 @@
                     <div class="float-end">
                         <div class="avatar-sm mx-auto mb-4">
                             <span class="avatar-title rounded-circle bg-light font-size-24">
-                                <i class="mdi mdi-account-group text-success"></i>
+                                <i class="mdi mdi-account-group text-warning"></i>
                             </span>
                         </div>
                     </div>
                     <div>
-                        <p class="text-muted text-uppercase fw-semibold font-size-13">Total Usuarios</p>
-                        <h4 class="mb-1 mt-1"><span class="counter-value" data-target="6">0</span></h4>
+                        <p class="text-muted text-uppercase fw-semibold font-size-13">Usuarios</p>
+                        <h4 class="mb-1 mt-1">{{countUsuarios}}</h4>
                     </div>
                     <p class="text-muted mt-3 mb-0">
-                        <span class="badge bg-warning-subtle text-warning me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>0.55%</span> since last week
+                        Total de usuarios
                     </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="font-size-14 mb-4">Resumen mantenimientos</h4>
+
+                    <div id="spline_area" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    
+                    <h5 class="card-title mb-3 me-2">Total</h5>
+                    <div id="donut-chart" class="apex-charts" dir="ltr"></div>
+                    <div class="mt-4 text-center">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                <div class="d-flex">
+                                    <i class="mdi mdi-circle font-size-12 mt-1 text-primary"></i>
+                                    <div class="flex-grow-1 ms-2">
+                                        <p class="mb-0">Realizados (36.4%)</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 font-size-14">26</h5>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                <div class="d-flex">
+                                    <i class="mdi mdi-circle font-size-12 mt-1 text-warning"></i>
+                                    <div class="flex-grow-1 ms-2">
+                                        <p class="mb-0">Asignados (24.2%)</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 font-size-14">45</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -92,23 +140,204 @@
 
 @section scripts {
     <script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
-    @* <script src="~/assets/js/pages/dashboard.init.js"></script> *@
+    
     <script src="~/assets/js/app.js"></script>
 
     <script>
         var indexHome = new Vue({
             el: '#index-home',
             data: {
-
+                vmDashboard: {},
+                countOrdenes: 0,
+                countLineas: 0,
+                countMaquinarias: 0,
+                countUsuarios: 0,
+                ordenes: [],
+                ordenesAsignadas: [],
+                ordenesRealizados: []
             },
             mounted: function () {
-
+                this.loadDataDashboard();
+                this.loadChart();
+                this.loadChart2();
             },
             created: function () {
 
             },
             methods: {
+                blockUI: function (msg) {
+                    $(function () {
+                        //#region block UI
+                        $('#index-home').block({
+                            message: msg,
+                            css: {
+                                backgroundColor: '#36404a',
+                                color: '#fff',
+                                height: 40,
+                                paddingTop: 10,
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                borderRadius: 7,
+                                border: '0',
+                                opacity: 0.5,
+                                zIndex: 9999999,
+                                cursor: 'wait'
+                            },
+                        });
+                        //#endregion
+                    });
+                },
+                unblockUI: function () {
+                    $(function () {
+                        setTimeout(() => {
+                            $('#index-home').unblock();
+                        }, 1000);
+                    });
+                },
+                showAlert: function (title, msg, icon) {
 
+                    const typeIcon = icon;
+
+                    Swal.fire(
+                        {
+                            title: title,
+                            text: msg,
+                            icon: typeIcon,
+                            confirmButtonColor: '#0576b9'
+                        }
+                    );
+                },
+                loadDataDashboard: function () {
+                    let url = '/Home/GetDataDashboard/';
+
+                    this.blockUI('Obteniendo información...');
+
+                    axios.get(url).
+                    then((resp) => {
+                        let rm = resp.data;
+
+                        //console.log('obj resp', JSON.stringify(rm));
+
+                        if (rm.response) {
+                            this.vmDashboard = rm.result;
+                            this.countOrdenes = this.vmDashboard.countOrdenesTrabajo;
+                            this.countLineas = this.vmDashboard.countLineas;
+                            this.countMaquinarias = this.vmDashboard.countMaquinarias;
+                            this.countUsuarios = this.vmDashboard.countUsuarios;
+                        } else {
+                            this.vmDashboard = [];
+                            this.countOrdenes = 0;
+                            this.countLineas = 0;
+                            this.countMaquinarias = 0;
+                            this.countUsuarios = 0;
+                        }
+
+                        this.unblockUI();
+                    }).
+                    catch((err) => {
+                        console.log('Ocurrió un errror en loadDataDashboard: ', err);
+                        this.unblockUI();
+                    });
+                },
+                loadChart: function () {
+                    $(function () {
+                        var options = {
+                            chart: {
+                            height: 350,
+                            type: 'area',
+                            toolbar: {
+                                show: false
+                            }
+                            },
+                            dataLabels: {
+                            enabled: false
+                            },
+                            stroke: {
+                            curve: 'smooth',
+                            width: 3,
+                            },
+                            series: [{
+                            name: 'Realizados',
+                            data: [34, 40, 28, 52, 42, 109, 100, 32, 12, 10, 43, 56]
+                            }, {
+                            name: 'Asignados',
+                            data: [32, 60, 34, 46, 34, 52, 41, 8, 21, 19, 55, 80]
+                            }],
+                            colors: ['#0ab39c', '#ffd966'],
+                            xaxis: {
+                                type: 'string',
+                                categories: [
+                                    "ENE", 
+                                    "FEB", 
+                                    "MAR", 
+                                    "ABR", 
+                                    "MAY", 
+                                    "JUN", 
+                                    "JUL",
+                                    "AGO",
+                                    "SEP",
+                                    "OCT",
+                                    "NOV",
+                                    "DIC"
+                                ],
+                            },
+                            grid: {
+                                borderColor: '#f1f1f1',
+                            },
+                            fill: {
+                                type: 'gradient',
+                                gradient: {
+                                    shadeIntensity: 1,
+                                    inverseColors: false,
+                                    opacityFrom: 0.45,
+                                    opacityTo: 0.05,
+                                    stops: [20, 100, 100, 100]
+                                },
+                            },
+                            // tooltip: {
+                            //     x: {
+                            //         format: 'dd/MM/yy HH:mm'
+                            //     },
+                            // }
+                        }
+
+                        var chart = new ApexCharts(
+                            document.querySelector("#spline_area"),
+                            options
+                        );
+
+                        chart.render();
+                    });
+                },
+                loadChart2: function () {
+                    $(function() {
+                        var options = {
+                          series: [45, 26],
+                          chart: {
+                            height: 248,
+                              type: 'donut',
+                          },
+                          labels: ["Realizados", "Asignados"],
+                          plotOptions: {
+                              pie: {
+                                donut: {
+                                  size: '75%',
+
+                                }
+                              }
+                          },
+                          legend: {
+                              show: false,
+                          },
+
+                          colors: ['#0576b9', '#2cb57e'],
+
+                        };
+
+                        var chart = new ApexCharts(document.querySelector("#donut-chart"), options);
+                        chart.render();
+                    });
+                }
             }
         });
     </script>
