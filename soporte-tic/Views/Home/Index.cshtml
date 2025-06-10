@@ -111,11 +111,11 @@
                                 <div class="d-flex">
                                     <i class="mdi mdi-circle font-size-12 mt-1 text-primary"></i>
                                     <div class="flex-grow-1 ms-2">
-                                        <p class="mb-0">Realizados (36.4%)</p>
+                                        <p class="mb-0">Realizados ({{porcentajeRealizadas}}%)</p>
                                     </div>
                                 </div>
                                 <div>
-                                    <h5 class="mb-0 font-size-14">26</h5>
+                                    <h5 class="mb-0 font-size-14">{{countRealizadas}}</h5>
                                 </div>
                             </div>
 
@@ -123,11 +123,11 @@
                                 <div class="d-flex">
                                     <i class="mdi mdi-circle font-size-12 mt-1 text-warning"></i>
                                     <div class="flex-grow-1 ms-2">
-                                        <p class="mb-0">Asignados (24.2%)</p>
+                                        <p class="mb-0">Asignados ({{porcentajeAsignadas}}%)</p>
                                     </div>
                                 </div>
                                 <div>
-                                    <h5 class="mb-0 font-size-14">45</h5>
+                                    <h5 class="mb-0 font-size-14">{{countAsignadas}}</h5>
                                 </div>
                             </div>
                         </div>
@@ -154,12 +154,16 @@
                 countUsuarios: 0,
                 ordenes: [],
                 ordenesAsignadas: [],
-                ordenesRealizados: []
+                ordenesRealizadas: [],
+                countAsignadas: 0,
+                countRealizadas: 0,
+                porcentajeRealizadas: 0.0,
+                porcentajeAsignadas: 0.0
             },
             mounted: function () {
                 this.loadDataDashboard();
-                this.loadChart();
-                this.loadChart2();
+                //this.loadChart();
+                //this.loadChart2();
             },
             created: function () {
 
@@ -224,6 +228,36 @@
                             this.countLineas = this.vmDashboard.countLineas;
                             this.countMaquinarias = this.vmDashboard.countMaquinarias;
                             this.countUsuarios = this.vmDashboard.countUsuarios;
+
+                            this.ordenesAsignadas = this.vmDashboard.ordenes.filter((o => o.ortrFechaEjecucionInicio == null));
+                            this.ordenesRealizadas = this.vmDashboard.ordenes.filter((o => o.ortrFechaEjecucionInicio != null));
+                            //console.log('ordenes asignadas', this.ordenesAsignadas.length);
+                            //console.log('ordenes realizadas', this.ordenesRealizadas.length);
+
+                            this.countAsignadas = this.ordenesAsignadas.length;
+                            this.countRealizadas = this.ordenesRealizadas.length;
+
+                            this.porcentajeAsignadas = Math.round((this.countAsignadas / this.countOrdenes) * 100, 2);
+                            this.porcentajeRealizadas = Math.round((this.countRealizadas / this.countOrdenes) * 100, 2);
+
+                            const registrosPorMesAsignadas = Array(12).fill(0);
+                            const registrosPorMesRealizadas = Array(12).fill(0);
+
+                            this.ordenesAsignadas.forEach(registro => {
+                                const mes = new Date(registro.ortrFechaPrevistaInicio).getMonth(); // 0 a 11
+                                registrosPorMesAsignadas[mes]++;
+                            });
+
+                            this.ordenesRealizadas.forEach(registro => {
+                                const mes = new Date(registro.ortrFechaEjecucionInicio).getMonth(); // 0 a 11
+                                registrosPorMesRealizadas[mes]++;
+                            });
+
+                            //console.log('ordenes asignadas', registrosPorMesAsignadas);
+                            //console.log('ordenes realizadas', registrosPorMesRealizadas);
+
+                            this.loadChart(registrosPorMesAsignadas, registrosPorMesRealizadas);
+                            this.loadChart2(this.countRealizadas, this.countAsignadas);
                         } else {
                             this.vmDashboard = [];
                             this.countOrdenes = 0;
@@ -239,7 +273,7 @@
                         this.unblockUI();
                     });
                 },
-                loadChart: function () {
+                loadChart: function (registrosAsignados, registrosRealizados) {
                     $(function () {
                         var options = {
                             chart: {
@@ -258,10 +292,10 @@
                             },
                             series: [{
                             name: 'Realizados',
-                            data: [34, 40, 28, 52, 42, 109, 100, 32, 12, 10, 43, 56]
+                            data: registrosRealizados
                             }, {
                             name: 'Asignados',
-                            data: [32, 60, 34, 46, 34, 52, 41, 8, 21, 19, 55, 80]
+                            data: registrosAsignados
                             }],
                             colors: ['#0ab39c', '#ffd966'],
                             xaxis: {
@@ -309,10 +343,10 @@
                         chart.render();
                     });
                 },
-                loadChart2: function () {
+                loadChart2: function (realizadas, asignadas) {
                     $(function() {
                         var options = {
-                          series: [45, 26],
+                          series: [realizadas, asignadas],
                           chart: {
                             height: 248,
                               type: 'donut',
@@ -322,7 +356,6 @@
                               pie: {
                                 donut: {
                                   size: '75%',
-
                                 }
                               }
                           },

@@ -223,7 +223,7 @@ namespace Domain.Business.Implementation
             try
             {
                 var rmQuery = await _ctx.GetAll(u =>
-                    u.OrtrFechaEjecucionInicio!.Value.Date.Year == currentDate.Year);
+                    u.OrtrFechaPrevistaInicio!.Value.Date.Year == currentDate.Year);
                 IQueryable<OrdenTrabajo> query = (IQueryable<OrdenTrabajo>)rmQuery.Result;
 
 
