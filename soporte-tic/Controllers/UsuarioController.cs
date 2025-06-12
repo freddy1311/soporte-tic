@@ -153,5 +153,15 @@ namespace soporte_tic.Controllers
 
             return Json(rm);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ShowUserPerfil()
+        {
+            var usuaCodigo = Convert.ToInt64(User.FindFirst("CodigoUsuario")?.Value);
+            var rmUsuario = await _usuarioRepository.Get(usuaCodigo);
+            Usuario usuario = rmUsuario.Result;
+            VMUsuario vmUsuario = _mapper.Map<VMUsuario>(usuario);
+            return PartialView(vmUsuario);
+        }
     }
 }

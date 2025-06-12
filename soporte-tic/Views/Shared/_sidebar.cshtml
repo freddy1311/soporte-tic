@@ -1,11 +1,21 @@
-﻿<!-- ========== Left Sidebar Start ========== -->
+﻿@using System.Security.Claims
+@{
+    var perfil = Convert.ToInt32(User.FindFirst(ClaimTypes.Role)?.Value);
+}
+
+<style>
+    .disabled {
+        color: gray!important;
+        pointer-events: none!important;
+        cursor: not-allowed!important;
+        text-decoration: none;
+    }
+</style>
+
 <div class="vertical-menu">
 
     <div data-simplebar class="h-100">
-
-        <!--- Sidemenu -->
         <div id="sidebar-menu">
-            <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title" key="t-menu">Menu</li>
 
@@ -24,8 +34,8 @@
                         <span key="t-authentication">Gestión</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="@Url.Action("Index","Empresa") " key="t-empresa">Empresa</a></li>
-                        <li><a href="@Url.Action("Index","Usuario")" key="t-usuarios">Usuarios</a></li>
+                        <li><a href="@Url.Action("Index", "Empresa") " key="t-empresa" class="@(perfil != 3 ? "" : "disabled")">Empresa</a></li>
+                        <li><a href="@Url.Action("Index", "Usuario")" key="t-usuarios" class="@(perfil != 3 ? "" : "disabled")">Usuarios</a></li>
                     </ul>
                 </li>
 
@@ -35,8 +45,8 @@
                         <span key="t-multi-level">Equipos</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-                        <li><a href="@Url.Action("Index","Maquinaria")" key="t-maquinarias">Maquinarias</a></li>
-                        <li><a href="@Url.Action("Index","MaquinariaTarea")" key="t-tareas-maquinaria">Tareas Maquinaria</a></li>
+                        <li><a href="@Url.Action("Index", "Maquinaria")" key="t-maquinarias" class="@(perfil != 3 ? "" : "disabled")">Maquinarias</a></li>
+                        <li><a href="@Url.Action("Index", "MaquinariaTarea")" key="t-tareas-maquinaria" class="@(perfil != 3 ? "" : "disabled")">Tareas Maquinaria</a></li>
                     </ul>
                 </li>
 
@@ -48,9 +58,9 @@
                         <span key="t-support">Mantenimiento</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-                        <li><a href="@Url.Action("Index","Mantenimiento")" key="t-primer-nivel">Órdenes de Trabajo</a></li>
-                        <li><a href="@Url.Action("Pendientes", "Mantenimiento")" key="t-pendientes">Reparar y Urgentes</a></li>
-                        <li><a href="@Url.Action("ConfiguracionOdt","Mantenimiento")" key="t-configuracionodt">Configuración ODT</a></li>
+                        <li><a href="@Url.Action("Index", "Mantenimiento")" key="t-primer-nivel" class="@(perfil != 3 ? "" : "disabled")">Órdenes de Trabajo</a></li>
+                        <li><a href="@Url.Action("Pendientes", "Mantenimiento")" key="t-pendientes" class="@(perfil != 3 ? "" : "disabled")">Reparar y Urgentes</a></li>
+                        <li><a href="@Url.Action("ConfiguracionOdt", "Mantenimiento")" key="t-configuracionodt" class="@(perfil == 1 || perfil == 0 ? "" : "disabled")">Configuración ODT</a></li>
                     </ul>
                 </li>
 
@@ -62,12 +72,11 @@
                         <span key="t-historicos">Históricos</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-                        <li><a href="@Url.Action("Reporte01", "Mantenimiento")" key="t-reporte-odts">Reporte General</a></li>
+                        <li><a href="@Url.Action("Reporte01", "Mantenimiento")" key="t-reporte-odts" class="@(perfil != 3 ? "" : "disabled")">Reporte General</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
-        <!-- Sidebar -->
+        
     </div>
 </div>
-<!-- Left Sidebar End -->

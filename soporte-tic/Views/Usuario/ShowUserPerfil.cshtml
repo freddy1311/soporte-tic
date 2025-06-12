@@ -1,0 +1,31 @@
+﻿@model soporte_tic.Models.ViewModels.VMUsuario
+
+@{
+    var modelUsuario = Model;
+}
+
+<div class="modal-dialog modal-dialog-centered" role="document" id="frmCreateUsuario">
+    <div class="modal-content" id="frmContent">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Crear Usuario</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="text-center bg-pattern">
+                <img src="~/assets/images/users/avatar-1.jpg" alt="avatar-4" class="avatar-xl img-thumbnail rounded-circle mb-3">
+                <h4 class="text-primary mb-2">Peter Johne</h4>
+                <h5 class="text-muted font-size-13 mb-3">UI/UX Designer</h5>
+                <div class="text-center">
+                    <a href="@Url.Action("Email-inbox", "Apps")" class="btn btn-success me-2 waves-effect waves-light btn-sm"><i class="mdi mdi-email-outline me-1"></i>Send Mail</a>
+                    <a href="@Url.Action("Chat", "Apps")" class="btn btn-primary waves-effect waves-light btn-sm"><i class="mdi mdi-phone-outline me-1"></i>PhoneCall</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            
+        </div>
+    </div>
+
+</div>

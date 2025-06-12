@@ -54,17 +54,109 @@
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
                     <h6 class="dropdown-header">Bienvenido!</h6>
-                    <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> <span class="align-middle" key="t-profile">Perfil</span></a>
+                    <a class="dropdown-item" href="javascript:void(0);" v-on:click="showUserPerfil()"><i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> <span class="align-middle" key="t-profile">Perfil</span></a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="@Url.Action("Logout","Login")"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle" key="t-logout">Cerrar Sesión</span></a>
                 </div>
             </div>
 
-            <div class="dropdown d-inline-block">
-                <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
-                    <i class="bx bx-cog bx-spin"></i>
-                </button>
-            </div>
         </div>
     </div>
 </header>
+@await Html.PartialAsync("~/Views/Shared/_modalStandard.cshtml")
+@section scripts {
+    
+    <script>
+        var pageNavBar = new Vue({
+            el: '#page-topbar',
+            data: {
+            },
+            mounted: function () {
+                var vm = this;
+                
+            },
+            created: function () {
+                console.log('hola from vue.js');
+            },
+            methods: {
+                showUserPerfil: function () {
+                    let url = '/Usuario/ShowUserPerfil/';
+
+                    axios.get(url).
+                        then((response) => {
+                            $('.modal').html(response.data);
+                            $('#standardModal').modal('show');
+                        }).
+                        catch((error) => {
+                            console.log('Error en showUserPerfil: ' + error);
+                        });
+                },
+                showInfoUser: function (user) {
+                    if (user != null) {
+                        let estado = (user.usuaEstado == 0) ? 'INACTIVO' : 'ACTIVO';
+                        let logo = (user.usuaFoto != null && user.usuaFoto != '') ?
+                            `/uploads/${user.usuaFoto}` : '/assets/images/users/no_user.jpg';
+                        let perfil = this.getPerfilName(user.usuaPerfil);
+
+                        Swal.fire({
+                            title: "<strong>Información de Usuario</strong>",
+                            html: `
+                                <div style="text-align: center; margin-top: 10px; ">
+                                    <img class="img-thumbnail avatar-sm mt-2 mb-4" style="width: 120px!important; height: 120px!important;" src="${logo}" alt="Logo Empresa">
+                                    <table style="border-collapse: collapse; width: 100%; margin: 0 auto; font-size: 16px;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Nombre:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaNombre}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Cédula:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaCedula}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Teléfono:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaTelefono}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Email:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${user.usuaEmail}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Perfil:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${perfil}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bolder;">Estado:</td>
+                                                <td style="border: 1px solid #ddd; padding: 8px;">${estado}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            `,
+                        });
+                    } else {
+                        this.showAlert(
+                            'Ver Información de Usuario',
+                            'No se detectó un Usuario para mostar!.',
+                            'warning'
+                        );
+                    }
+                },
+                getPerfilName: function (codPerfil){
+                    switch (codPerfil) {
+                        case 1:
+                            return 'Administrador';
+                        case 2:
+                            return 'Supervisor';
+                        case 3:
+                            return 'Técnico';
+                        case 4:
+                            return 'Monitor';
+                        default:
+                            return 'SN';
+                    }
+                }
+            }
+        });
+    </script>
+}
