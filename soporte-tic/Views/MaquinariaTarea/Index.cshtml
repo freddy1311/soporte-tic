@@ -204,7 +204,7 @@
 
                     axios.get(url).then((response) => {
                         let rm = response.data;
-                        console.log(JSON.stringify(rm));
+                        //console.log(JSON.stringify(rm));
 
                         if (rm.response) {
                             this.tareas = rm.result;
@@ -268,7 +268,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 let url = '/MaquinariaTarea/DeleteTareaMaquinaria/';
-                                console.log('código tarea: ' + codTarea);
+                                //console.log('código tarea: ' + codTarea);
                                 this.blockUI('Eliminando tarea...');
 
                                 axios.get(url, { params: { codTarea: codTarea } }).

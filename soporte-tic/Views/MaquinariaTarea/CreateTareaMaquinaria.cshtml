@@ -70,7 +70,7 @@
         },
         created: function () {
             this.vmMaquinariaTarea = @Html.Raw(Json.Serialize(Model));
-            console.log('vmMaquinariaTarea: ', this.vmMaquinariaTarea);
+            //console.log('vmMaquinariaTarea: ', this.vmMaquinariaTarea);
             this.loadMaquinarias();
         },
         methods: {
@@ -158,7 +158,7 @@
             },
             selectMaquinaria: function () {
                 let maquinariaSelected = $('#cboMaquinaria').val();
-                console.log('producto: ' + maquinariaSelected);
+                //console.log('producto: ' + maquinariaSelected);
                 this.loadComponentes(maquinariaSelected);
             },
             loadComponentes: function (codMaquinaria) {
@@ -181,7 +181,7 @@
             },
             selectComponente: function () {
                 let componenteSelected = $('#cboComponente').val();
-                console.log('componente: ' + componenteSelected);
+                //console.log('componente: ' + componenteSelected);
                 this.vmMaquinariaTarea.maquCodigo = componenteSelected;
             },
             createTarea: function () {
@@ -191,7 +191,7 @@
                     return;
                 }
 
-                console.log('vmMaquinariaTarea: ' + JSON.stringify(this.vmMaquinariaTarea));
+                //console.log('vmMaquinariaTarea: ' + JSON.stringify(this.vmMaquinariaTarea));
                 
                 this.blockUI('Creando tarea...');
 

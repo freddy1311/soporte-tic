@@ -304,7 +304,6 @@
 
                     axios.get(url).then(response => {
                         let rm = response.data;
-                        console.log(JSON.stringify(rm));
 
                         if (rm.response) {
                             this.maquinarias = rm.result;
@@ -334,7 +333,6 @@
 
                     axios.get(url, {params: {codMaquinaria: codMaquinaria}}).then(response => {
                         let rm = response.data;
-                        console.log(JSON.stringify(rm));
 
                         if (rm.response) {
                             this.maquinariasComponente = rm.result;
@@ -398,7 +396,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 let url = '/Maquinaria/DeleteMaquinaria/';
-                                console.log('código maquinaria: ' + codMaquinaria);
+                                //console.log('código maquinaria: ' + codMaquinaria);
                                 this.blockUI('Eliminando maquinaria...');
 
                                 axios.get(url, { params: { codMaquinaria: codMaquinaria } }).
@@ -538,7 +536,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 let url = '/Maquinaria/DeleteMaquinaria/';
-                                console.log('código maquinaria: ' + codComponente);
+                                //console.log('código maquinaria: ' + codComponente);
                                 this.blockUI('Eliminando componente...');
 
                                 axios.get(url, { params: { codMaquinaria: codComponente } }).

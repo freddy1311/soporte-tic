@@ -49,7 +49,6 @@ namespace Domain.Business.Implementation
                 var rmQuery = await _context.GetAll(u => u.UsuaEstado == 1 && u.UsuaPerfil != 0);
                 IQueryable<Usuario> query = (IQueryable<Usuario>)rmQuery.Result;
 
-
                 if (query.ToList().Count > 0)
                 {
                     var users = query.
@@ -64,7 +63,7 @@ namespace Domain.Business.Implementation
             }
             catch (Exception ex)
             {
-                rm.SetResponse(true, $"No se pudo obtener la lista de usuarios: {ex.Message}.", "Usuarios");
+                rm.SetResponse(false, $"No se pudo obtener la lista de usuarios: {ex.Message}.", "Usuarios");
             }
 
             return rm;

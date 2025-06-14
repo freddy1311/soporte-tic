@@ -263,7 +263,7 @@ namespace soporte_tic.Controllers
             return View(orden);
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<JsonResult> FinalizeOrdenTrabajo([FromBody] VMOrdenTrabajo model)
         {
             List<DetalleOdt> tareasOrdenes = _mapper.Map<List<DetalleOdt>>(model.Tareas);
@@ -275,6 +275,10 @@ namespace soporte_tic.Controllers
             #region update tareas de odt
             if (rm.Response && tareasOrdenes.Count > 0)
             {
+                OrdenTrabajo ordenUpdated = rm.Result;
+                VMOrdenTrabajo vmOrdenUpdated = _mapper.Map<VMOrdenTrabajo>(ordenUpdated);
+                rm.Result = vmOrdenUpdated;
+
                 foreach (var tarea in tareasOrdenes)
                 {
                     var rmTarea = await _mantenimientoDetalleService.Update(tarea);

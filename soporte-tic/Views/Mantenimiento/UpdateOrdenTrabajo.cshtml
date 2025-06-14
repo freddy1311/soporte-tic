@@ -141,7 +141,8 @@
         },
         created: function () {
             this.vmOrdenTrabajo = @Html.Raw(Json.Serialize(Model));
-            console.log('vmOrdenTrabajo: ', this.vmOrdenTrabajo);
+            //console.log('vmOrdenTrabajo: ', this.vmOrdenTrabajo);
+            
             if (this.vmOrdenTrabajo.ortrSemana > 1) {
                 this.selectWeek2(this.vmOrdenTrabajo.ortrSemana);
             }
@@ -306,7 +307,7 @@
 
                 axios.get(url).then(response => {
                     let rm = response.data;
-                    console.log(`getUsuarios() ${rm.response}`);
+                    //console.log(`getUsuarios() ${rm.response}`);
 
                     if (rm.response) {
                         this.responsables = rm.result;
@@ -323,7 +324,7 @@
                 this.vmOrdenTrabajo.usuaResponsable = responsableSelected;
             },
             selectWeek: function (event) {
-                console.log(`Semana seleccionada: ${JSON.stringify(event.target.value)}`);
+                //console.log(`Semana seleccionada: ${JSON.stringify(event.target.value)}`);
                 let numSemana = parseInt(event.target.value);
 
                 const anio = new Date().getFullYear();
@@ -351,7 +352,7 @@
 
                 this.fechaInicio = formatear(inicio);
                 this.fechaFin = formatear(fin);
-                console.log(`Fechas de Semana seleccionada: ${this.fechaInicio} - ${this.fechaFin}`);
+                //console.log(`Fechas de Semana seleccionada: ${this.fechaInicio} - ${this.fechaFin}`);
             },
             selectWeek2: function (num) {
                 let numSemana = parseInt(num);
@@ -381,7 +382,7 @@
 
                 this.fechaInicio = formatear(inicio);
                 this.fechaFin = formatear(fin);
-                console.log(`Fechas de Semana seleccionada: ${this.fechaInicio} - ${this.fechaFin}`);
+                //console.log(`Fechas de Semana seleccionada: ${this.fechaInicio} - ${this.fechaFin}`);
             },
             updateOrdenTrabajo: function () {
                 let url = '/Mantenimiento/UpdateOrdenTrabajo/';
@@ -389,7 +390,7 @@
                 this.vmOrdenTrabajo.ortrFechaPrevistaInicio = this.fechaInicio;
                 this.vmOrdenTrabajo.ortrFechaPrevistaFin = this.fechaFin;
 
-                console.log('vmOrdenTrabajo: ' + JSON.stringify(this.vmOrdenTrabajo));
+                //console.log('vmOrdenTrabajo: ' + JSON.stringify(this.vmOrdenTrabajo));
 
                 if (!this.validateFields()) {
                     return;

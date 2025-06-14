@@ -297,7 +297,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 let url = '/Mantenimiento/DeleteOrdenTrabajo/';
-                                console.log('código orden trabajo: ' + codOrden);
+                                //console.log('código orden trabajo: ' + codOrden);
                                 this.blockUI('Eliminando orden de trabajo...');
 
                                 axios.get(url, { params: { codOrden: codOrden } }).

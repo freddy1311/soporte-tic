@@ -275,7 +275,7 @@
                     return `${year}-${month}-${day}`;
                 },
                 updateOdt: function () {
-                    console.log(JSON.stringify(this.vmOrdenTrabajo));
+                    //console.log(JSON.stringify(this.vmOrdenTrabajo));
                     const url = '/Mantenimiento/FinalizeOrdenTrabajo/';
 
                     Swal.fire({
@@ -288,7 +288,7 @@
                         if (result.isConfirmed) {
                             this.blockUI('Finalizando Orden de Trabajo...');
 
-                            axios.put(url, this.vmOrdenTrabajo).
+                            axios.post(url, this.vmOrdenTrabajo).
                                 then((resp) => {
                                     let rm = resp.data;
 

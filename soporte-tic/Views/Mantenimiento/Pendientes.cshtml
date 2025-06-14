@@ -36,7 +36,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="orden in ordenes">
+                            <tr v-for="orden in ordenes" v-if="(orden.dodtResultado == 2 || orden.dodtResultado == 3)">
                                 <td>
                                     <small># {{orden.ortrNumero}}</small>
                                 </td>
@@ -233,7 +233,7 @@
                                     }))
                                 );
                                 this.totalOrdenes = this.ordenes.length;
-                                console.log('getOrdenesTrabajoPendientes: ' + JSON.stringify(this.ordenes));
+                                //console.log('getOrdenesTrabajoPendientes: ' + JSON.stringify(this.ordenes));
                             } else {
                                 this.ordenes = [];
                                 this.totalOrdenes = 0;

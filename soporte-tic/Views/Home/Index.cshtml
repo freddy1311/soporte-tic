@@ -73,16 +73,16 @@
                     <div class="float-end">
                         <div class="avatar-sm mx-auto mb-4">
                             <span class="avatar-title rounded-circle bg-light font-size-24">
-                                <i class="mdi mdi-account-group text-warning"></i>
+                                <i class="mdi mdi-account-group text-danger"></i>
                             </span>
                         </div>
                     </div>
                     <div>
-                        <p class="text-muted text-uppercase fw-semibold font-size-13">Usuarios</p>
-                        <h4 class="mb-1 mt-1">{{countUsuarios}}</h4>
+                        <p class="text-muted text-uppercase fw-semibold font-size-13">Pendientes</p>
+                        <h4 class="mb-1 mt-1">{{totalOrdenesPendientes}}</h4>
                     </div>
                     <p class="text-muted mt-3 mb-0">
-                        Total de usuarios
+                        Total de tareas pendientes
                     </p>
                 </div>
             </div>
@@ -152,6 +152,7 @@
                 countLineas: 0,
                 countMaquinarias: 0,
                 countUsuarios: 0,
+                totalOrdenesPendientes: 0,
                 ordenes: [],
                 ordenesAsignadas: [],
                 ordenesRealizadas: [],
@@ -162,6 +163,7 @@
             },
             mounted: function () {
                 this.loadDataDashboard();
+                this.getOrdenesTrabajoPendientes();
                 //this.loadChart();
                 //this.loadChart2();
             },
@@ -370,7 +372,55 @@
                         var chart = new ApexCharts(document.querySelector("#donut-chart"), options);
                         chart.render();
                     });
-                }
+                },
+                getOrdenesTrabajoPendientes: function () {
+                    let url = '/Mantenimiento/GetListODTPendientes/';
+
+                    //this.blockUI('Cargando tareas de órdenes de trabajo...');
+                    let ordenes = [];
+                    this.totalOrdenesPendientes = 0;
+
+                    axios.get(url).
+                        then((response) => {
+                            let rm = response.data;
+
+                            if (rm.response) {
+                                //this.ordenes = rm.result;
+                                let ordenesAux = rm.result;
+                                ordenes = ordenesAux.flatMap(odt =>
+                                    odt.tareas.map(tarea => ({
+                                    // Campos de la tarea
+                                    dodtCodigo: tarea.dodtCodigo,
+                                    tamaCodigo: tarea.tamaCodigo,
+                                    tamaNombre: tarea.tamaNombre,
+                                    dodtResultado: tarea.dodtResultado,
+                                    dodtObservacion: tarea.dodtObservacion,
+
+                                    // Campos del objeto padre
+                                    ortrCodigo: odt.ortrCodigo,
+                                    maquNombreF: odt.maquNombreF,
+                                    maquNombre: odt.maquNombre,
+                                    ortrNumero: odt.ortrNúmero,
+                                    ortrSemana: odt.ortrSemana,
+                                    ortrTipo: odt.ortrTipo,
+                                    usuaResponsableNombre: odt.usuaResponsableNombre,
+                                    ortrFechaEjecucionInicio: odt.ortrFechaEjecucionInicio,
+                                    ortrFechaEjecucionFin: odt.ortrFechaEjecucionFin
+                                    }))
+                                );
+                                this.totalOrdenesPendientes = ordenes.length;
+                                //console.log('getOrdenesTrabajoPendientes: ' + JSON.stringify(this.ordenes));
+                            } else {
+                                ordenes = [];
+                                this.totalOrdenesPendientes = 0;
+                            }
+                        }).
+                        catch((error) => {
+                            console.log('Error en getOrdenesTrabajoPendientes: ' + error);
+                            this.unblockUI();
+                            this.totalOrdenesPendientes = 0;
+                        });
+                },
             }
         });
     </script>

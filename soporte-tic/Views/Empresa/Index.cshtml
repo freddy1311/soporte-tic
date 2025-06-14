@@ -311,7 +311,7 @@
                             if (rm.response) {
                                 this.vmEmpresa = rm.result;
                                 this.logoNew = `/uploads/${this.vmEmpresa.emprLogo}`;
-                                console.log('vmEmpresa cod => ' + this.vmEmpresa.emprCodigo, this.logoNew);
+                                //console.log('vmEmpresa cod => ' + this.vmEmpresa.emprCodigo, this.logoNew);
 
                                 if (this.vmEmpresa.emprCodigo != 0) {
                                     this.getSucursales();
@@ -432,7 +432,7 @@
                             this.configuraciones = [];
                         }
 
-                        console.log('list config => ', this.configuraciones.length);
+                        //console.log('list config => ', this.configuraciones.length);
                     })
                     .catch(error => {
                         console.error('Error getListConfiguraciones => ' + error);

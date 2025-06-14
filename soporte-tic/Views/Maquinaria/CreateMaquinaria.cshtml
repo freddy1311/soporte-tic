@@ -47,7 +47,7 @@
         },
         created: function () {
             this.vmMaquinaria = @Html.Raw(Json.Serialize(Model));
-            console.log('vmMaquinaria: ', this.vmMaquinaria);
+            //console.log('vmMaquinaria: ', this.vmMaquinaria);
             this.tipoMaquinaria = this.vmMaquinaria.maquTipo;
         },
         methods: {
@@ -124,7 +124,7 @@
                     return;
                 }
 
-                console.log('vmMaquinaria: ' + JSON.stringify(this.vmMaquinaria));
+                //console.log('vmMaquinaria: ' + JSON.stringify(this.vmMaquinaria));
                 let tipo = this.vmMaquinaria.maquTipo;
 
                 this.blockUI('Creando maquinaria...');

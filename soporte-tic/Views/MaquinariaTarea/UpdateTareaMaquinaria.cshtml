@@ -63,7 +63,7 @@
         },
         created: function () {
             this.VMMaquinariaTarea = @Html.Raw(Json.Serialize(Model));
-            console.log('vmMaquinariaTarea: ', JSON.stringify(this.VMMaquinariaTarea));
+            //console.log('vmMaquinariaTarea: ', JSON.stringify(this.VMMaquinariaTarea));
         },
         methods: {
             blockUI: function (msg) {
@@ -139,7 +139,7 @@
                     return;
                 }
 
-                console.log('VMMaquinariaTarea: ' + JSON.stringify(this.VMMaquinariaTarea));
+                //console.log('VMMaquinariaTarea: ' + JSON.stringify(this.VMMaquinariaTarea));
 
                 this.blockUI('Actualizando tarea de maquinaria...');
 
